@@ -1,0 +1,1 @@
+ALTER TABLE `user_profiles` ADD `permissions_customized` integer DEFAULT false NOT NULL;

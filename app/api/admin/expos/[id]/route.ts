@@ -1,0 +1,7 @@
+import { eq } from "drizzle-orm";
+import { getExposManager as getAdminUser } from "@/app/chatgpt-auth";
+import { getDb } from "@/db";
+import { expos } from "@/db/schema";
+import { getExpoBucket, normalizeExpoForm, storeExpoImage } from "@/lib/expo-catalog";
+
+export async function PATCH(request:Request,{params}:{params:Promise<{id:string}>}){const admin=await getAdminUser();if(!admin)return Response.json({error:"unauthorized"},{status:401});const{id}=await params;const db=getDb();const[current]=await db.select().from(expos).where(eq(expos.id,id)).limit(1);if(!current)return Response.json({error:"expo not found"},{status:404});const formData=await request.formData().catch(()=>null);if(!formData)return Response.json({error:"invalid form"},{status:400});let newObjectKey:string|null=null;try{const values=normalizeExpoForm(formData);const file=formData.get("imageFile");if(file instanceof File&&file.size>0)newObjectKey=await storeExpoImage(id,file);const externalImage=values.imageUrl;const[updated]=await db.update(expos).set({...values,imageUrl:newObjectKey?null:externalImage??current.imageUrl,imageObjectKey:newObjectKey?newObjectKey:externalImage?null:current.imageObjectKey,updatedAt:new Date().toISOString()}).where(eq(expos.id,id)).returning();return Response.json({expo:updated});}catch(error){if(newObjectKey)await getExpoBucket().delete(newObjectKey).catch(()=>undefined);return Response.json({error:error instanceof Error?error.message:"invalid request"},{status:400});}}

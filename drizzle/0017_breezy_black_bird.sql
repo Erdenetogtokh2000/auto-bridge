@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `vehicle_subtotal_mnt` integer DEFAULT 0 NOT NULL;

@@ -1,0 +1,1 @@
+ALTER TABLE `vehicles` ADD `vin` text;

@@ -1,0 +1,6 @@
+import { getExposManager as getAdminUser } from "@/app/chatgpt-auth";
+import { getDb } from "@/db";
+import { expos } from "@/db/schema";
+import { getExpoBucket, normalizeExpoForm, storeExpoImage } from "@/lib/expo-catalog";
+
+export async function POST(request:Request){const admin=await getAdminUser();if(!admin)return Response.json({error:"unauthorized"},{status:401});const formData=await request.formData().catch(()=>null);if(!formData)return Response.json({error:"invalid form"},{status:400});const id=`EXP-${crypto.randomUUID()}`;let objectKey:string|null=null;try{const values=normalizeExpoForm(formData);const file=formData.get("imageFile");if(file instanceof File&&file.size>0)objectKey=await storeExpoImage(id,file);const now=new Date().toISOString();const[created]=await getDb().insert(expos).values({id,...values,imageUrl:objectKey?null:values.imageUrl,imageObjectKey:objectKey,createdBy:admin.email.toLowerCase(),createdAt:now,updatedAt:now}).returning();return Response.json({expo:created},{status:201});}catch(error){if(objectKey)await getExpoBucket().delete(objectKey).catch(()=>undefined);return Response.json({error:error instanceof Error?error.message:"invalid request"},{status:400});}}

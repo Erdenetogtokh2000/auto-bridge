@@ -1,0 +1,1 @@
+ALTER TABLE `user_profiles` ADD `permissions` text DEFAULT '[]' NOT NULL;

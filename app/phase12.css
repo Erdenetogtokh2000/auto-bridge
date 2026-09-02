@@ -1,0 +1,170 @@
+.language-links { display: inline-flex; align-items: center; gap: 9px; }
+.language-links a { color: #607087; font-weight: 700; }
+.language-links a:first-child { color: var(--navy); }
+.subpage-actions { display: flex; align-items: center; gap: 18px; }
+.footer-links { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 12px; }.footer-links a { color: #9aa9bc; }.footer-links a:hover { color: #fff; }
+.subpage-actions > a:first-child { color: #1464f4; font-size: 8px; font-weight: 800; }
+.mobile-menu { display: none; position: relative; }
+.mobile-menu summary { list-style: none; cursor: pointer; display: grid; place-items: center; }
+.mobile-menu summary::-webkit-details-marker { display: none; }
+.mobile-menu > div { position: absolute; top: 34px; right: 0; width: 210px; padding: 9px; display: grid; gap: 2px; background: #fff; border: 1px solid #dce4ee; border-radius: 4px; box-shadow: 0 14px 30px rgba(7,24,52,.14); }
+.mobile-menu > div a { padding: 10px; color: var(--navy); font-size: 10px; font-weight: 700; }
+.korean-home { min-height: 100vh; color: #fff; background: #07162f; }
+.korean-hero { padding: 120px 0 105px; background: linear-gradient(90deg,rgba(4,13,29,.98),rgba(7,22,47,.52)),url('/images/korea-mongolia-vehicle-import-hero.png') center/cover; }
+.korean-hero p { color: #8db9ff; font-size: 10px; font-weight: 800; letter-spacing: .18em; }.korean-hero h1 { margin: 20px 0; font-size: clamp(40px,6vw,72px); line-height: 1.02; letter-spacing: -.05em; }.korean-hero h1 em { color: #62a0ff; font-style: normal; }.korean-hero > .container > span { display: block; max-width: 650px; color: #c6d3e8; font-size: 14px; line-height: 1.75; }.korean-points { margin: 25px 0 30px; display: flex; flex-wrap: wrap; gap: 20px; }.korean-points span { display: flex; align-items: center; gap: 6px; color: #dce7f9; font-size: 10px; }.korean-points svg { width: 15px; color: #62a0ff; }.korean-services { padding: 28px 0 70px; display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }.korean-services article { padding: 25px; background: #fff; border-radius: 5px; color: var(--navy); }.korean-services svg { color: #1464f4; }.korean-services h2 { margin: 18px 0 8px; font-size: 18px; }.korean-services p { min-height: 34px; color: #708096; font-size: 10px; line-height: 1.6; }.korean-services a { display: inline-flex; align-items: center; gap: 5px; color: #1464f4; font-size: 9px; font-weight: 800; }.legal-page { min-height: 100vh; background: #f5f7fa; }.legal-card { max-width: 860px; margin: 35px auto 80px; padding: 38px 42px; background: #fff; border: 1px solid #dfe5ed; border-radius: 5px; }.legal-card h1 { margin: 8px 0 22px; color: var(--navy); font-size: 31px; }.legal-card h2 { margin: 26px 0 8px; color: var(--navy); font-size: 15px; }.legal-card p { color: #596b83; font-size: 11px; line-height: 1.8; }.report-grid { grid-template-columns: 1.2fr .8fr; }
+@media (max-width: 1040px) { .mobile-menu { display: block; } .nav-actions > .primary-button { display: none; } }
+@media (max-width: 760px) { .subpage-actions { gap: 9px; }.subpage-nav > span { display: none; }.expo-detail-card { grid-template-columns: 1fr; }.expo-detail-image,.expo-detail-image img { min-height: 260px; }.expo-detail-copy { padding: 25px 20px; }.expo-detail-copy h1 { font-size: 25px; }.report-grid { grid-template-columns: 1fr; }.report-breakdown { grid-template-columns: 1fr 1fr; }.report-payment-grid { grid-template-columns: 1fr 1fr; }.korean-services { grid-template-columns: 1fr; }.korean-hero { padding: 80px 0 70px; }.korean-points { display: grid; gap: 10px; }.legal-card { margin: 20px 14px 50px; padding: 27px 22px; } }
+.user-financing-toggle { grid-column: span 2; display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border: 1px solid #dce5ef; background: #f8fbff; }
+.user-financing-toggle input { width: 18px; height: 18px; margin-top: 2px; accent-color: #1d63d8; }
+.user-financing-toggle span { display: flex; flex-direction: column; gap: 3px; }
+.user-financing-toggle small { color: #718198; font-size: 11px; }
+.user-financing-badge { display: block; width: fit-content; margin-top: 5px; color: #087e5d; font-size: 10px; font-weight: 700; }
+.financing-gate-note { margin: 0; padding: 12px 14px; color: #8b5a0a; background: #fff6e5; border: 1px solid #f4dfae; }
+.financing-form small { color: #7b899c; font-size: 11px; }
+.customs-financing-panel { border-color: #bfe7dd; }
+.hero-slide { grid-column: 1 / -1; position: relative; display: grid; grid-template-columns: 52% 48%; align-items: center; min-height: 590px; width: 100%; }
+.hero-slide .hero-copy { grid-column: 1; }
+.hero-slide .hero-visual { grid-column: 2; min-height: 450px; background-position: center; background-size: cover; background-repeat: no-repeat; }
+.hero-slide .hero-visual-expo { margin: 38px 0 38px 18px; border-radius: 8px; box-shadow: 0 24px 50px rgba(1,10,27,.32); }
+.hero-copy-expo h1 { max-width: 610px; font-size: clamp(38px, 4.6vw, 64px); }
+.expo-hero-eyebrow span { background: #ffbf37; }
+.expo-hero-meta { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 14px 23px; color: #dce7f9; font-size: 11px; font-weight: 700; }
+.expo-hero-meta span { display: inline-flex; align-items: center; gap: 7px; }
+.expo-hero-meta svg { color: #ffbf37; }
+.hero-expo-cta { margin-top: 28px; padding: 13px 18px; display: inline-flex; align-items: center; gap: 8px; color: #07162f; background: #ffbf37; border-radius: 4px; font-size: 11px; font-weight: 800; box-shadow: 0 9px 20px rgba(255,191,55,.22); }
+.hero-expo-cta:hover { background: #ffd16b; }
+.hero-carousel-controls { position: absolute; z-index: 3; right: 10px; bottom: 146px; display: inline-flex; align-items: center; gap: 8px; padding: 7px 9px; color: #dbe7fb; background: rgba(5,20,45,.76); border: 1px solid rgba(255,255,255,.16); border-radius: 999px; backdrop-filter: blur(7px); }
+.hero-carousel-controls button { width: 25px; height: 25px; display: grid; place-items: center; color: inherit; background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+.hero-carousel-controls button:hover, .hero-carousel-controls button:focus-visible { color: #07162f; background: #fff; outline: none; }
+.hero-carousel-dots { display: inline-flex; align-items: center; gap: 5px; }
+.hero-carousel-dots button { width: 6px; height: 6px; padding: 0; background: rgba(255,255,255,.48); }
+.hero-carousel-dots button.active { width: 19px; background: #ffbf37; border-radius: 999px; }
+@media (max-width: 760px) { .hero-slide { display: block; min-height: 760px; }.hero-slide .hero-visual { position: absolute; right: -65px; bottom: 140px; width: 340px; min-height: 280px; }.hero-slide .hero-visual-expo { right: -15px; bottom: 155px; width: 335px; min-height: 230px; margin: 0; opacity: .92; }.hero-copy-expo h1 { font-size: 39px; }.expo-hero-meta { display: grid; gap: 9px; }.hero-carousel-controls { right: 8px; bottom: 142px; } }
+
+/* Selected homepage direction: official, colorful AUTO BRIDGE layout */
+.selected-design .brand-logo-image { width: 218px; height: 54px; }
+.selected-design { --brand-blue: #0756c9; --brand-deep: #092c70; --brand-red: #ef1e27; --brand-sky: #eaf4ff; }
+.selected-design .topline { display: none; }
+.selected-design .main-header { position: relative; background: #fff; border-bottom: 1px solid #e7edf5; box-shadow: 0 1px 0 rgba(13,46,98,.04); }
+.selected-design .nav-wrap { width: min(1440px, calc(100% - 52px)); height: 80px; gap: 24px; }
+.selected-design .brand { gap: 10px; }
+.selected-design .brand-mark { width: 45px; height: 45px; border-radius: 0; background: linear-gradient(145deg, #154b9f 0 52%, #0d70dc 53% 70%, #fff 71%); box-shadow: none; overflow: hidden; }
+.selected-design .brand-k { color: #fff; font-size: 31px; font-weight: 900; line-height: 1; font-style: italic; transform: translateX(-1px); }
+.selected-design .brand-copy strong { color: #123d87; font-size: 18px; letter-spacing: -.03em; }
+.selected-design .brand-copy strong em { color: var(--brand-red); font-style: normal; }
+.selected-design .brand-copy small { margin-top: 4px; color: #8090aa; font-size: 7px; letter-spacing: .11em; }
+.selected-design .desktop-nav { flex: 1; justify-content: center; gap: clamp(13px, 1.8vw, 31px); font-size: 13px; font-weight: 650; white-space: nowrap; }
+.selected-design .desktop-nav a { position: relative; padding: 30px 0 27px; }
+.selected-design .desktop-nav a.active::after, .selected-design .desktop-nav a:hover::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--brand-red); border-radius: 3px 3px 0 0; }
+.selected-design .desktop-nav a.active { color: var(--brand-blue); }
+.selected-design .nav-actions { gap: 13px; }
+.selected-design .nav-phone { display: flex; flex-direction: column; gap: 4px; color: #173e83; white-space: nowrap; }
+.selected-design .nav-phone strong { font-size: 14px; }
+.selected-design .nav-phone small { color: #7889a3; font-size: 9px; text-align: right; }
+.selected-design .language-pill { height: 42px; padding: 0 12px; display: inline-flex; align-items: center; gap: 10px; border: 1px solid #dde5ef; border-radius: 7px; color: #172846; font-size: 11px; font-weight: 750; }
+.selected-design .login-link { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 0 13px; color: var(--brand-blue); border: 1px solid #c9daf4; border-radius: 7px; font-size: 11px; font-weight: 800; white-space: nowrap; }
+.selected-design .login-link:hover { color: #fff; background: var(--brand-blue); border-color: var(--brand-blue); }
+.selected-design .primary-button.small { display: none; }
+.selected-design .hero { min-height: 455px; background-color: #063b8c; background-image: linear-gradient(90deg, rgba(2,29,83,.92) 0%, rgba(4,51,121,.68) 38%, rgba(5,47,110,.08) 73%), url('/images/korea-mongolia-vehicle-import-hero.png'); background-position: center; background-size: cover; }
+.selected-design .hero-grid { opacity: .08; }
+.selected-design .hero-layout { width: min(1440px, calc(100% - 52px)); min-height: 455px; display: block; padding: 0; }
+.selected-design .hero-slide { display: block; min-height: 455px; }
+.selected-design .hero-slide .hero-copy { max-width: 620px; padding: 62px 0 70px; }
+.selected-design .hero .eyebrow { color: #a9ceff; font-size: 10px; letter-spacing: .12em; }
+.selected-design .hero .eyebrow span { background: var(--brand-red); }
+.selected-design .hero h1 { margin: 20px 0 14px; font-size: clamp(45px, 5.3vw, 73px); line-height: .98; letter-spacing: -.055em; text-shadow: 0 2px 1px rgba(0,0,0,.08); }
+.selected-design .hero h1 em { color: #fff; }
+.selected-design .hero-copy > p { max-width: 510px; color: #e4efff; font-size: 14px; line-height: 1.65; }
+.selected-design .hero-actions { margin-top: 27px; display: flex; flex-wrap: wrap; gap: 13px; }
+.selected-design .hero-actions a { min-height: 48px; padding: 0 18px; display: inline-flex; align-items: center; gap: 9px; border-radius: 6px; font-size: 12px; font-weight: 800; box-shadow: 0 9px 20px rgba(4,30,80,.2); }
+.selected-design .hero-action-primary { color: #fff; background: var(--brand-red); }
+.selected-design .hero-action-primary:hover { background: #d71921; }
+.selected-design .hero-action-secondary { color: #fff; background: #1464d8; border: 1px solid rgba(255,255,255,.28); }
+.selected-design .hero-action-secondary:hover { background: #0d55be; }
+.selected-design .hero-slide .hero-visual:not(.hero-visual-expo) { display: none; }
+.selected-design .hero-slide .hero-visual-expo { position: absolute; right: 0; top: 35px; width: 48%; height: 380px; min-height: 0; margin: 0; border-radius: 10px; opacity: .96; box-shadow: 0 22px 55px rgba(1,12,39,.32); }
+.selected-design .hero-copy-expo { position: relative; z-index: 2; }
+.selected-design .hero-copy-expo h1 { font-size: clamp(36px, 4vw, 58px); }
+.selected-design .hero-carousel-controls { right: 0; bottom: 26px; }
+.selected-design .quote-panel { position: relative; left: auto; right: auto; bottom: auto; width: min(1080px, 100%); margin: -42px auto 0; padding: 20px 24px 18px; border-radius: 12px; box-shadow: 0 18px 45px rgba(13,49,101,.2); }
+.selected-design .quote-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 13px; }
+.selected-design .quote-heading > div > span { color: var(--brand-red); font-size: 9px; font-weight: 850; letter-spacing: .15em; }
+.selected-design .quote-heading h2 { margin: 4px 0 0; color: var(--brand-deep); font-size: 19px; }
+.selected-design .quote-heading > svg { color: var(--brand-blue); }
+.selected-design .quote-panel > label { text-transform: none; font-size: 10px; }
+.selected-design .market-section { padding: 82px 0 80px; }
+.selected-design .section-kicker { color: var(--brand-blue); }
+.selected-design .section-heading h2 { font-size: clamp(27px, 3vw, 38px); }
+.selected-design .market-grid { gap: 16px; }
+.selected-design .market-card { min-height: 252px; padding: 24px; border: 0; border-radius: 12px; background-color: #123b7c; background-image: linear-gradient(135deg, rgba(5,28,74,.94), rgba(12,70,153,.5)), url('/images/korea-mongolia-vehicle-import-hero.png'); background-size: cover; background-position: center; box-shadow: 0 10px 28px rgba(14,43,89,.12); }
+.selected-design .market-card:nth-child(2) { background-position: 52% center; }
+.selected-design .market-card:nth-child(3) { background-position: 93% center; }
+.selected-design .market-card.silver { color: #fff; background-color: #123b7c; }
+.selected-design .market-card::after { border-color: rgba(255,255,255,.2); box-shadow: 0 0 0 38px rgba(255,255,255,.05); }
+.selected-design .market-card > p { color: #e1edff; }
+.selected-design .market-card h3 { font-size: 24px; }
+.selected-design .market-bottom { border-color: rgba(255,255,255,.45); color: #fff; }
+.selected-design .vehicles-section { padding: 76px 0 86px; background: #f6f9fd; }
+.selected-design .vehicle-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.selected-design .vehicle-card { border: 1px solid #e3eaf3; border-radius: 12px; box-shadow: 0 7px 22px rgba(18,45,91,.07); transition: transform .2s ease, box-shadow .2s ease; }
+.selected-design .vehicle-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(18,45,91,.14); }
+.selected-design .vehicle-image { height: 174px; background: linear-gradient(145deg,#e7f0fb,#c9d7e8); }
+.selected-design .vehicle-tag { top: 13px; left: 13px; color: #fff; background: var(--brand-red); border-radius: 5px; font-size: 8px; }
+.selected-design .vehicle-info { padding: 16px; }
+.selected-design .vehicle-info h3 { font-size: 16px; }
+.selected-design .price-row { margin-top: 14px; padding-top: 12px; }
+.selected-design .price-row strong { color: var(--brand-blue); font-size: 14px; }
+.selected-design .calculator-section { padding: 82px 0 90px; background: #edf5ff; }
+.selected-design .public-calculator-form, .selected-design .calculator-summary { border-radius: 12px; box-shadow: 0 10px 26px rgba(19,57,110,.08); }
+.selected-design .process-section { padding: 82px 0; background: linear-gradient(135deg, #0759cf, #0d73df); }
+.selected-design .steps-grid { border-top-color: rgba(255,255,255,.25); }
+.selected-design .steps-grid article { border-color: rgba(255,255,255,.25); }
+.selected-design .step-icon { color: #fff; background: rgba(255,255,255,.16); border-radius: 50%; }
+.selected-design .expo-section { padding: 76px 0; background: #fff; }
+.selected-design .expo-date { border-radius: 12px; background: var(--brand-red); }
+.selected-design .outline-button { border-color: var(--brand-blue); color: var(--brand-blue); border-radius: 7px; }
+.selected-design .service-strip { background: #fff; }
+.selected-design .service-grid > div { min-height: 96px; }
+.selected-design footer { background: #f7faff; }
+.selected-design .footer-brand .brand-mark { width: 38px; height: 38px; }
+@media (max-width: 1180px) { .selected-design .nav-phone { display: none; }.selected-design .desktop-nav { gap: 16px; font-size: 11px; }.selected-design .vehicle-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .selected-design .desktop-nav { display: none; }.selected-design .mobile-menu { display: block; }.selected-design .hero-layout, .selected-design .nav-wrap { width: min(100% - 32px, 700px); }.selected-design .hero-slide .hero-visual-expo { right: -34px; width: 53%; opacity: .64; }.selected-design .hero-copy { position: relative; z-index: 2; }.selected-design .quote-panel { width: calc(100% - 32px); }.selected-design .market-grid { grid-template-columns: 1fr 1fr; }.selected-design .vehicle-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .selected-design .brand-copy strong { font-size: 15px; }.selected-design .brand-copy small { font-size: 6px; }.selected-design .language-pill { display: none; }.selected-design .hero { min-height: 560px; }.selected-design .hero-layout, .selected-design .hero-slide { min-height: 560px; }.selected-design .hero-slide .hero-copy { padding: 53px 0 70px; }.selected-design .hero h1 { font-size: 45px; }.selected-design .hero-copy > p { max-width: 330px; font-size: 12px; }.selected-design .hero-actions a { min-height: 44px; padding: 0 12px; font-size: 10px; }.selected-design .hero-slide .hero-visual-expo { top: auto; bottom: 55px; right: -28px; width: 78%; height: 180px; opacity: .45; }.selected-design .hero-carousel-controls { bottom: 13px; }.selected-design .quote-panel { margin-top: -25px; width: calc(100% - 22px); padding: 17px 14px; }.selected-design .quote-heading h2 { font-size: 16px; }.selected-design .url-field { grid-template-columns: 20px 1fr; }.selected-design .url-field button { grid-column: 1 / -1; height: 43px; justify-content: center; }.selected-design .quote-contact-fields { margin-left: 0; grid-template-columns: 1fr; }.selected-design .quote-footer { padding-left: 0; gap: 8px; align-items: flex-start; flex-direction: column; }.selected-design .market-section, .selected-design .vehicles-section, .selected-design .calculator-section, .selected-design .process-section, .selected-design .expo-section { padding: 58px 0; }.selected-design .market-grid, .selected-design .vehicle-grid { grid-template-columns: 1fr; }.selected-design .section-heading.split { display: block; }.selected-design .section-heading.split > p { margin-top: 13px; }.selected-design .expo-layout { grid-template-columns: 1fr; gap: 22px; }.selected-design .expo-date { width: 110px; height: 110px; }.selected-design .service-grid { grid-template-columns: 1fr 1fr; }.selected-design .service-grid > div { padding: 15px 12px; border-bottom: 1px solid #e6eaf0; }.selected-design .footer-inner { flex-direction: column; align-items: flex-start; gap: 12px; } }
+
+/* Keep the full Cover visible; the quote form now sits below it. */
+.selected-design .quote-band { padding: 28px 0 30px; background: #f4f8fd; }
+.selected-design .quote-band .quote-panel { margin: 0 auto; }
+@media (max-width: 600px) { .selected-design .quote-band { padding: 20px 0 24px; }.selected-design .quote-band .quote-panel { margin: 0 auto; } }
+
+/* Show the current Expo's real photo behind the information block. */
+.selected-design .expo-section { position: relative; overflow: hidden; background-color: #edf4fc; background-position: center; background-size: cover; background-repeat: no-repeat; }
+.selected-design .expo-section::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(255,255,255,.96) 0%, rgba(255,255,255,.9) 38%, rgba(255,255,255,.58) 68%, rgba(4,31,75,.16) 100%); }
+.selected-design .expo-section .container { position: relative; z-index: 1; }
+.selected-design .expo-copy h2 { color: #09244f; }
+.selected-design .expo-copy > p:not(.section-kicker) { color: #4e6180; }
+.selected-design .expo-meta { color: #29405f; }
+.selected-design .expo-actions { display: grid; gap: 12px; justify-items: stretch; }
+.selected-design .expo-register { width: 214px; color: #fff; background: var(--brand-red); border-radius: 8px; box-shadow: 0 10px 22px rgba(239,30,39,.18); }
+.selected-design .expo-register summary { min-height: 46px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; list-style: none; font-size: 10px; font-weight: 800; }
+.selected-design .expo-register summary::-webkit-details-marker { display: none; }
+.selected-design .expo-register form { padding: 14px; display: grid; gap: 9px; background: #fff; border: 1px solid rgba(239,30,39,.2); color: #173967; border-radius: 0 0 8px 8px; }
+.selected-design .expo-register label { display: grid; gap: 4px; font-size: 8px; font-weight: 750; }
+.selected-design .expo-register input { height: 31px; padding: 0 8px; border: 1px solid #d7e1ef; border-radius: 4px; font-size: 9px; outline: none; }
+.selected-design .expo-register input:focus { border-color: var(--brand-blue); box-shadow: 0 0 0 2px rgba(7,86,201,.12); }
+.selected-design .expo-register button { height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-radius: 4px; color: #fff; background: var(--brand-blue); font-size: 9px; font-weight: 800; cursor: pointer; }
+.selected-design .steps-grid article { min-height: 260px; padding: 28px 28px 24px; overflow: hidden; background-color: #0b56c9; background-position: center; background-size: cover; }
+.selected-design .steps-grid article::before { content: ""; position: absolute; inset: 0; background: linear-gradient(150deg, rgba(2,34,90,.91), rgba(4,91,200,.38)); }
+.selected-design .steps-grid article:nth-child(1) { background-image: url("https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=82"); }
+.selected-design .steps-grid article:nth-child(2) { background-image: url("https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1000&q=82"); }
+.selected-design .steps-grid article:nth-child(3) { background-image: url("https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?auto=format&fit=crop&w=1000&q=82"); }
+.selected-design .steps-grid article:nth-child(4) { background-image: url("https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1000&q=82"); }
+.selected-design .steps-grid article > * { position: relative; z-index: 1; }
+.selected-design .steps-grid article > span { top: 32px; right: 27px; color: rgba(255,255,255,.72); }
+.selected-design .steps-grid h3 { margin-top: 22px; }
+.selected-design .steps-grid p { color: rgba(255,255,255,.84); }
+.selected-design .expo-location-bottom { margin-top: 20px; padding-top: 14px; display: flex; align-items: center; gap: 8px; border-top: 1px solid rgba(41,64,95,.22); color: #173967; font-size: 11px; font-weight: 750; }
+.selected-design .expo-location-bottom svg { color: var(--brand-red); }
+@media (max-width: 600px) { .selected-design .steps-grid article { min-height: 220px; }.selected-design .expo-location-bottom { margin-top: 16px; } }
+.selected-design .process-section { background: #fff; color: #0a2d63; }
+.selected-design .process-section .section-heading.centered h2 { color: #0a2d63; }
+.selected-design .process-section .section-heading.centered > p:last-child { color: #667b99; }

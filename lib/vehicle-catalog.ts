@@ -1,4 +1,4 @@
-import { env } from "cloudflare:workers";
+import { getNetlifyBucket } from "@/lib/netlify-bucket";
 
 export const vehicleMarkets = ["KOREA", "USA", "MONGOLIA"] as const;
 export const vehicleStatuses = ["AVAILABLE", "RESERVED", "SOLD", "ARCHIVED"] as const;
@@ -42,10 +42,8 @@ export function normalizeVehicleForm(formData: FormData) {
   };
 }
 
-export function getVehicleBucket(): R2Bucket {
-  const bucket = (env as unknown as { BUCKET?: R2Bucket }).BUCKET;
-  if (!bucket) throw new Error("Cloudflare R2 binding `BUCKET` is unavailable.");
-  return bucket;
+export function getVehicleBucket() {
+  return getNetlifyBucket();
 }
 
 export async function storeVehicleImage(vehicleId: string, file: File) {

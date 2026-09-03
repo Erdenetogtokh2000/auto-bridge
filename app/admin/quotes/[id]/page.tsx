@@ -17,6 +17,6 @@ export default async function QuoteEstimatePage({ params }: { params: Promise<{ 
   const [estimate] = await getDb().select().from(quoteEstimates).where(eq(quoteEstimates.quoteRequestId, id)).limit(1);
   return <DashboardShell role="admin" title="Үнийн санал бэлтгэх" subtitle={`${quote.requesterName ?? "Нэргүй харилцагч"} · ${quote.requesterPhone ?? "Утасгүй"}`} userName={actor.displayName} userCode={actor.email} adminPermissions={actor.permissions} isSystemAdmin={actor.isAdmin}>
     <div className="estimate-toolbar"><Link className="estimate-back" href="/admin"><ArrowLeft/>Хүсэлтийн жагсаалт</Link><a className="estimate-source" href={quote.sourceUrl} target="_blank" rel="noreferrer">Зарын эх сурвалж <ExternalLink/></a></div>
-    <QuoteEstimateForm quoteId={id} initial={estimate ?? null} requesterEmail={quote.requesterEmail}/>
+    <QuoteEstimateForm quoteId={id} initial={estimate ? { ...estimate, productionYear: estimate.productionYear ?? undefined, mileageKm: estimate.mileageKm ?? undefined } : null} requesterEmail={quote.requesterEmail}/>
   </DashboardShell>;
 }

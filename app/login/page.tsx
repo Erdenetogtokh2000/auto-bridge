@@ -1,8 +1,8 @@
-import { ArrowRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/app/components/brand-logo";
+import { NetlifyLoginForm } from "@/app/components/netlify-login-form";
 import { redirect } from "next/navigation";
 import {
-  chatGPTSignInPath,
   getAuthenticatedRole,
   roleHomePath,
 } from "@/app/chatgpt-auth";
@@ -22,9 +22,7 @@ export default async function LoginPage() {
         <p className="login-kicker">НЭГДСЭН НЭВТРЭХ ХЭСЭГ</p>
         <h1 id="login-title">Бүртгэлээрээ нэвтэрнэ үү</h1>
         <p className="login-intro">Нэг удаа нэвтэрсний дараа таны эрхийг таньж, харилцагч, тээвэр, ББСБ эсвэл админы зөв хэсэгт автоматаар оруулна.</p>
-        <a className="login-primary" href={chatGPTSignInPath("/login")}>
-          ChatGPT бүртгэлээр нэвтрэх <ArrowRight size={16} />
-        </a>
+        <NetlifyLoginForm />
         <div className="login-points">
           <span><CheckCircle2 size={15} /> Нэг холбоосоор бүх эрх</span>
           <span><ShieldCheck size={15} /> Аюулгүй эрхийн шалгалт</span>

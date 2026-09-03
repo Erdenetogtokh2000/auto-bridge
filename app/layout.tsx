@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "AUTO BRIDGE",
   description: "Солонгос болон Америкаас автомашин захиалах, төлбөр, бичиг баримт, тээврийн явцыг нэг дор удирдах платформ.",
   keywords: ["AUTO BRIDGE", "Солонгосоос машин захиалах", "Encar Монгол", "автомашин импорт"],
-  metadataBase: new URL("https://auto-bridge-mn.netlify.app"),
+  metadataBase: new URL("https://autobridge2026.netlify.app"),
   openGraph: { title: "AUTO BRIDGE", description: "Сонголтоос хүргэлт хүртэл нэг системд.", type: "website" },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };

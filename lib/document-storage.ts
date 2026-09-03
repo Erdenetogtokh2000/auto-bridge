@@ -1,9 +1,7 @@
-import { env } from "cloudflare:workers";
+import { getNetlifyBucket } from "@/lib/netlify-bucket";
 
-export function getDocumentBucket(): R2Bucket {
-  const bucket = (env as unknown as { BUCKET?: R2Bucket }).BUCKET;
-  if (!bucket) throw new Error("Cloudflare R2 binding `BUCKET` is unavailable.");
-  return bucket;
+export function getDocumentBucket() {
+  return getNetlifyBucket();
 }
 
 export function safeDocumentName(value: string) {

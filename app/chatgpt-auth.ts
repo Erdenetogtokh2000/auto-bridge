@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
-import { getUser } from "@netlify/identity";
+import { createServerClient } from "@supabase/ssr";
+import { cookies } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { shipments, userProfiles } from "@/db/schema";
@@ -33,10 +34,30 @@ function normalizeEmail(value: string): string {
 }
 
 async function getRawChatGPTUser(): Promise<ChatGPTUser | null> {
-  const identityUser = await getUser();
+  const cookieStore = await cookies();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!supabaseUrl || !publishableKey) return null;
+
+  const supabase = createServerClient(supabaseUrl, publishableKey, {
+    cookies: {
+      getAll: () => cookieStore.getAll(),
+      setAll: (entries) => {
+        try {
+          entries.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
+        } catch {
+          // Server Components cannot always write cookies. The auth callback
+          // route refreshes sessions before users reach protected pages.
+        }
+      },
+    },
+  });
+  const { data: { user: identityUser } } = await supabase.auth.getUser();
   const email = identityUser?.email ? normalizeEmail(identityUser.email) : "";
   if (!email) return null;
-  const fullName = identityUser?.name ?? null;
+  const fullName = typeof identityUser?.user_metadata?.full_name === "string"
+    ? identityUser.user_metadata.full_name
+    : null;
 
   return {
     displayName: fullName ?? email,

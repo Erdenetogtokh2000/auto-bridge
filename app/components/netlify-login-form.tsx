@@ -1,6 +1,6 @@
 "use client";
 
-import { login, requestPasswordRecovery, signup } from "@netlify/identity";
+import { createBrowserClient } from "@supabase/ssr";
 import { ArrowRight } from "lucide-react";
 import { FormEvent, useState } from "react";
 
@@ -8,6 +8,13 @@ export function NetlifyLoginForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const getSupabase = () => {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+    if (!url || !key) throw new Error("Нэвтрэх үйлчилгээ тохируулагдаагүй байна.");
+    return createBrowserClient(url, key);
+  };
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -17,10 +24,19 @@ export function NetlifyLoginForm() {
     const password = String(data.get("password") ?? "");
     try {
       if (mode === "signup") {
-        await signup(email, password, { full_name: String(data.get("name") ?? "").trim() });
+        const { error } = await getSupabase().auth.signUp({
+          email,
+          password,
+          options: {
+            data: { full_name: String(data.get("name") ?? "").trim() },
+            emailRedirectTo: `${window.location.origin}/auth/callback?next=/login`,
+          },
+        });
+        if (error) throw error;
         setMessage("Бүртгэл үүслээ. И-мэйлээр ирсэн баталгаажуулах холбоосыг нээнэ үү.");
       } else {
-        await login(email, password);
+        const { error } = await getSupabase().auth.signInWithPassword({ email, password });
+        if (error) throw error;
         window.location.href = "/login";
       }
     } catch (error) {
@@ -32,7 +48,13 @@ export function NetlifyLoginForm() {
     const email = (document.querySelector<HTMLInputElement>('#identity-email')?.value ?? "").trim();
     if (!email) return setMessage("Эхлээд и-мэйл хаягаа оруулна уу.");
     setBusy(true);
-    try { await requestPasswordRecovery(email); setMessage("Нууц үг сэргээх холбоосыг и-мэйлээр илгээлээ."); }
+    try {
+      const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+      });
+      if (error) throw error;
+      setMessage("Нууц үг сэргээх холбоосыг и-мэйлээр илгээлээ.");
+    }
     catch (error) { setMessage(error instanceof Error ? error.message : "Хүсэлт илгээж чадсангүй."); }
     finally { setBusy(false); }
   }

@@ -120,7 +120,7 @@ export function DashboardShell({ role, title, subtitle, userName, userCode, unre
         </SidebarContent>
         <SidebarFooter className="dashboard-footer">
           {role === "admin" && (isSystemAdmin || adminPermissions.includes("SETTINGS_MANAGE")) && <a href="/admin/settings"><Settings size={17} /><span>Тохиргоо</span></a>}
-          <a href="/signout-with-chatgpt?return_to=%2Flogin"><LogOut size={17} /><span>Гарах</span></a>
+          <a href="/logout"><LogOut size={17} /><span>Гарах</span></a>
           <div className="dashboard-user">
             <span>{displayName.slice(0, 1).toUpperCase()}</span>
             <div><strong>{displayName}</strong><small>{displayCode}</small></div>

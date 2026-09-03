@@ -1,6 +1,5 @@
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { env } from "cloudflare:workers";
+import { getUser } from "@netlify/identity";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { shipments, userProfiles } from "@/db/schema";
@@ -15,13 +14,8 @@ export type ChatGPTUser = {
 
 export type AppRole = "ADMIN" | "MANAGER" | "FINANCE" | "TRANSPORT" | "CUSTOMER";
 
-const USER_EMAIL_HEADER = "oai-authenticated-user-email";
-const USER_FULL_NAME_HEADER = "oai-authenticated-user-full-name";
-const USER_FULL_NAME_ENCODING_HEADER =
-  "oai-authenticated-user-full-name-encoding";
-const PERCENT_ENCODED_UTF8 = "percent-encoded-utf-8";
-const SIGN_IN_PATH = "/signin-with-chatgpt";
-const SIGN_OUT_PATH = "/signout-with-chatgpt";
+const SIGN_IN_PATH = "/login";
+const SIGN_OUT_PATH = "/logout";
 const CALLBACK_PATH = "/callback";
 
 // These are the initial staff/customer accounts supplied for the first
@@ -39,17 +33,10 @@ function normalizeEmail(value: string): string {
 }
 
 async function getRawChatGPTUser(): Promise<ChatGPTUser | null> {
-  const requestHeaders = await headers();
-  const rawEmail = requestHeaders.get(USER_EMAIL_HEADER);
-  const email = rawEmail ? normalizeEmail(rawEmail) : "";
+  const identityUser = await getUser();
+  const email = identityUser?.email ? normalizeEmail(identityUser.email) : "";
   if (!email) return null;
-
-  const encodedFullName = requestHeaders.get(USER_FULL_NAME_HEADER);
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get(USER_FULL_NAME_ENCODING_HEADER) === PERCENT_ENCODED_UTF8
-      ? safeDecodeURIComponent(encodedFullName)
-      : null;
+  const fullName = identityUser?.name ?? null;
 
   return {
     displayName: fullName ?? email,
@@ -63,7 +50,7 @@ function configuredAdminEmails() {
 }
 
 function configuredEmails(key: "ADMIN_EMAILS" | "FINANCE_EMAILS" | "TRANSPORT_EMAILS" | "CUSTOMER_EMAILS") {
-  const configured = (env as unknown as Record<string, string | undefined>)[key] ?? "";
+  const configured = process.env[key] ?? "";
   const role = key.replace("_EMAILS", "") as Exclude<AppRole, "MANAGER">;
   return [...new Set([
     ...configured.split(/[ ,;]+/).map(normalizeEmail).filter(Boolean),
@@ -345,12 +332,4 @@ function isReservedAuthPath(pathname: string): boolean {
     pathname === SIGN_OUT_PATH ||
     pathname === CALLBACK_PATH
   );
-}
-
-function safeDecodeURIComponent(value: string): string | null {
-  try {
-    return decodeURIComponent(value);
-  } catch {
-    return null;
-  }
 }

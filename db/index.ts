@@ -1,13 +1,18 @@
-import { env } from "cloudflare:workers";
-import { drizzle } from "drizzle-orm/d1";
+import { getDatabase } from "@netlify/database";
+import { drizzle } from "drizzle-orm/node-postgres";
 import * as schema from "./schema";
 
 export function getDb() {
-  if (!env.DB) {
-    throw new Error(
-      "Cloudflare D1 binding `DB` is unavailable. Set the `d1` field in .openai/hosting.json to `DB` or let your control plane inject the real binding values before using the database."
-    );
+  const connection = getDatabase();
+  if (connection.driver !== "server") {
+    throw new Error("AUTO BRIDGE requires the Netlify server database driver.");
   }
-
-  return drizzle(env.DB, { schema });
+  const database = drizzle(connection.pool, { schema });
+  return Object.assign(database, {
+    // D1 exposed batch(); keep the existing application contract while
+    // Postgres executes the prepared statements concurrently.
+    batch<T extends readonly PromiseLike<unknown>[]>(queries: T) {
+      return Promise.all(queries);
+    },
+  });
 }

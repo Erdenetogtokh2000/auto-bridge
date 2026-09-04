@@ -7,6 +7,7 @@ import "./public-pages-luxury.css";
 import "./quote-flow-luxury.css";
 import "./auth-luxury.css";
 import "./global-sourcing-redesign.css";
+import "./global-sourcing-detail.css";
 import { NetlifyAuthCallback } from "@/app/components/netlify-auth-callback";
 
 export const metadata: Metadata = {

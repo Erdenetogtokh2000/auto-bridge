@@ -1,11 +1,18 @@
-import { NextResponse } from "next/server";
 import { getAuthenticatedRole, roleHomePath } from "@/app/chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
-export async function GET(request: Request) {
+export async function GET() {
   const role = await getAuthenticatedRole();
-  const origin = new URL(request.url).origin;
   const destination = role ? roleHomePath(role) : "/login";
-  return NextResponse.redirect(new URL(destination, origin));
+
+  // Use a relative Location header so the browser keeps the public Render
+  // hostname instead of following Render's internal localhost:10000 origin.
+  return new Response(null, {
+    status: 303,
+    headers: {
+      Location: destination,
+      "Cache-Control": "no-store",
+    },
+  });
 }

@@ -1,7 +1,7 @@
-import { getNetlifyBucket } from "@/lib/netlify-bucket";
+import { getSupabaseBucket } from "@/lib/supabase-bucket";
 
 export function getDocumentBucket() {
-  return getNetlifyBucket();
+  return getSupabaseBucket("auto-bridge-files");
 }
 
 export function safeDocumentName(value: string) {

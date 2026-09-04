@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { shipments, userProfiles } from "@/db/schema";
 import { adminPermissionCodes, hasAdminPermission, normalizeAdminPermissions, type AdminPermission } from "@/lib/admin-permissions";
@@ -19,8 +19,6 @@ const SIGN_IN_PATH = "/login";
 const SIGN_OUT_PATH = "/logout";
 const CALLBACK_PATH = "/callback";
 
-// Initial production accounts. Environment variables can add more accounts,
-// while these known addresses keep routing stable during rollout.
 const ROLE_FALLBACK_EMAILS: Record<AppRole, string[]> = {
   ADMIN: ["erdenetogtokh2000@gmail.com"],
   MANAGER: ["g.iveel0609@gmail.com"],
@@ -29,9 +27,6 @@ const ROLE_FALLBACK_EMAILS: Record<AppRole, string[]> = {
   CUSTOMER: [],
 };
 
-// Managers can operate the commercial workflow (including prices/quotes,
-// orders, catalog, financing visibility and reports), but system settings
-// remain an administrator-only fallback capability.
 const MANAGER_FALLBACK_PERMISSIONS: AdminPermission[] = adminPermissionCodes.filter(
   (code) => code !== "SETTINGS_MANAGE",
 );
@@ -59,6 +54,7 @@ async function getRawChatGPTUser(): Promise<ChatGPTUser | null> {
       },
     },
   });
+
   const { data: { user: identityUser } } = await supabase.auth.getUser();
   const email = identityUser?.email ? normalizeEmail(identityUser.email) : "";
   if (!email) return null;
@@ -96,29 +92,51 @@ function configuredRoleForEmail(email: string): AppRole | null {
   return null;
 }
 
+type AuthProfile = {
+  role: string;
+  permissions: string;
+  permissionsCustomized: boolean;
+  status: string;
+};
+
+async function getAuthProfile(email: string): Promise<AuthProfile | null> {
+  try {
+    const [profile] = await getDb().select({
+      role: userProfiles.role,
+      permissions: userProfiles.permissions,
+      permissionsCustomized: userProfiles.permissionsCustomized,
+      status: userProfiles.status,
+    }).from(userProfiles).where(eq(userProfiles.email, normalizeEmail(email))).limit(1);
+    return profile ?? null;
+  } catch {
+    // Fallback accounts can still sign in if the application DB is temporarily
+    // unavailable. Whenever a DB profile exists, it is authoritative.
+    return null;
+  }
+}
+
+function appRoleFromProfile(role: string | null | undefined): AppRole | null {
+  if (role === "ADMIN") return "ADMIN";
+  if (role === "MANAGER" || role === "DEALER") return "MANAGER";
+  if (role === "FINANCE") return "FINANCE";
+  if (role === "TRANSPORT") return "TRANSPORT";
+  if (role === "CUSTOMER") return "CUSTOMER";
+  return null;
+}
+
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const user = await getRawChatGPTUser();
   if (!user) return null;
-  const email = normalizeEmail(user.email);
-  // Production/fallback staff accounts resolve directly from the authenticated
-  // email, matching the original chatgpt.site behavior. A temporary database
-  // outage or missing DATABASE_URL must not turn a successful login into a 500.
-  if (configuredRoleForEmail(email)) return user;
-  const [profile] = await getDb().select({ status: userProfiles.status }).from(userProfiles)
-    .where(eq(userProfiles.email, email)).limit(1);
-  return profile?.status === "SUSPENDED" ? null : user;
+  const profile = await getAuthProfile(user.email);
+  if (profile?.status === "SUSPENDED") return null;
+  return user;
 }
 
-export async function requireChatGPTUser(
-  returnTo: string,
-): Promise<ChatGPTUser> {
+export async function requireChatGPTUser(returnTo: string): Promise<ChatGPTUser> {
   const user = await getChatGPTUser();
   if (user) return user;
 
   if (await getRawChatGPTUser()) redirect("/access-denied");
-
-  // Бүх хамгаалагдсан маршрут нэг нэвтрэх цэгээр эхэлнэ.
-  // Нэвтэрсний дараа /login нь эрхээр нь зөв самбар руу чиглүүлнэ.
   redirect(chatGPTSignInPath("/login"));
 }
 
@@ -128,56 +146,50 @@ export async function getCustomerUser(required?: UserPermission): Promise<Custom
   const user = await getChatGPTUser();
   if (!user) return null;
   const email = normalizeEmail(user.email);
-  const configuredRole = configuredRoleForEmail(email);
-  if (configuredRole && configuredRole !== "CUSTOMER") return null;
-  if (configuredRole === "CUSTOMER") {
-    const permissions = defaultPermissionsForRole("CUSTOMER");
+  const profile = await getAuthProfile(email);
+
+  if (profile) {
+    if (profile.status !== "ACTIVE" || profile.role !== "CUSTOMER") return null;
+    const permissions = effectivePermissionsForRole("CUSTOMER", profile.permissions, profile.permissionsCustomized);
     return required && !hasUserPermission(permissions, required) ? null : { ...user, permissions };
   }
-  const [profile] = await getDb().select({ role: userProfiles.role, permissions: userProfiles.permissions, permissionsCustomized: userProfiles.permissionsCustomized }).from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.status, "ACTIVE"))).limit(1);
-  if (profile && profile.role !== "CUSTOMER") return null;
-  const permissions = profile
-    ? effectivePermissionsForRole("CUSTOMER", profile.permissions, profile.permissionsCustomized)
-    : defaultPermissionsForRole("CUSTOMER");
+
+  const configuredRole = configuredRoleForEmail(email);
+  if (configuredRole && configuredRole !== "CUSTOMER") return null;
+  const permissions = defaultPermissionsForRole("CUSTOMER");
   return required && !hasUserPermission(permissions, required) ? null : { ...user, permissions };
 }
 
-/**
- * Resolve the signed-in user's landing area in one server-side place.
- * The browser never supplies a role; the authenticated email and active
- * profile (or an existing transport assignment) are the only sources.
- */
 export async function getAuthenticatedRole(): Promise<AppRole | null> {
   const user = await getChatGPTUser();
   if (!user) return null;
 
   const email = normalizeEmail(user.email);
   const configuredRole = configuredRoleForEmail(email);
+
+  // The owner/admin fallback remains authoritative. Every other existing
+  // Admin-managed profile overrides fallback role mappings.
+  if (configuredRole === "ADMIN") return "ADMIN";
+
+  const profile = await getAuthProfile(email);
+  if (profile) {
+    if (profile.status !== "ACTIVE") return null;
+    return appRoleFromProfile(profile.role);
+  }
+
   if (configuredRole) return configuredRole;
 
-  const [profile] = await getDb().select({ role: userProfiles.role })
-    .from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.status, "ACTIVE")))
-    .limit(1);
+  try {
+    const [assigned] = await getDb().select({ id: shipments.id })
+      .from(shipments)
+      .where(eq(shipments.transportEmployeeEmail, email))
+      .limit(1);
+    if (assigned) return "TRANSPORT";
+  } catch {
+    // Authentication itself should not fail because of a DB outage.
+  }
 
-  if (profile?.role === "ADMIN") return "ADMIN";
-  if (profile?.role === "MANAGER" || profile?.role === "DEALER") return "MANAGER";
-  if (profile?.role === "FINANCE") return "FINANCE";
-  if (profile?.role === "TRANSPORT") return "TRANSPORT";
-  if (profile?.role === "CUSTOMER") return "CUSTOMER";
-
-  const [assigned] = await getDb().select({ id: shipments.id })
-    .from(shipments)
-    .where(eq(shipments.transportEmployeeEmail, email))
-    .limit(1);
-  if (assigned) return "TRANSPORT";
-
-  // A signed-in user without a profile is a customer by default. Public
-  // quote requests create this profile automatically; staff roles are
-  // granted explicitly by an administrator.
-  if (!profile) return "CUSTOMER";
-  return null;
+  return "CUSTOMER";
 }
 
 export function roleHomePath(role: AppRole): string {
@@ -209,18 +221,16 @@ export async function getAdminUser(): Promise<ChatGPTUser | null> {
   if (!user) return null;
   const email = normalizeEmail(user.email);
   if (configuredAdminEmails().includes(email)) return user;
-  const [profile] = await getDb().select({ id: userProfiles.id }).from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.role, "ADMIN"), eq(userProfiles.status, "ACTIVE"))).limit(1);
-  return profile ? user : null;
+  const profile = await getAuthProfile(email);
+  return profile?.status === "ACTIVE" && profile.role === "ADMIN" ? user : null;
 }
 
 export async function requireAdmin(returnTo: string): Promise<ChatGPTUser> {
   const user = await requireChatGPTUser(returnTo);
   const email = normalizeEmail(user.email);
   if (configuredAdminEmails().includes(email)) return user;
-  const [profile] = await getDb().select({ id: userProfiles.id }).from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.role, "ADMIN"), eq(userProfiles.status, "ACTIVE"))).limit(1);
-  if (!profile) redirect("/access-denied");
+  const profile = await getAuthProfile(email);
+  if (profile?.status !== "ACTIVE" || profile.role !== "ADMIN") redirect("/access-denied");
   return user;
 }
 
@@ -234,22 +244,26 @@ export async function getAdminStaffUser(required?: AdminPermission): Promise<Adm
   if (!user) return null;
   const email = normalizeEmail(user.email);
   const configuredRole = configuredRoleForEmail(email);
+
   if (configuredRole === "ADMIN") {
     return { ...user, isAdmin: true, permissions: [...adminPermissionCodes] };
   }
+
+  const profile = await getAuthProfile(email);
+  if (profile) {
+    if (profile.status !== "ACTIVE") return null;
+    if (profile.role === "ADMIN") return { ...user, isAdmin: true, permissions: [...adminPermissionCodes] };
+    if (profile.role !== "MANAGER" && profile.role !== "DEALER") return null;
+    const permissions = normalizeAdminPermissions(profile.permissions);
+    if (required && !hasAdminPermission(permissions, required)) return null;
+    return { ...user, isAdmin: false, permissions };
+  }
+
   if (configuredRole === "MANAGER") {
     if (required && !hasAdminPermission(MANAGER_FALLBACK_PERMISSIONS, required)) return null;
     return { ...user, isAdmin: false, permissions: [...MANAGER_FALLBACK_PERMISSIONS] };
   }
-  const [profile] = await getDb().select({ role: userProfiles.role, permissions: userProfiles.permissions })
-    .from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.status, "ACTIVE")))
-    .limit(1);
-  if (profile?.role === "ADMIN") return { ...user, isAdmin: true, permissions: [...adminPermissionCodes] };
-  if (profile?.role !== "MANAGER" && profile?.role !== "DEALER") return null;
-  const permissions = normalizeAdminPermissions(profile.permissions);
-  if (required && !hasAdminPermission(permissions, required)) return null;
-  return { ...user, isAdmin: false, permissions };
+  return null;
 }
 
 export async function requireAdminPermission(returnTo: string, required: AdminPermission): Promise<AdminStaffUser> {
@@ -281,18 +295,29 @@ export async function getTransportUser(required?: UserPermission): Promise<Trans
   const email = normalizeEmail(user.email);
   const configuredRole = configuredRoleForEmail(email);
   if (configuredRole === "ADMIN") return { ...user, isAdmin: true, permissions: defaultPermissionsForRole("TRANSPORT") };
-  if (configuredRole === "TRANSPORT") return { ...user, isAdmin: false, permissions: defaultPermissionsForRole("TRANSPORT") };
-  const [profile] = await getDb().select({ role: userProfiles.role, permissions: userProfiles.permissions, permissionsCustomized: userProfiles.permissionsCustomized }).from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.status, "ACTIVE"))).limit(1);
-  if (profile?.role === "ADMIN") return { ...user, isAdmin: true, permissions: defaultPermissionsForRole("TRANSPORT") };
-  if (profile?.role === "TRANSPORT") {
+
+  const profile = await getAuthProfile(email);
+  if (profile) {
+    if (profile.status !== "ACTIVE") return null;
+    if (profile.role === "ADMIN") return { ...user, isAdmin: true, permissions: defaultPermissionsForRole("TRANSPORT") };
+    if (profile.role !== "TRANSPORT") return null;
     const permissions = effectivePermissionsForRole("TRANSPORT", profile.permissions, profile.permissionsCustomized);
     return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
   }
-  const [assigned] = await getDb().select({ id: shipments.id })
-    .from(shipments)
-    .where(eq(shipments.transportEmployeeEmail, email)).limit(1);
-  if (!assigned) return null;
+
+  if (configuredRole === "TRANSPORT") {
+    const permissions = defaultPermissionsForRole("TRANSPORT");
+    return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
+  }
+
+  try {
+    const [assigned] = await getDb().select({ id: shipments.id })
+      .from(shipments)
+      .where(eq(shipments.transportEmployeeEmail, email)).limit(1);
+    if (!assigned) return null;
+  } catch {
+    return null;
+  }
   const permissions = defaultPermissionsForRole("TRANSPORT");
   return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
 }
@@ -317,11 +342,16 @@ export async function getFinanceUser(required?: UserPermission): Promise<Finance
   const user = await getChatGPTUser();
   if (!user) return null;
   const email = normalizeEmail(user.email);
-  if (configuredRoleForEmail(email) === "FINANCE") return { ...user, isAdmin: false, permissions: defaultPermissionsForRole("FINANCE") };
-  const [profile] = await getDb().select({ role: userProfiles.role, permissions: userProfiles.permissions, permissionsCustomized: userProfiles.permissionsCustomized }).from(userProfiles)
-    .where(and(eq(userProfiles.email, email), eq(userProfiles.status, "ACTIVE"))).limit(1);
-  if (profile?.role !== "FINANCE") return null;
-  const permissions = effectivePermissionsForRole("FINANCE", profile.permissions, profile.permissionsCustomized);
+  const profile = await getAuthProfile(email);
+
+  if (profile) {
+    if (profile.status !== "ACTIVE" || profile.role !== "FINANCE") return null;
+    const permissions = effectivePermissionsForRole("FINANCE", profile.permissions, profile.permissionsCustomized);
+    return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
+  }
+
+  if (configuredRoleForEmail(email) !== "FINANCE") return null;
+  const permissions = defaultPermissionsForRole("FINANCE");
   return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
 }
 

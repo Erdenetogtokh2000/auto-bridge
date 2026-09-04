@@ -1,6 +1,36 @@
 /* AUTO BRIDGE homepage cover replacement — presentation only.
    Keeps all existing hero copy, CTA targets, quote flow and backend behavior intact. */
 
+/* IMPORTANT: the previous cinematic film layer used z-index:-1 on a fixed element.
+   Inside the hero's isolated stacking context that placed the image behind the hero's
+   solid background, which is why production appeared almost completely black.
+   Keep the cover inside the hero, above the hero background and below all live HTML. */
+.global-sourcing-home .cinematic-film {
+  position: absolute !important;
+  top: 0 !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 0 !important;
+  width: 100vw !important;
+  height: 100% !important;
+  min-height: max(680px, 100svh) !important;
+  transform: translateX(-50%) !important;
+  overflow: hidden !important;
+  background: #050B14 !important;
+}
+
+.global-sourcing-home .hero-slide {
+  isolation: isolate;
+}
+
+.global-sourcing-home .hero-copy-cinematic,
+.global-sourcing-home .hero-market-labels,
+.global-sourcing-home .hero-carousel-controls {
+  position: relative;
+  z-index: 12;
+}
+
 .global-sourcing-home .cinematic-film-poster,
 .global-sourcing-home .cinematic-film-shot {
   inset: 0 !important;
@@ -15,7 +45,7 @@
 .global-sourcing-home .cinematic-film-poster {
   opacity: 1 !important;
   transform: none !important;
-  filter: brightness(.82) contrast(1.06) saturate(.90) !important;
+  filter: brightness(.92) contrast(1.03) saturate(.96) !important;
 }
 
 .global-sourcing-home .cinematic-film-shot,
@@ -25,20 +55,21 @@
   display: none !important;
 }
 
-/* The new asset already has clean dark space on the left for the live HTML headline.
-   Keep only enough shading for text readability without hiding the vehicles. */
+/* Keep only a restrained left-side vignette for headline readability.
+   The right half remains clear so the two SUVs and showroom are visible. */
 .global-sourcing-home .cinematic-film-vignette {
+  z-index: 3 !important;
   background:
     linear-gradient(90deg,
-      rgba(5, 11, 20, .74) 0%,
-      rgba(5, 11, 20, .52) 23%,
-      rgba(5, 11, 20, .20) 43%,
-      rgba(5, 11, 20, .04) 67%,
-      rgba(5, 11, 20, .06) 100%),
+      rgba(5, 11, 20, .68) 0%,
+      rgba(5, 11, 20, .46) 24%,
+      rgba(5, 11, 20, .18) 43%,
+      rgba(5, 11, 20, .02) 68%,
+      rgba(5, 11, 20, .03) 100%),
     linear-gradient(180deg,
-      rgba(5, 11, 20, .12) 0%,
-      transparent 46%,
-      rgba(5, 11, 20, .30) 100%) !important;
+      rgba(5, 11, 20, .08) 0%,
+      transparent 48%,
+      rgba(5, 11, 20, .22) 100%) !important;
 }
 
 @media (max-width: 980px) {
@@ -49,15 +80,19 @@
 
   .global-sourcing-home .cinematic-film-vignette {
     background:
-      linear-gradient(90deg, rgba(5,11,20,.80) 0%, rgba(5,11,20,.52) 44%, rgba(5,11,20,.12) 82%, rgba(5,11,20,.12) 100%),
-      linear-gradient(180deg, rgba(5,11,20,.14) 0%, transparent 42%, rgba(5,11,20,.40) 100%) !important;
+      linear-gradient(90deg, rgba(5,11,20,.72) 0%, rgba(5,11,20,.48) 43%, rgba(5,11,20,.08) 82%, rgba(5,11,20,.08) 100%),
+      linear-gradient(180deg, rgba(5,11,20,.10) 0%, transparent 44%, rgba(5,11,20,.30) 100%) !important;
   }
 }
 
 @media (max-width: 680px) {
+  .global-sourcing-home .cinematic-film {
+    min-height: max(720px, 100svh) !important;
+  }
+
   .global-sourcing-home .cinematic-film-poster,
   .global-sourcing-home .cinematic-film-shot {
     background-position: 70% center !important;
-    filter: brightness(.72) contrast(1.06) saturate(.88) !important;
+    filter: brightness(.84) contrast(1.04) saturate(.94) !important;
   }
 }

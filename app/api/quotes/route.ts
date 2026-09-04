@@ -3,6 +3,10 @@ import { notifications, quoteEstimates, quoteRequests, userProfiles } from "@/db
 import { notificationValues } from "@/lib/notifications";
 import { calculateQuote } from "@/lib/quote-calculation";
 
+function redirect(path: string) {
+  return new Response(null, { status: 303, headers: { Location: path } });
+}
+
 export async function POST(request: Request) {
   const formData = await request.formData();
   const sourceUrlInput = String(formData.get("vehicleUrl") ?? formData.get("listingUrl") ?? "").trim();
@@ -19,10 +23,10 @@ export async function POST(request: Request) {
     return Number.isFinite(value) && value >= 0 && value <= 1_000_000_000_000_000 ? value : fallback;
   };
   if (sourceUrlInput && !/^https?:\/\//i.test(sourceUrlInput)) {
-    return Response.redirect(new URL("/?quoteError=invalid-url#quote", request.url), 303);
+    return redirect("/?quoteError=invalid-url#quote");
   }
   if (!requesterName || !requesterPhone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail)) {
-    return Response.redirect(new URL("/?quoteError=contact-required#quote", request.url), 303);
+    return redirect("/?quoteError=contact-required#quote");
   }
   const id = `QR-${Date.now().toString(36).toUpperCase()}`;
   const db=getDb();
@@ -46,5 +50,5 @@ export async function POST(request: Request) {
     db.insert(notifications).values(notificationValues({recipientType:"ADMIN",type:"QUOTE_REQUEST",title:expoId?"Шинэ Expo бүртгэлийн хүсэлт":"Шинэ үнийн хүсэлт",message:expoId?`${requesterName} ${expoTitle||"Expo"}-д бүртгүүлэх хүсэлт илгээлээ.`:`${requesterName} автомашины үнийн хүсэлт илгээлээ.`,href:`/admin#quotes`,actorEmail:requesterEmail})),
     ...(estimate ? [db.insert(quoteEstimates).values(estimate)] : []),
   ]);
-  return Response.redirect(new URL(`/request-received?ref=${encodeURIComponent(id)}`, request.url), 303);
+  return redirect(`/request-received?ref=${encodeURIComponent(id)}`);
 }

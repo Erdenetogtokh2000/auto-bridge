@@ -5,6 +5,7 @@ import {
   CarFront,
   ChevronRight,
   FileCheck2,
+  MapPin,
   Menu,
   Search,
   ShieldCheck,

@@ -1,0 +1,1 @@
+This file is intentionally harmless and documents the final UI-only cover-layer fix for the AUTO BRIDGE homepage.

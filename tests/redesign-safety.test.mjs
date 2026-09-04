@@ -85,12 +85,14 @@ test("keeps role routing and authentication implementation in place", async () =
   assert.match(forgot, /resetPasswordForEmail/);
 });
 
-test("loads the redesign as CSS-only presentation layers after existing styles", async () => {
+test("loads the global sourcing presentation without replacing core quote and calculator components", async () => {
   const layout = await text("app/layout.tsx");
+  const home = await text("app/page.tsx");
+  const hero = await text("app/components/home-hero-carousel.tsx");
   assert.match(layout, /global-sourcing-redesign\.css/);
   assert.match(layout, /global-sourcing-detail\.css/);
-  const home = await text("app/page.tsx");
-  assert.match(home, /GLOBAL AUTOMOTIVE SOURCING/);
+  assert.match(hero, /GLOBAL AUTOMOTIVE SOURCING/);
+  assert.match(hero, /Таны сонголт\. Дэлхийн зах зээл\./);
   assert.match(home, /EncarQuickQuote/);
   assert.match(home, /PublicCostCalculator/);
 });

@@ -8,7 +8,14 @@ function safeNext(value: string | null) {
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
-  const response = NextResponse.redirect(new URL(safeNext(url.searchParams.get("next")), url.origin));
+  const destination = safeNext(url.searchParams.get("next"));
+  const response = new NextResponse(null, {
+    status: 303,
+    headers: {
+      Location: destination,
+      "Cache-Control": "no-store",
+    },
+  });
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!code || !supabaseUrl || !publishableKey) return response;

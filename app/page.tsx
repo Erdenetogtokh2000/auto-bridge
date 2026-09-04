@@ -5,10 +5,12 @@ import {
   CarFront,
   ChevronRight,
   FileCheck2,
+  Globe2,
   Link2,
   MapPin,
   Menu,
   Search,
+  ShieldCheck,
   Ship,
   Truck,
 } from "lucide-react";
@@ -25,8 +27,7 @@ const marketCards = [
   {
     eyebrow: "KOREA STOCK",
     title: "Солонгосоос захиалах",
-    text: "Encar болон бусад баталгаатай эх сурвалжаас сонгосон автомашинаа захиална.",
-    accent: "cobalt",
+    text: "Encar болон бусад эх сурвалжаас сонгосон автомашинаа захиална.",
     meta: "Шинэ сонголтууд өдөр бүр",
     market: "KOREA",
   },
@@ -34,7 +35,6 @@ const marketCards = [
     eyebrow: "READY IN MONGOLIA",
     title: "Монголд бэлэн",
     text: "Тээвэр, гаалийн процесс дууссан, шууд үзэж сонгох боломжтой автомашинууд.",
-    accent: "navy",
     meta: "Шууд худалдан авах",
     market: "MONGOLIA",
   },
@@ -42,18 +42,29 @@ const marketCards = [
     eyebrow: "USA ORDER",
     title: "Америкаас захиалах",
     text: "АНУ-ын зах зээлээс сонгосон автомашины үнэ, тээврийн нэгдсэн тооцоо авна.",
-    accent: "silver",
     meta: "Тооцоолсон буух үнэ",
     market: "USA",
   },
 ];
 
-const steps = [
-  { number: "01", title: "Машинаа сонгох", text: "Зарын линкээ оруулах эсвэл каталогоос сонгоно.", icon: Link2 },
-  { number: "02", title: "Тооцоо батлах", text: "Үнэ, тээвэр, татварын задаргаатай санал авна.", icon: Calculator },
-  { number: "03", title: "Тээврээ хянах", text: "Боомтоос Монгол хүртэл явцыг нэг дор харна.", icon: Ship },
-  { number: "04", title: "Хүлээн авах", text: "Бичиг баримтаа татаж, машинаа хүлээн авна.", icon: FileCheck2 },
-];
+const trustItems = ["GLOBAL SOURCING", "VERIFIED VEHICLES", "TRANSPARENT PROCESS", "SECURE DELIVERY"];
+const sourcingMarkets = ["KOREA", "JAPAN", "CHINA", "USA", "EUROPE", "UAE"];
+const howSteps = [
+  ["01", "Таны хүсэлт", "Зарын линк, каталог эсвэл хүссэн машины мэдээллээ илгээнэ."],
+  ["02", "Дэлхийн зах зээлээс хайх", "Боломжит эх сурвалж, үнэ болон нөхцөлийг харьцуулна."],
+  ["03", "Машин шалгах", "Боломжтой түүх, үзлэг, баримтын мэдээллийг нягтална."],
+  ["04", "Худалдан авалт", "Баталгаажсан саналын дагуу худалдан авалтын процесс үргэлжилнэ."],
+  ["05", "Экспорт ба тээвэр", "Баримт бичиг, порт, тээврийн үе шатыг нэг урсгалаар хянана."],
+  ["06", "Монголд хүргэлт", "Захиалгын төлөв, бичиг баримт, төлбөрийн мэдээллээ кабинетаас харна."],
+] as const;
+const verificationPoints = ["Exterior", "Interior", "Engine", "Chassis", "Documents", "Vehicle history"];
+const logisticsSteps = ["VEHICLE", "INSPECTION", "PREPARATION", "PORT", "SHIPPING", "DESTINATION"];
+const whyItems = [
+  ["GLOBAL ACCESS", "Олон улсын автомашины зах зээлтэй холбогдоно."],
+  ["VERIFIED QUALITY", "Машин болон баримт бичгийн мэдээллийг боломжтой хүрээнд нягтална."],
+  ["TRANSPARENT PROCESS", "Үе шат бүрийн мэдээллийг ойлгомжтой харуулна."],
+  ["END-TO-END DELIVERY", "Сонголтоос хүргэлт хүртэл зохион байгуулна."],
+] as const;
 
 export const dynamic = "force-dynamic";
 
@@ -82,6 +93,13 @@ async function loadHeroExpos(): Promise<HeroExpo[]> {
 }
 
 const marketLabel: Record<string, string> = { KOREA: "Солонгос", USA: "Америк", MONGOLIA: "Монголд" };
+function inferredDrive(trim: string | null) {
+  const value = (trim ?? "").toUpperCase();
+  if (/AWD|4WD|4MATIC|QUATTRO|XDRIVE/.test(value)) return "AWD / 4WD";
+  if (/RWD/.test(value)) return "RWD";
+  if (/FWD/.test(value)) return "FWD";
+  return "—";
+}
 
 export default async function Home() {
   const [vehicleCards, heroExpos] = await Promise.all([loadFeaturedVehicles(), loadHeroExpos()]);
@@ -93,18 +111,7 @@ export default async function Home() {
   const expoBackgroundStyle = nextExpoImage ? { backgroundImage: `url("${nextExpoImage}")` } : undefined;
 
   return (
-    <main className="site-shell selected-design luxury-site">
-      <div className="topline">
-        <div className="container topline-inner">
-          <span>БНСУ · МОНГОЛ · АНУ</span>
-          <div className="topline-links">
-            <span><MapPin size={13} /> Seoul, Korea</span>
-            <a href="/#contact">Тусламж</a>
-            <span className="language-links"><a href="/">MN</a><a href="/ko">한국어</a><ChevronRight size={12} /></span>
-          </div>
-        </div>
-      </div>
-
+    <main className="site-shell luxury-site global-sourcing-home">
       <header className="main-header">
         <div className="container nav-wrap">
           <a className="brand" href="/" aria-label="AUTO BRIDGE нүүр"><BrandLogo /></a>
@@ -122,7 +129,6 @@ export default async function Home() {
             <a className="nav-phone" href="tel:+97670113322"><strong>☎ 7011-3322</strong><small>Даваа–Баасан 09:00–18:00</small></a>
             <a className="language-pill" href="/">MN <ChevronRight size={13} /></a>
             <a className="login-link" href={accountPath}>{accountLabel}</a>
-            <a className="primary-button small" href="/#quote">Үнийн санал авах <ArrowRight size={15} /></a>
             <details className="mobile-menu"><summary aria-label="Цэс нээх"><Menu size={22} /></summary><div><a href="/#top">Нүүр</a><a href="/vehicles">Машин хайх</a><a href="/calculator">Үнийн тооцоо</a><a href="/#tracking">Тээврийн явц</a><a href="/expo">Авто экспо</a><a href="/news">Мэдээ</a><a href="/#about">Бидний тухай</a><a href="/#contact">Холбоо барих</a><a href={accountPath}>{accountLabel}</a></div></details>
           </div>
         </div>
@@ -133,25 +139,57 @@ export default async function Home() {
         <div className="container hero-layout"><HomeHeroCarousel expos={[]} /></div>
       </section>
 
-      <section className="quote-band" aria-label="Үнийн санал авах">
-        <div className="container"><EncarQuickQuote /></div>
+      <section className="global-trust-strip" aria-label="AUTO BRIDGE давуу тал">
+        <div className="container global-trust-grid">{trustItems.map((item) => <div key={item}><span />{item}</div>)}</div>
       </section>
 
-      <section className="market-section" id="markets">
+      <section className="curated-section" id="vehicles">
         <div className="container">
-          <div className="section-heading split">
-            <div><p className="section-kicker">АВТОМАШИН СОНГОХ</p><h2>Танд тохирох зах зээл</h2></div>
-            <p>Бэлэн автомашин сонгох эсвэл гадаад эх сурвалжаас захиалж, Монголд буух нийт үнийг урьдчилан хараарай.</p>
+          <div className="premium-section-heading">
+            <div><p className="section-kicker">CURATED VEHICLES</p><h2>Шилдэг сонголтууд</h2></div>
+            <div><p>Бидний санал болгож буй чанартай автомашинууд</p><a href="/vehicles">Бүх автомашин харах <ArrowRight size={16} /></a></div>
           </div>
-          <div className="market-grid">
-            {marketCards.map((market, index) => (
-              <a className={`market-card ${market.accent}`} href={`/vehicles?market=${market.market}`} key={market.title}>
-                <div className="market-index">0{index + 1}</div><p>{market.eyebrow}</p><h3>{market.title}</h3>
-                <span className="market-text">{market.text}</span>
-                <div className="market-bottom"><span>{market.meta}</span><ArrowRight size={19} /></div>
-              </a>
-            ))}
+          {vehicleCards.length ? <div className="curated-grid">
+            {vehicleCards.map((vehicle) => {
+              const image = vehicle.imageObjectKey ? `/api/vehicle-images/${encodeURIComponent(vehicle.id)}` : vehicle.imageUrl;
+              const price = Number(vehicle.priceAmount ?? vehicle.priceKrw ?? 0);
+              return <article className="curated-card" key={vehicle.id}>
+                <a className={`curated-image ${image ? "has-image" : ""}`} href={`/vehicles/${encodeURIComponent(vehicle.id)}`}>
+                  {image ? <img loading="lazy" src={image} alt={`${vehicle.make} ${vehicle.model}`} /> : <CarFront size={116} strokeWidth={0.8} />}
+                  <span className="curated-year">{vehicle.productionYear}</span>
+                  <span className="curated-market">{marketLabel[vehicle.sourceMarket] ?? vehicle.sourceMarket}</span>
+                </a>
+                <div className="curated-copy">
+                  <small>{vehicle.make}</small>
+                  <h3>{vehicle.model}</h3>
+                  <div className="curated-specs">
+                    <span><b>{vehicle.engineCapacityCc ? `${vehicle.engineCapacityCc.toLocaleString("mn-MN")} cc` : "—"}</b><small>Хөдөлгүүр</small></span>
+                    <span><b>{(vehicle.mileageKm ?? 0).toLocaleString("mn-MN")} км</b><small>Гүйлт</small></span>
+                    <span><b>{inferredDrive(vehicle.trim)}</b><small>Хөтлөгч</small></span>
+                  </div>
+                  <div className="curated-price"><span>{price > 0 ? `${price.toLocaleString("mn-MN")} ${vehicle.priceCurrency ?? "KRW"}` : "Үнэ санал болгоно"}</span><a href={`/vehicles/${encodeURIComponent(vehicle.id)}`}>Дэлгэрэнгүй <ArrowRight size={15} /></a></div>
+                </div>
+              </article>;
+            })}
+          </div> : <div className="home-catalog-empty"><CarFront /><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын линкийг илгээж үнийн санал авах боломжтой.</p></div><a href="/#quote">Үнийн санал авах <ArrowRight /></a></div>}
+        </div>
+      </section>
+
+      <section className="global-sourcing-section" id="global-network">
+        <div className="container global-sourcing-layout">
+          <div className="global-sourcing-copy">
+            <p className="section-kicker">SOURCED WITHOUT BORDERS</p>
+            <h2>Дэлхийн зах зээлийг нэг цэгээс.</h2>
+            <p>Сонголтын хүрээг олон улсын эх сурвалжаар тэлж, бодит захиалгын нөхцөл, үнэ, тээврийн боломжийг тухайн хүсэлт бүрээр баталгаажуулна.</p>
+            <small>Зах зээлийн зураглал нь sourcing хүрээг танилцуулах визуал бөгөөд бодит захиалгын боломжийг менежер баталгаажуулна.</small>
           </div>
+          <div className="sourcing-network" aria-label="Олон улсын sourcing зах зээл">
+            <div className="network-orbit orbit-one" /><div className="network-orbit orbit-two" /><div className="network-core"><BrandLogo /></div>
+            {sourcingMarkets.map((market, index) => <span className={`network-market market-${index + 1}`} key={market}>{market}</span>)}
+          </div>
+        </div>
+        <div className="container market-grid premium-market-grid">
+          {marketCards.map((market, index) => <a className="market-card" href={`/vehicles?market=${market.market}`} key={market.title}><div className="market-index">0{index + 1}</div><p>{market.eyebrow}</p><h3>{market.title}</h3><span className="market-text">{market.text}</span><div className="market-bottom"><span>{market.meta}</span><ArrowRight size={19} /></div></a>)}
         </div>
       </section>
 
@@ -172,57 +210,51 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="vehicles-section" id="vehicles">
+      <section className="how-section" id="how-it-works">
         <div className="container">
-          <div className="section-heading split aligned">
-            <div><p className="section-kicker">PREMIUM SELECTION</p><h2>Шилдэг сонголтууд</h2><p className="luxury-section-subtitle">Бидний санал болгож буй чанартай автомашинууд</p></div>
-            <a className="text-link" href="/vehicles">Бүх автомашин харах <ArrowRight size={16} /></a>
-          </div>
-          {vehicleCards.length ? <div className="vehicle-grid">
-            {vehicleCards.map((vehicle) => {
-              const image = vehicle.imageObjectKey ? `/api/vehicle-images/${encodeURIComponent(vehicle.id)}` : vehicle.imageUrl;
-              return <article className="vehicle-card" key={vehicle.id}>
-                <div className={`vehicle-image ${image ? "catalog-image" : "pearl"}`}>
-                  <span className="vehicle-tag">{vehicle.productionYear}</span>
-                  {image ? <img src={image} alt={`${vehicle.make} ${vehicle.model}`} /> : <CarFront size={116} strokeWidth={0.8} />}
-                  <small>{marketLabel[vehicle.sourceMarket] ?? vehicle.sourceMarket} · {vehicle.stockNo}</small>
-                </div>
-                <div className="vehicle-info">
-                  <div><p>{vehicle.productionYear} · {vehicle.fuelType ?? "Түлш тодорхойгүй"}</p><h3>{vehicle.make} {vehicle.model}</h3></div>
-                  <span className="vehicle-km">{(vehicle.mileageKm ?? 0).toLocaleString("mn-MN")} км{vehicle.engineCapacityCc ? ` · ${vehicle.engineCapacityCc.toLocaleString("mn-MN")} cc` : ""}</span>
-                  <div className="price-row"><span>Автомашины үнэ</span><strong>{Number(vehicle.priceAmount ?? vehicle.priceKrw ?? 0).toLocaleString("mn-MN")} {vehicle.priceCurrency ?? "KRW"}</strong></div>
-                  <a href="/vehicles">Дэлгэрэнгүй <ArrowRight size={15} /></a>
-                </div>
-              </article>;
-            })}
-          </div> : <div className="home-catalog-empty"><CarFront /><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын линкийг илгээж үнийн санал авах боломжтой.</p></div><a href="/#quote">Үнийн санал авах <ArrowRight /></a></div>}
+          <div className="premium-section-heading"><div><p className="section-kicker">HOW IT WORKS</p><h2>Сонголтоос хүргэлт хүртэл</h2></div><p>Энэ нь үйлчилгээний ерөнхий визуал тайлбар. Системийн бодит төлөв, эрх, workflow өөрчлөгдөөгүй.</p></div>
+          <div className="how-scroll">{howSteps.map(([number, title, text]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{text}</p></article>)}</div>
         </div>
       </section>
 
-      <section className="calculator-section" id="calculator">
-        <div className="container">
-          <div className="section-heading split">
-            <div><p className="section-kicker">ГААЛЬ · ТАТВАР · ТЭЭВЭР</p><h2>Монголд буух нийт өртгөө урьдчилан хараарай</h2></div>
-            <p>Encar линкээ оруулахад машины үнэ, үйлдвэрлэсэн он, түлш, хөдөлгүүрийн мэдээллийг боломжтой хэмжээнд автоматаар татаж, гааль татварын урьдчилсан тооцоог шууд гаргана.</p>
-          </div>
-          <PublicCostCalculator compact />
+      <section className="verification-section">
+        <div className="container verification-layout">
+          <div className="verification-visual"><div className="verification-car"><CarFront size={150} strokeWidth={0.65} /></div><div className="verification-scan-line" /></div>
+          <div className="verification-copy"><p className="section-kicker">INSPECTION &amp; VERIFICATION</p><h2>WE DON’T JUST<br />SOURCE CARS.<br /><em>WE VERIFY THEM.</em></h2><p>Эх зар, нийлүүлэгч болон тухайн автомашинд байгаа мэдээллийн хүрээнд машин, баримт бичгийн мэдээллийг нягтална. Боломжгүй шалгалтыг баталгаатай мэтээр харуулахгүй.</p><div className="verification-points">{verificationPoints.map((point) => <span key={point}><ShieldCheck size={15} />{point}</span>)}</div></div>
         </div>
       </section>
 
-      <section className="process-section" id="tracking">
+      <section className="logistics-section" id="tracking">
         <div className="container">
-          <div className="section-heading centered"><p className="section-kicker light">ЗАХИАЛГЫН ЯВЦ</p><h2>Бүх процесс ил тод</h2><p>Захиалга бүр нэг бүртгэлтэй. Та төлбөр, бичиг баримт болон тээврийн шинэчлэл бүрийг хувийн кабинетаасаа хянана.</p></div>
-          <div className="steps-grid">{steps.map((step) => { const Icon = step.icon; return <article key={step.number}><div className="step-icon"><Icon size={24} /></div><span>{step.number}</span><h3>{step.title}</h3><p>{step.text}</p></article>; })}</div>
+          <div className="premium-section-heading"><div><p className="section-kicker">LOGISTICS</p><h2>Тээврийн явцыг ойлгомжтой харна.</h2></div><p>Захиалгын бодит төлөв, төлбөр, бичиг баримт, тээврийн шинэчлэл нь одоо байгаа кабинетаар үргэлжлэн ажиллана.</p></div>
+          <div className="logistics-route">{logisticsSteps.map((step, index) => <div key={step}><span>{String(index + 1).padStart(2, "0")}</span><b>{step}</b></div>)}</div>
+          <div className="logistics-actions"><a href={accountPath}>Кабинет руу орох <ArrowRight size={15} /></a></div>
         </div>
       </section>
 
-      <section className="service-strip" id="about">
+      <section className="why-section" id="about">
+        <div className="container"><div className="premium-section-heading"><div><p className="section-kicker">WHY AUTO BRIDGE</p><h2>Илүү тод, илүү хариуцлагатай процесс.</h2></div><p>Таны сонголт. Дэлхийн зах зээл.</p></div><div className="why-grid">{whyItems.map(([title, text], index) => <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></div>
+      </section>
+
+      <section className="quote-calculator-section" id="quote">
+        <div className="container">
+          <div className="premium-section-heading"><div><p className="section-kicker">REQUEST &amp; CALCULATE</p><h2>Линкээс буух өртөг хүртэл.</h2></div><p>Encar эсвэл бусад зарын линк → машины мэдээлэл → татвар → тээвэр → Монголд буух урьдчилсан өртөг гэсэн одоо байгаа урсгал хэвээр.</p></div>
+          <div className="quote-band"><EncarQuickQuote /></div>
+          <div className="calculator-section embedded-calculator"><PublicCostCalculator compact /></div>
+        </div>
+      </section>
+
+      <section className="service-strip">
         <div className="container service-grid">
           <div><Truck size={25} /><span><strong>Нэгдсэн тээвэр</strong><small>Боомтоос хүлээлгэн өгөх хүртэл</small></span></div>
           <div><FileCheck2 size={25} /><span><strong>Цахим баримт</strong><small>Гэрээ, invoice, BL нэг дор</small></span></div>
           <div><Calculator size={25} /><span><strong>Ил тод тооцоо</strong><small>Үнэ, татвар, төлбөрийн задаргаа</small></span></div>
           <div><Search size={25} /><span><strong>Явцын хяналт</strong><small>Захиалга бүрийн бодит төлөв</small></span></div>
         </div>
+      </section>
+
+      <section className="final-cta">
+        <div className="container final-cta-inner"><div><p>CAN’T FIND YOUR CAR?</p><h2>Таны хайж буй машин олдохгүй байна уу?<br /><em>Бид дэлхийн зах зээлээс олж өгнө.</em></h2></div><a href="#quote">МАШИН ЗАХИАЛАХ <ArrowRight size={17} /></a></div>
       </section>
 
       <footer id="contact">

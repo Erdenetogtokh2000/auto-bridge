@@ -1,20 +1,17 @@
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/app/components/brand-logo";
 import { NetlifyLoginForm } from "@/app/components/netlify-login-form";
-import { getAuthenticatedRole, roleHomePath } from "@/app/chatgpt-auth";
-import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
-export default async function LoginPage() {
-  const role = await getAuthenticatedRole();
-  if (role) redirect(roleHomePath(role));
-
+export default function LoginPage() {
   return (
     <main className="login-page">
       <section className="login-card" aria-labelledby="login-title">
         <div className="login-brand">
-          <BrandLogo className="login-brand-logo" />
+          <a href="/" aria-label="AUTO BRIDGE нүүр хуудас">
+            <BrandLogo className="login-brand-logo" />
+          </a>
         </div>
         <p className="login-kicker">НЭГДСЭН НЭВТРЭХ ХЭСЭГ</p>
         <h1 id="login-title">Бүртгэлээрээ нэвтэрнэ үү</h1>

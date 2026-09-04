@@ -5,8 +5,6 @@ import {
   CarFront,
   ChevronRight,
   FileCheck2,
-  Globe2,
-  Link2,
   MapPin,
   Menu,
   Search,
@@ -21,6 +19,7 @@ import { PublicCostCalculator } from "@/app/components/public-cost-calculator";
 import { HomeHeroCarousel, type HeroExpo } from "@/app/components/home-hero-carousel";
 import { EncarQuickQuote } from "@/app/components/encar-quick-quote";
 import { BrandLogo } from "@/app/components/brand-logo";
+import { GlobalSourcingMap } from "@/app/components/global-sourcing-map";
 import { getAuthenticatedRole, roleHomePath } from "@/app/chatgpt-auth";
 
 const marketCards = [
@@ -48,7 +47,6 @@ const marketCards = [
 ];
 
 const trustItems = ["GLOBAL SOURCING", "VERIFIED VEHICLES", "TRANSPARENT PROCESS", "SECURE DELIVERY"];
-const sourcingMarkets = ["KOREA", "JAPAN", "CHINA", "USA", "EUROPE", "UAE"];
 const howSteps = [
   ["01", "Таны хүсэлт", "Зарын линк, каталог эсвэл хүссэн машины мэдээллээ илгээнэ."],
   ["02", "Дэлхийн зах зээлээс хайх", "Боломжит эх сурвалж, үнэ болон нөхцөлийг харьцуулна."],
@@ -176,17 +174,18 @@ export default async function Home() {
       </section>
 
       <section className="global-sourcing-section" id="global-network">
-        <div className="container global-sourcing-layout">
-          <div className="global-sourcing-copy">
-            <p className="section-kicker">SOURCED WITHOUT BORDERS</p>
-            <h2>Дэлхийн зах зээлийг нэг цэгээс.</h2>
-            <p>Сонголтын хүрээг олон улсын эх сурвалжаар тэлж, бодит захиалгын нөхцөл, үнэ, тээврийн боломжийг тухайн хүсэлт бүрээр баталгаажуулна.</p>
-            <small>Зах зээлийн зураглал нь sourcing хүрээг танилцуулах визуал бөгөөд бодит захиалгын боломжийг менежер баталгаажуулна.</small>
+        <div className="container">
+          <div className="global-sourcing-map-intro">
+            <div>
+              <p className="section-kicker">GLOBAL SOURCING</p>
+              <h2>SOURCED WITHOUT BORDERS</h2>
+            </div>
+            <div>
+              <p>Japan, Korea, China, Europe, UAE, USA зэрэг олон улсын зах зээлээс боломжит эх сурвалжийг харьцуулж, таны хүссэн автомашины sourcing нөхцөлийг нэг дороос шалгана.</p>
+              <small>Map дээрх sourcing point дээр hover, focus эсвэл дарж тухайн зах зээлийн боломжит чиглэлүүдийг хараарай.</small>
+            </div>
           </div>
-          <div className="sourcing-network" aria-label="Олон улсын sourcing зах зээл">
-            <div className="network-orbit orbit-one" /><div className="network-orbit orbit-two" /><div className="network-core"><BrandLogo /></div>
-            {sourcingMarkets.map((market, index) => <span className={`network-market market-${index + 1}`} key={market}>{market}</span>)}
-          </div>
+          <GlobalSourcingMap />
         </div>
         <div className="container market-grid premium-market-grid">
           {marketCards.map((market, index) => <a className="market-card" href={`/vehicles?market=${market.market}`} key={market.title}><div className="market-index">0{index + 1}</div><p>{market.eyebrow}</p><h3>{market.title}</h3><span className="market-text">{market.text}</span><div className="market-bottom"><span>{market.meta}</span><ArrowRight size={19} /></div></a>)}

@@ -1,18 +1,10 @@
 import { CheckCircle2, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/app/components/brand-logo";
 import { NetlifyLoginForm } from "@/app/components/netlify-login-form";
-import { redirect } from "next/navigation";
-import {
-  getAuthenticatedRole,
-  roleHomePath,
-} from "@/app/chatgpt-auth";
 
 export const dynamic = "force-dynamic";
 
 export default async function LoginPage() {
-  const role = await getAuthenticatedRole();
-  if (role) redirect(roleHomePath(role));
-
   return (
     <main className="login-page">
       <section className="login-card" aria-labelledby="login-title">

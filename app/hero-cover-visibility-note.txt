@@ -1,1 +1,0 @@
-Final cover visibility patch: keep cinematic-film in the hero stacking context instead of z-index:-1 so the generated showroom cover remains visible behind live HTML content.

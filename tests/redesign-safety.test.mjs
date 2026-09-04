@@ -88,11 +88,38 @@ test("keeps role routing and authentication implementation in place", async () =
 test("loads the global sourcing presentation without replacing core quote and calculator components", async () => {
   const layout = await text("app/layout.tsx");
   const home = await text("app/page.tsx");
-  const hero = await text("app/components/home-hero-carousel.tsx");
   assert.match(layout, /global-sourcing-redesign\.css/);
   assert.match(layout, /global-sourcing-detail\.css/);
-  assert.match(hero, /GLOBAL AUTOMOTIVE SOURCING/);
-  assert.match(hero, /Таны сонголт\. Дэлхийн зах зээл\./);
+  assert.match(layout, /global-sourcing-map\.css/);
   assert.match(home, /EncarQuickQuote/);
   assert.match(home, /PublicCostCalculator/);
+});
+
+test("implements the cinematic hero with live HTML content and existing routes", async () => {
+  const layout = await text("app/layout.tsx");
+  const hero = await text("app/components/home-hero-carousel.tsx");
+  const css = await text("app/cinematic-hero.css");
+  await access(path.join(root, "public/images/korea-mongolia-vehicle-import-hero.png"));
+
+  assert.match(layout, /cinematic-hero\.css/);
+  assert.match(hero, /GLOBAL AUTOMOTIVE/);
+  assert.match(hero, /SOURCING &amp; EXPORT/);
+  assert.match(hero, /Таны сонголт\./);
+  assert.match(hero, /Бидний дэлхийн сүлжээ\./);
+  assert.match(hero, /EXPLORE VEHICLES/);
+  assert.match(hero, /href="\/vehicles"/);
+  assert.match(hero, /SOURCE A VEHICLE/);
+  assert.match(hero, /href="#quote"/);
+  for (const market of ["JAPAN", "KOREA", "USA", "EUROPE", "UAE", "CHINA"]) assert.match(hero, new RegExp(market));
+
+  assert.match(css, /--hero-obsidian:\s*#090909/i);
+  assert.match(css, /--hero-graphite:\s*#161616/i);
+  assert.match(css, /--hero-warm-white:\s*#F1EFEA/i);
+  assert.match(css, /--hero-champagne:\s*#B5A078/i);
+  assert.match(css, /--hero-stone:\s*#8E8B84/i);
+  assert.doesNotMatch(css, /#D4AF37/i);
+  assert.match(css, /prefers-reduced-motion:\s*reduce/);
+  assert.match(css, /min-height:\s*max\(680px,\s*100svh\)/);
+  assert.match(css, /korea-mongolia-vehicle-import-hero\.png/);
+  assert.match(css, /animation-name:\s*ab-film-/);
 });

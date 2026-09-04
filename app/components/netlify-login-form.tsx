@@ -2,7 +2,19 @@
 
 import { createBrowserClient } from "@supabase/ssr";
 import { ArrowRight } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
+
+function friendlyAuthError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  const normalized = message.toLowerCase();
+  if (normalized.includes("invalid login credentials")) return "И-мэйл эсвэл нууц үг буруу байна.";
+  if (normalized.includes("email not confirmed")) return "И-мэйл хаягаа эхлээд баталгаажуулна уу.";
+  if (normalized.includes("rate limit") || normalized.includes("only request this after")) {
+    return "Баталгаажуулах и-мэйл илгээх түр хязгаарт хүрсэн байна. Хэсэг хүлээгээд дахин оролдоно уу.";
+  }
+  if (normalized.includes("user already registered")) return "Энэ и-мэйлээр бүртгэл аль хэдийн үүссэн байна.";
+  return message || "Нэвтрэх үед алдаа гарлаа.";
+}
 
 export function NetlifyLoginForm() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -16,9 +28,21 @@ export function NetlifyLoginForm() {
     return createBrowserClient(url, key);
   };
 
+  useEffect(() => {
+    let active = true;
+    getSupabase().auth.getSession().then(({ data }) => {
+      if (!active || !data.session) return;
+      setBusy(true);
+      setMessage("Таны нэвтэрсэн эрхийг шалгаж байна…");
+      window.location.replace("/auth/continue");
+    }).catch(() => {});
+    return () => { active = false; };
+  }, []);
+
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setBusy(true); setMessage("");
+    setBusy(true);
+    setMessage("");
     const data = new FormData(event.currentTarget);
     const email = String(data.get("email") ?? "").trim();
     const password = String(data.get("password") ?? "");
@@ -37,29 +61,16 @@ export function NetlifyLoginForm() {
       } else {
         const { error } = await getSupabase().auth.signInWithPassword({ email, password });
         if (error) throw error;
-        window.location.href = "/auth/continue";
+        setMessage("Нэвтэрлээ. Таны эрхийг шалгаж байна…");
+        void fetch("/api/auth/login-log", { method: "POST", keepalive: true }).catch(() => {});
+        window.location.replace("/auth/continue");
+        return;
       }
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Нэвтрэх үед алдаа гарлаа.");
-    } finally { setBusy(false); }
-  }
-
-  async function forgotPassword() {
-    const email = (document.querySelector<HTMLInputElement>('#identity-email')?.value ?? "").trim();
-    if (!email) return setMessage("Эхлээд и-мэйл хаягаа оруулна уу.");
-    setBusy(true);
-    try {
-      // Supabase's hosted recovery email currently uses the implicit browser
-      // flow. Send it directly to the public reset page so the browser can
-      // retain the recovery session and update the password.
-      const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
-      });
-      if (error) throw error;
-      setMessage("Нууц үг сэргээх холбоосыг и-мэйлээр илгээлээ.");
+      setMessage(friendlyAuthError(error));
+    } finally {
+      setBusy(false);
     }
-    catch (error) { setMessage(error instanceof Error ? error.message : "Хүсэлт илгээж чадсангүй."); }
-    finally { setBusy(false); }
   }
 
   return <>
@@ -71,8 +82,8 @@ export function NetlifyLoginForm() {
     </form>
     {message && <p role="status" style={{fontSize:13,color:"#475569"}}>{message}</p>}
     <div style={{display:"flex",justifyContent:"space-between",gap:12,marginTop:14,fontSize:12}}>
-      <button type="button" onClick={() => {setMode(mode === "login" ? "signup" : "login");setMessage("");}} style={{border:0,background:"none",color:"#1464f4",cursor:"pointer"}}>{mode === "login" ? "Шинээр бүртгүүлэх" : "Нэвтрэх хэсэг"}</button>
-      {mode === "login" && <button type="button" onClick={forgotPassword} style={{border:0,background:"none",color:"#1464f4",cursor:"pointer"}}>Нууц үг мартсан</button>}
+      <button type="button" onClick={() => {setMode(mode === "login" ? "signup" : "login");setMessage("");}} style={{border:0,background:"none",color:"#1464f4",cursor:"pointer",padding:0}}>{mode === "login" ? "Шинээр бүртгүүлэх" : "Нэвтрэх хэсэг"}</button>
+      {mode === "login" && <a href="/forgot-password" style={{color:"#1464f4",textDecoration:"none"}}>Нууц үг мартсан</a>}
     </div>
   </>;
 }

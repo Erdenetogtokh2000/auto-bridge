@@ -1,4 +1,4 @@
-import { getNetlifyBucket } from "@/lib/netlify-bucket";
+import { getSupabaseBucket } from "@/lib/supabase-bucket";
 
 export const vehicleMarkets = ["KOREA", "USA", "MONGOLIA"] as const;
 export const vehicleStatuses = ["AVAILABLE", "RESERVED", "SOLD", "ARCHIVED"] as const;
@@ -43,7 +43,7 @@ export function normalizeVehicleForm(formData: FormData) {
 }
 
 export function getVehicleBucket() {
-  return getNetlifyBucket();
+  return getSupabaseBucket("auto-bridge-files");
 }
 
 export async function storeVehicleImage(vehicleId: string, file: File) {

@@ -49,8 +49,11 @@ export function NetlifyLoginForm() {
     if (!email) return setMessage("Эхлээд и-мэйл хаягаа оруулна уу.");
     setBusy(true);
     try {
+      // Supabase's hosted recovery email currently uses the implicit browser
+      // flow. Send it directly to the public reset page so the browser can
+      // retain the recovery session and update the password.
       const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
+        redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
       setMessage("Нууц үг сэргээх холбоосыг и-мэйлээр илгээлээ.");

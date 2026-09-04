@@ -1,0 +1,63 @@
+/* Secondary public-flow refinements for the global sourcing redesign. */
+
+.vehicle-showroom-sections { margin-top: 22px; display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.vehicle-showroom-sections section { min-height: 260px; padding: 32px; background: #151515; border: 1px solid rgba(243,241,236,.10); }
+.vehicle-showroom-sections section > div { display: flex; align-items: center; gap: 10px; color: #b9a47a; font-size: 12px; font-weight: 750; letter-spacing: .12em; }
+.vehicle-showroom-sections h2 { margin: 28px 0 14px; color: #f1eee7; font-family: Georgia, "Times New Roman", serif; font-size: 30px; font-weight: 500; }
+.vehicle-showroom-sections p { margin: 0; color: #9c9891; font-size: 15px; line-height: 1.75; }
+.vehicle-showroom-sections a { margin-top: 24px; display: inline-flex; align-items: center; gap: 7px; color: #d1c09b; font-size: 14px; font-weight: 700; }
+
+/* Calculator and request flow stay prominent and readable. */
+.calculator-page .calculator-hero,
+.quote-request-page .quote-request-hero { padding-top: 74px; padding-bottom: 66px; }
+.calculator-page .calculator-hero > .container > span,
+.quote-request-page .quote-request-hero > .container > span { display: block; max-width: 760px; color: #a8a49d; font-size: 16px; line-height: 1.7; }
+.calculator-page .calculator-content,
+.quote-request-page .quote-request-content { background: #0d0d0d; }
+.calculator-page .public-calculator,
+.quote-request-page .quote-request-layout { font-size: 14px; }
+.calculator-page .calculator-field > span,
+.quote-request-page label > span { font-size: 14px !important; }
+.calculator-page .calculator-input input,
+.calculator-page select,
+.quote-request-page input { min-height: 48px; font-size: 15px !important; }
+.calculator-page .calculator-form-heading h2,
+.calculator-page .calculator-summary-heading h2,
+.quote-request-page .calculator-form-heading h2,
+.quote-request-page .calculator-summary-heading h2 { font-family: Georgia, "Times New Roman", serif; font-weight: 500; }
+
+/* Authentication: official graphite presentation, readable sizes, same auth behavior. */
+.login-page { background: radial-gradient(circle at 50% 12%, rgba(185,164,122,.08), transparent 25%), #0a0a0a !important; font-family: Inter, Manrope, "Noto Sans", "Segoe UI", Arial, sans-serif; }
+.login-page .login-card { color: #e8e6e1 !important; background: #171717 !important; border: 1px solid rgba(243,241,236,.12) !important; border-radius: 6px !important; box-shadow: 0 34px 80px rgba(0,0,0,.38) !important; }
+.login-page .login-kicker { color: #b9a47a !important; font-size: 13px !important; }
+.login-page .login-card h1 { color: #f3f1ec !important; font-size: clamp(32px,4vw,44px) !important; }
+.login-page .login-intro { color: #a8a49d !important; font-size: 16px !important; }
+.login-page form input { min-height: 50px !important; color: #f1eee7 !important; background: #101010 !important; border-color: rgba(243,241,236,.13) !important; border-radius: 4px !important; font-size: 16px !important; }
+.login-page .login-primary { min-height: 50px !important; color: #111 !important; background: #b9a47a !important; border-radius: 4px !important; font-size: 15px !important; }
+.login-page form + p[role="status"] { font-size: 14px !important; color: #b5b1aa !important; }
+.login-page form ~ div { font-size: 14px !important; }
+.login-page form ~ div button,
+.login-page form ~ div a { color: #d1c09b !important; font-size: 14px !important; }
+.login-page .login-points { color: #9b978f !important; font-size: 14px !important; }
+.login-page .login-home-link { color: #aaa69e !important; font-size: 14px !important; }
+
+/* Success and legal screens */
+.success-page { background: #0a0a0a !important; color: #e8e6e1; }
+.success-page .success-card { background: #171717 !important; border: 1px solid rgba(243,241,236,.12) !important; border-radius: 6px !important; box-shadow: 0 30px 80px rgba(0,0,0,.35) !important; }
+.success-page .success-card h1 { color: #f3f1ec !important; font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px,4vw,46px) !important; font-weight: 500 !important; }
+.success-page .success-card > p { color: #aaa69e !important; font-size: 16px !important; }
+.success-page .success-reference,
+.success-page .success-note { background: #101010 !important; border-color: rgba(243,241,236,.10) !important; color: #c7c2b9 !important; font-size: 14px !important; }
+.success-page .primary-button { color: #111 !important; background: #b9a47a !important; border-radius: 4px !important; }
+
+.legal-page { background: #0d0d0d !important; color: #e8e6e1; }
+.legal-page .legal-card { background: #171717 !important; border-color: rgba(243,241,236,.10) !important; border-radius: 5px !important; }
+.legal-page .legal-card h1,
+.legal-page .legal-card h2 { color: #f3f1ec !important; }
+.legal-page .legal-card p { color: #aaa69e !important; font-size: 15px !important; }
+
+@media (max-width: 760px) {
+  .vehicle-showroom-sections { grid-template-columns: 1fr; }
+  .vehicle-showroom-sections section { min-height: auto; padding: 24px 20px; }
+  .login-page .login-card { padding: 30px 22px 28px !important; }
+}

@@ -9,6 +9,7 @@ import "./auth-luxury.css";
 import "./global-sourcing-redesign.css";
 import "./global-sourcing-detail.css";
 import "./global-sourcing-map.css";
+import "./cinematic-hero.css";
 import { NetlifyAuthCallback } from "@/app/components/netlify-auth-callback";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   description: "AUTO BRIDGE — автомашины олон улсын sourcing, захиалга, тээвэр, төлбөр, баримт бичиг, гааль татварын тооцоог нэг дор удирдах платформ.",
   keywords: ["AUTO BRIDGE", "Global Automotive Sourcing", "Солонгосоос машин захиалах", "Encar Монгол", "автомашин импорт"],
   metadataBase: new URL("https://autobridge.mn"),
-  openGraph: { title: "AUTO BRIDGE — Global Automotive Sourcing & Export", description: "Таны сонголт. Дэлхийн зах зээл.", type: "website" },
+  openGraph: { title: "AUTO BRIDGE — Global Automotive Sourcing & Export", description: "Таны сонголт. Бидний дэлхийн сүлжээ.", type: "website" },
   icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
 };
 

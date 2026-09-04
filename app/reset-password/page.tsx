@@ -45,7 +45,11 @@ export default function ResetPasswordPage() {
   return (
     <main className="login-page">
       <section className="login-card" aria-labelledby="reset-title">
-        <div className="login-brand"><BrandLogo className="login-brand-logo" /></div>
+        <div className="login-brand">
+          <a href="/" aria-label="AUTO BRIDGE нүүр хуудас">
+            <BrandLogo className="login-brand-logo" />
+          </a>
+        </div>
         <p className="login-kicker">НУУЦ ҮГ СЭРГЭЭХ</p>
         <h1 id="reset-title">Шинэ нууц үг оруулна уу</h1>
         <p className="login-intro">И-мэйлээр ирсэн сэргээх холбоосоор орсны дараа шинэ нууц үгээ тохируулна.</p>

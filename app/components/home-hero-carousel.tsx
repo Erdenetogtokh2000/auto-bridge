@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CalendarDays, CarFront, ChevronLeft, ChevronRight, MapPin, Pause, Play, Send } from "lucide-react";
+import { ArrowRight, CalendarDays, ChevronLeft, ChevronRight, MapPin, Pause, Play } from "lucide-react";
 
 export type HeroExpo = {
   id: string;
@@ -16,8 +16,28 @@ export type HeroExpo = {
   imageObjectKey: string | null;
 };
 
+const heroMarkets = ["JAPAN", "KOREA", "USA", "EUROPE", "UAE", "CHINA"] as const;
+
 function formatDate(value: string) {
   return value.replaceAll("-", ".");
+}
+
+function CinematicAutomotiveFilm() {
+  return (
+    <div className="cinematic-film" aria-hidden="true">
+      <div className="cinematic-film-poster" />
+      <div className="cinematic-film-shot film-shot-silhouette" />
+      <div className="cinematic-film-shot film-shot-grille" />
+      <div className="cinematic-film-shot film-shot-headlight" />
+      <div className="cinematic-film-shot film-shot-body" />
+      <div className="cinematic-film-shot film-shot-wheel" />
+      <div className="cinematic-film-shot film-shot-full" />
+      <div className="cinematic-film-headlight-glow" />
+      <div className="cinematic-film-light-sweep" />
+      <div className="cinematic-film-vignette" />
+      <div className="cinematic-film-grain" />
+    </div>
+  );
 }
 
 export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
@@ -38,33 +58,41 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
 
   const expo = current?.expo;
   const image = expo?.imageObjectKey ? `/api/expo-images/${encodeURIComponent(expo.id)}` : expo?.imageUrl;
-  const imageStyle = image ? { backgroundImage: `linear-gradient(90deg, rgba(10,10,10,.12), rgba(10,10,10,.28)), url("${image}")` } : undefined;
+  const imageStyle = image ? { backgroundImage: `linear-gradient(90deg, rgba(9,9,9,.22), rgba(9,9,9,.38)), url("${image}")` } : undefined;
 
-  return <div className="hero-slide" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
-    <div className={`hero-copy ${expo ? "hero-copy-expo" : ""}`} aria-live="polite">
-      {expo ? <>
-        <div className="eyebrow expo-hero-eyebrow"><span /> УДАХГҮЙ БОЛОХ АВТО ЭКСПО</div>
-        <h1>{expo.title}</h1>
-        <p>{expo.description ?? "Солонгос болон олон улсын автомашины шинэ загвар, технологийг нэг дороос үзээрэй."}</p>
-        <div className="expo-hero-meta"><span><CalendarDays size={15} /> {formatDate(expo.startDate)} – {formatDate(expo.endDate)}</span><span><MapPin size={15} /> {expo.city}, {expo.country}</span></div>
-        <a className="hero-expo-cta" href={`/expo/${encodeURIComponent(expo.id)}`}>Дэлгэрэнгүй үзэх <ArrowRight size={16} /></a>
-      </> : <>
-        <div className="eyebrow"><span /> GLOBAL AUTOMOTIVE SOURCING &amp; EXPORT</div>
-        <h1>GLOBAL AUTOMOTIVE<br /><em>SOURCING &amp; EXPORT</em></h1>
-        <p className="hero-brand-message">Таны сонголт. Дэлхийн зах зээл.</p>
-        <p className="hero-supporting-copy">Exceptional vehicles. Sourced without borders. Сонголтоос худалдан авалт, экспорт, тээвэр хүртэлх үйл явцыг AUTO BRIDGE нэг системд холбоно.</p>
-        <div className="hero-actions">
-          <a className="hero-action-primary" href="/vehicles"><CarFront size={18} /> МАШИН ХАЙХ <ArrowRight size={16} /></a>
-          <a className="hero-action-secondary" href="#quote"><Send size={17} /> МАШИН ЗАХИАЛАХ <ArrowRight size={16} /></a>
-        </div>
-      </>}
+  return (
+    <div className="hero-slide" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
+      {!expo && <CinematicAutomotiveFilm />}
+
+      <div className={`hero-copy ${expo ? "hero-copy-expo" : "hero-copy-cinematic"}`} aria-live="polite">
+        {expo ? <>
+          <div className="eyebrow expo-hero-eyebrow"><span /> УДАХГҮЙ БОЛОХ АВТО ЭКСПО</div>
+          <h1>{expo.title}</h1>
+          <p>{expo.description ?? "Солонгос болон олон улсын автомашины шинэ загвар, технологийг нэг дороос үзээрэй."}</p>
+          <div className="expo-hero-meta"><span><CalendarDays size={15} /> {formatDate(expo.startDate)} – {formatDate(expo.endDate)}</span><span><MapPin size={15} /> {expo.city}, {expo.country}</span></div>
+          <a className="hero-expo-cta" href={`/expo/${encodeURIComponent(expo.id)}`}>Дэлгэрэнгүй үзэх <ArrowRight size={16} /></a>
+        </> : <>
+          <div className="cinematic-hero-overline">AUTO BRIDGE / GLOBAL AUTOMOTIVE NETWORK</div>
+          <h1 className="cinematic-hero-title">GLOBAL AUTOMOTIVE<br /><span>SOURCING &amp; EXPORT</span></h1>
+          <p className="hero-brand-message cinematic-hero-message">Таны сонголт.<br />Бидний дэлхийн сүлжээ.</p>
+          <div className="hero-actions cinematic-hero-actions">
+            <a className="hero-action-primary" href="/vehicles">EXPLORE VEHICLES <ArrowRight size={16} /></a>
+            <a className="hero-action-secondary" href="#quote">SOURCE A VEHICLE <ArrowRight size={16} /></a>
+          </div>
+        </>}
+      </div>
+
+      {!expo && <div className="hero-market-labels" aria-label="AUTO BRIDGE sourcing markets">
+        {heroMarkets.map((market) => <span className={market === "KOREA" ? "is-active" : ""} key={market}>{market}</span>)}
+      </div>}
+
+      <div className={`hero-visual ${expo ? "hero-visual-expo" : ""}`} style={imageStyle} aria-hidden="true" />
+      {slides.length > 1 && <div className="hero-carousel-controls" aria-label="Cover слайд удирдах">
+        <button type="button" onClick={() => move(-1)} aria-label="Өмнөх slide"><ChevronLeft size={16} /></button>
+        <div className="hero-carousel-dots">{slides.map((slide, index) => <button key={slide.expo?.id ?? "default"} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`${index + 1}-р slide руу очих`} aria-current={index === active ? "true" : undefined} />)}</div>
+        <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Автомат солилтыг эхлүүлэх" : "Автомат солилтыг зогсоох"}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>
+        <button type="button" onClick={() => move(1)} aria-label="Дараагийн slide"><ChevronRight size={16} /></button>
+      </div>}
     </div>
-    <div className={`hero-visual ${expo ? "hero-visual-expo" : ""}`} style={imageStyle} aria-hidden="true" />
-    {slides.length > 1 && <div className="hero-carousel-controls" aria-label="Cover слайд удирдах">
-      <button type="button" onClick={() => move(-1)} aria-label="Өмнөх slide"><ChevronLeft size={16} /></button>
-      <div className="hero-carousel-dots">{slides.map((slide, index) => <button key={slide.expo?.id ?? "default"} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`${index + 1}-р slide руу очих`} aria-current={index === active ? "true" : undefined} />)}</div>
-      <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Автомат солилтыг эхлүүлэх" : "Автомат солилтыг зогсоох"}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>
-      <button type="button" onClick={() => move(1)} aria-label="Дараагийн slide"><ChevronRight size={16} /></button>
-    </div>}
-  </div>;
+  );
 }

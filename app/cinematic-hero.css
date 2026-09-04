@@ -1,0 +1,570 @@
+/* AUTO BRIDGE cinematic hero film — presentation only.
+   Uses the existing local production hero asset as a poster and layered motion source.
+   No backend, auth, quote, calculator or workflow behavior is changed. */
+
+.global-sourcing-home {
+  --hero-obsidian: #090909;
+  --hero-graphite: #161616;
+  --hero-warm-white: #F1EFEA;
+  --hero-champagne: #B5A078;
+  --hero-stone: #8E8B84;
+}
+
+/* Transparent hero navigation with a subtle scroll-to-graphite transition. */
+.global-sourcing-home .main-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 80;
+  width: 100%;
+  background: rgba(9, 9, 9, .28);
+  border-bottom-color: rgba(241, 239, 234, .08);
+  box-shadow: none;
+  backdrop-filter: blur(16px) saturate(110%);
+  -webkit-backdrop-filter: blur(16px) saturate(110%);
+}
+
+@supports (animation-timeline: scroll()) {
+  .global-sourcing-home .main-header {
+    animation: ab-hero-nav-scroll linear both;
+    animation-timeline: scroll(root);
+    animation-range: 0 220px;
+  }
+}
+
+@keyframes ab-hero-nav-scroll {
+  from {
+    background: rgba(9, 9, 9, .18);
+    border-bottom-color: rgba(241, 239, 234, .04);
+    box-shadow: none;
+  }
+  to {
+    background: rgba(22, 22, 22, .96);
+    border-bottom-color: rgba(241, 239, 234, .10);
+    box-shadow: 0 16px 42px rgba(0, 0, 0, .26);
+  }
+}
+
+.global-sourcing-home .main-header .desktop-nav a::after {
+  background: var(--hero-champagne);
+}
+
+.global-sourcing-home .main-header .nav-phone,
+.global-sourcing-home .main-header .language-pill:hover,
+.global-sourcing-home .main-header .login-link:hover {
+  color: var(--hero-champagne);
+}
+
+/* Full-browser cinematic stage. */
+.global-sourcing-home .hero {
+  min-height: max(680px, 100svh);
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--hero-obsidian);
+  border-bottom: 1px solid rgba(241, 239, 234, .08);
+}
+
+.global-sourcing-home .hero::before {
+  content: none;
+}
+
+.global-sourcing-home .hero-grid {
+  display: none;
+}
+
+.global-sourcing-home .hero-layout,
+.global-sourcing-home .hero-slide {
+  min-height: max(680px, 100svh);
+}
+
+.global-sourcing-home .hero-layout {
+  position: relative;
+  z-index: 2;
+}
+
+.global-sourcing-home .hero-slide {
+  display: block;
+  width: 100%;
+  position: relative;
+  overflow: visible;
+}
+
+/* Static poster is always present underneath the animated shots.
+   This means the hero remains meaningful before animation starts or if animation fails. */
+.cinematic-film {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: -1;
+  width: 100vw;
+  height: max(680px, 100svh);
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--hero-obsidian);
+}
+
+.cinematic-film-poster,
+.cinematic-film-shot {
+  position: absolute;
+  inset: -4%;
+  background-image: url('/images/korea-mongolia-vehicle-import-hero.png');
+  background-repeat: no-repeat;
+  background-color: var(--hero-obsidian);
+}
+
+.cinematic-film-poster {
+  opacity: .48;
+  background-size: cover;
+  background-position: 68% 50%;
+  filter: brightness(.28) contrast(1.26) saturate(.38);
+  transform: scale(1.025);
+}
+
+.cinematic-film-shot {
+  opacity: 0;
+  filter: brightness(.30) contrast(1.28) saturate(.42);
+  will-change: opacity, transform, filter;
+  animation-duration: 30s;
+  animation-timing-function: cubic-bezier(.42, 0, .18, 1);
+  animation-iteration-count: infinite;
+  animation-fill-mode: both;
+}
+
+.film-shot-silhouette {
+  background-size: 118%;
+  background-position: 72% 49%;
+  animation-name: ab-film-silhouette;
+}
+
+.film-shot-grille {
+  background-size: 182%;
+  background-position: 70% 50%;
+  animation-name: ab-film-grille;
+}
+
+.film-shot-headlight {
+  background-size: 216%;
+  background-position: 76% 44%;
+  animation-name: ab-film-headlight;
+}
+
+.film-shot-body {
+  background-size: 142%;
+  background-position: 67% 47%;
+  animation-name: ab-film-body;
+}
+
+.film-shot-wheel {
+  background-size: 214%;
+  background-position: 76% 72%;
+  animation-name: ab-film-wheel;
+}
+
+.film-shot-full {
+  background-size: cover;
+  background-position: 68% 50%;
+  animation-name: ab-film-full;
+}
+
+@keyframes ab-film-silhouette {
+  0%, 2% { opacity: 0; transform: scale(1.10) translate3d(2%, 0, 0); filter: brightness(.08) contrast(1.34) saturate(.28); }
+  7% { opacity: .48; filter: brightness(.18) contrast(1.30) saturate(.30); }
+  13% { opacity: .82; transform: scale(1.055) translate3d(0, 0, 0); filter: brightness(.27) contrast(1.28) saturate(.34); }
+  18% { opacity: .72; }
+  22%, 100% { opacity: 0; transform: scale(1.02) translate3d(-1%, 0, 0); }
+}
+
+@keyframes ab-film-grille {
+  0%, 16% { opacity: 0; transform: scale(1.16) translate3d(2%, 1%, 0); }
+  21% { opacity: .78; }
+  27% { opacity: .94; transform: scale(1.08) translate3d(0, 0, 0); filter: brightness(.34) contrast(1.31) saturate(.36); }
+  32% { opacity: .74; }
+  36%, 100% { opacity: 0; transform: scale(1.03) translate3d(-1%, 0, 0); }
+}
+
+@keyframes ab-film-headlight {
+  0%, 31% { opacity: 0; transform: scale(1.12) translate3d(1.5%, 0, 0); filter: brightness(.18) contrast(1.34) saturate(.28); }
+  36% { opacity: .72; }
+  42% { opacity: 1; transform: scale(1.055) translate3d(0, 0, 0); filter: brightness(.40) contrast(1.30) saturate(.38); }
+  47% { opacity: .76; }
+  51%, 100% { opacity: 0; transform: scale(1.02) translate3d(-.7%, 0, 0); }
+}
+
+@keyframes ab-film-body {
+  0%, 46% { opacity: 0; transform: scale(1.10) translate3d(2%, 0, 0); }
+  51% { opacity: .76; }
+  57% { opacity: .96; transform: scale(1.045) translate3d(0, 0, 0); filter: brightness(.36) contrast(1.25) saturate(.42); }
+  62% { opacity: .78; }
+  66%, 100% { opacity: 0; transform: scale(1.015) translate3d(-1%, 0, 0); }
+}
+
+@keyframes ab-film-wheel {
+  0%, 61% { opacity: 0; transform: scale(1.13) translate3d(1%, 2%, 0); }
+  66% { opacity: .72; }
+  72% { opacity: .94; transform: scale(1.06) translate3d(0, 0, 0); filter: brightness(.34) contrast(1.28) saturate(.38); }
+  76% { opacity: .72; }
+  80%, 100% { opacity: 0; transform: scale(1.02) translate3d(-.5%, 0, 0); }
+}
+
+@keyframes ab-film-full {
+  0%, 75% { opacity: 0; transform: scale(1.08) translate3d(1.5%, 0, 0); filter: brightness(.20) contrast(1.30) saturate(.30); }
+  80% { opacity: .72; }
+  87% { opacity: 1; transform: scale(1.025) translate3d(0, 0, 0); filter: brightness(.36) contrast(1.24) saturate(.40); }
+  94% { opacity: .94; transform: scale(1.00) translate3d(-.8%, 0, 0); }
+  100% { opacity: 0; transform: scale(.995) translate3d(-1.2%, 0, 0); }
+}
+
+/* Slow headlight ignition and directional light sweep. */
+.cinematic-film-headlight-glow {
+  position: absolute;
+  z-index: 6;
+  right: 15%;
+  top: 38%;
+  width: 24vw;
+  height: 18vw;
+  min-width: 260px;
+  min-height: 180px;
+  opacity: 0;
+  transform: translate3d(12%, 0, 0) scale(.74);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%, rgba(241,239,234,.34) 0%, rgba(181,160,120,.18) 11%, rgba(181,160,120,.05) 34%, transparent 68%);
+  filter: blur(12px);
+  mix-blend-mode: screen;
+  animation: ab-headlight-glow 30s ease-in-out infinite;
+}
+
+@keyframes ab-headlight-glow {
+  0%, 30%, 100% { opacity: 0; transform: translate3d(12%, 0, 0) scale(.72); }
+  36% { opacity: .16; }
+  42% { opacity: .82; transform: translate3d(0, 0, 0) scale(1); }
+  48% { opacity: .22; }
+  52%, 78% { opacity: 0; }
+  86% { opacity: .17; transform: translate3d(-2%, 0, 0) scale(.92); }
+  94% { opacity: 0; }
+}
+
+.cinematic-film-light-sweep {
+  position: absolute;
+  z-index: 7;
+  inset: -20% auto -20% -28%;
+  width: 34%;
+  opacity: 0;
+  transform: skewX(-12deg);
+  background: linear-gradient(90deg, transparent, rgba(241,239,234,.055), rgba(181,160,120,.045), transparent);
+  filter: blur(18px);
+  animation: ab-light-sweep 30s ease-in-out infinite;
+}
+
+@keyframes ab-light-sweep {
+  0%, 48% { opacity: 0; left: -28%; }
+  52% { opacity: .5; }
+  62% { opacity: .72; }
+  70% { opacity: .15; left: 94%; }
+  72%, 100% { opacity: 0; left: 110%; }
+}
+
+.cinematic-film-vignette {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(9,9,9,.97) 0%, rgba(9,9,9,.88) 28%, rgba(9,9,9,.54) 52%, rgba(9,9,9,.22) 73%, rgba(9,9,9,.42) 100%),
+    linear-gradient(180deg, rgba(9,9,9,.28) 0%, transparent 30%, transparent 68%, rgba(9,9,9,.62) 100%),
+    radial-gradient(circle at 72% 50%, transparent 0%, rgba(9,9,9,.14) 46%, rgba(9,9,9,.58) 100%);
+}
+
+.cinematic-film-grain {
+  position: absolute;
+  z-index: 9;
+  inset: 0;
+  opacity: .045;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(255,255,255,.5) 0, rgba(255,255,255,.5) 1px, transparent 1px, transparent 3px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,.24) 0, rgba(255,255,255,.24) 1px, transparent 1px, transparent 4px);
+  mix-blend-mode: soft-light;
+}
+
+/* Live HTML editorial copy. */
+.global-sourcing-home .hero-copy-cinematic {
+  max-width: 880px;
+  padding: clamp(160px, 19vh, 220px) 0 116px;
+  position: relative;
+  z-index: 12;
+}
+
+.cinematic-hero-overline {
+  margin-bottom: 24px;
+  color: var(--hero-stone);
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.4;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+
+.global-sourcing-home .hero .cinematic-hero-title {
+  max-width: 900px;
+  margin: 0;
+  color: var(--hero-warm-white);
+  font-family: var(--ab-serif);
+  font-size: clamp(58px, 6.4vw, 102px);
+  font-weight: 500;
+  line-height: .92;
+  letter-spacing: -.052em;
+  text-wrap: balance;
+  text-shadow: 0 20px 56px rgba(0,0,0,.48);
+}
+
+.global-sourcing-home .hero .cinematic-hero-title span {
+  color: var(--hero-warm-white);
+}
+
+.global-sourcing-home .hero .cinematic-hero-message {
+  margin: 30px 0 0;
+  max-width: 560px;
+  color: var(--hero-warm-white);
+  font-size: clamp(19px, 1.8vw, 27px);
+  font-weight: 450;
+  line-height: 1.42;
+  letter-spacing: -.015em;
+}
+
+.global-sourcing-home .cinematic-hero-actions {
+  margin-top: 36px;
+  gap: 12px;
+}
+
+.global-sourcing-home .cinematic-hero-actions a {
+  min-height: 48px;
+  padding: 0 20px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .055em;
+  box-shadow: none;
+}
+
+.global-sourcing-home .cinematic-hero-actions .hero-action-primary {
+  color: var(--hero-obsidian);
+  background: var(--hero-warm-white);
+  border-color: rgba(241,239,234,.90);
+}
+
+.global-sourcing-home .cinematic-hero-actions .hero-action-primary:hover {
+  color: var(--hero-obsidian);
+  background: #ffffff;
+  border-color: var(--hero-champagne);
+}
+
+.global-sourcing-home .cinematic-hero-actions .hero-action-secondary {
+  color: var(--hero-warm-white);
+  background: rgba(22,22,22,.46);
+  border-color: rgba(181,160,120,.58);
+  backdrop-filter: blur(8px);
+}
+
+.global-sourcing-home .cinematic-hero-actions .hero-action-secondary:hover {
+  color: #fff;
+  background: rgba(181,160,120,.10);
+  border-color: var(--hero-champagne);
+}
+
+.global-sourcing-home .cinematic-hero-actions a:focus-visible,
+.global-sourcing-home .main-header a:focus-visible {
+  outline: 2px solid var(--hero-champagne);
+  outline-offset: 4px;
+}
+
+/* Live HTML market typography in the hero lower-right corner. */
+.hero-market-labels {
+  position: absolute;
+  z-index: 13;
+  right: 0;
+  bottom: 44px;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  gap: 8px 18px;
+  justify-items: end;
+  color: var(--hero-stone);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+.hero-market-labels span {
+  transition: color .22s ease, transform .22s ease;
+}
+
+.hero-market-labels span:hover,
+.hero-market-labels span.is-active {
+  color: var(--hero-champagne);
+  transform: translateY(-1px);
+}
+
+/* Expo hero remains supported if expos are re-enabled later. */
+.global-sourcing-home .hero-slide .hero-visual-expo {
+  z-index: 2;
+}
+
+/* Tablet */
+@media (max-width: 1100px) {
+  .global-sourcing-home .hero,
+  .global-sourcing-home .hero-layout,
+  .global-sourcing-home .hero-slide,
+  .cinematic-film {
+    min-height: 760px;
+    height: 760px;
+  }
+
+  .global-sourcing-home .hero-copy-cinematic {
+    max-width: 720px;
+    padding-top: 170px;
+  }
+
+  .global-sourcing-home .hero .cinematic-hero-title {
+    font-size: clamp(54px, 8vw, 78px);
+  }
+
+  .cinematic-film-poster,
+  .film-shot-full {
+    background-position: 72% 50%;
+  }
+
+  .cinematic-film-vignette {
+    background:
+      linear-gradient(90deg, rgba(9,9,9,.96) 0%, rgba(9,9,9,.82) 40%, rgba(9,9,9,.34) 76%, rgba(9,9,9,.48) 100%),
+      linear-gradient(180deg, rgba(9,9,9,.28), transparent 50%, rgba(9,9,9,.58));
+  }
+}
+
+/* Mobile */
+@media (max-width: 760px) {
+  .global-sourcing-home .main-header {
+    background: rgba(9,9,9,.72);
+  }
+
+  .global-sourcing-home .nav-wrap {
+    height: 72px;
+  }
+
+  .global-sourcing-home .hero,
+  .global-sourcing-home .hero-layout,
+  .global-sourcing-home .hero-slide,
+  .cinematic-film {
+    min-height: 760px;
+    height: 760px;
+  }
+
+  .cinematic-film-poster,
+  .cinematic-film-shot {
+    inset: -2%;
+  }
+
+  .cinematic-film-poster,
+  .film-shot-silhouette,
+  .film-shot-body,
+  .film-shot-full {
+    background-size: auto 100%;
+    background-position: 70% center;
+  }
+
+  .film-shot-grille,
+  .film-shot-headlight,
+  .film-shot-wheel {
+    background-size: auto 146%;
+    background-position: 72% center;
+  }
+
+  .cinematic-film-headlight-glow {
+    right: -4%;
+    top: 34%;
+    width: 58vw;
+    height: 42vw;
+  }
+
+  .cinematic-film-vignette {
+    background:
+      linear-gradient(180deg, rgba(9,9,9,.76) 0%, rgba(9,9,9,.38) 25%, rgba(9,9,9,.20) 48%, rgba(9,9,9,.74) 76%, rgba(9,9,9,.96) 100%),
+      linear-gradient(90deg, rgba(9,9,9,.74) 0%, rgba(9,9,9,.42) 58%, rgba(9,9,9,.30) 100%);
+  }
+
+  .global-sourcing-home .hero-copy-cinematic {
+    max-width: none;
+    padding: 124px 0 196px;
+  }
+
+  .cinematic-hero-overline {
+    margin-bottom: 18px;
+    max-width: 320px;
+    font-size: 10px;
+    line-height: 1.55;
+    letter-spacing: .18em;
+  }
+
+  .global-sourcing-home .hero .cinematic-hero-title {
+    max-width: 620px;
+    font-size: clamp(42px, 12.2vw, 62px);
+    line-height: .94;
+    letter-spacing: -.045em;
+  }
+
+  .global-sourcing-home .hero .cinematic-hero-message {
+    margin-top: 22px;
+    max-width: 330px;
+    font-size: 18px;
+    line-height: 1.42;
+  }
+
+  .global-sourcing-home .cinematic-hero-actions {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr;
+    max-width: 330px;
+  }
+
+  .global-sourcing-home .cinematic-hero-actions a {
+    width: 100%;
+    min-height: 50px;
+    justify-content: space-between;
+  }
+
+  .hero-market-labels {
+    right: auto;
+    left: 0;
+    bottom: 46px;
+    max-width: calc(100vw - 40px);
+    grid-template-columns: repeat(3, auto);
+    justify-items: start;
+    gap: 10px 16px;
+    font-size: 9px;
+    letter-spacing: .18em;
+  }
+}
+
+/* Motion accessibility: show a calm static poster instead of the film sequence. */
+@media (prefers-reduced-motion: reduce) {
+  .global-sourcing-home .main-header,
+  .cinematic-film-shot,
+  .cinematic-film-headlight-glow,
+  .cinematic-film-light-sweep {
+    animation: none !important;
+  }
+
+  .cinematic-film-shot,
+  .cinematic-film-headlight-glow,
+  .cinematic-film-light-sweep {
+    display: none;
+  }
+
+  .cinematic-film-poster {
+    opacity: .64;
+    transform: none;
+  }
+
+  .global-sourcing-home .cinematic-hero-actions a,
+  .hero-market-labels span {
+    transition: none;
+  }
+}

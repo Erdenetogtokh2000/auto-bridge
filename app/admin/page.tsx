@@ -27,6 +27,13 @@ async function loadOrders() {
   } catch { return []; }
 }
 
+async function loadUnreadNotifications() {
+  try {
+    return await getDb().select({id:notifications.id}).from(notifications)
+      .where(and(eq(notifications.recipientType,"ADMIN"),eq(notifications.isRead,false)));
+  } catch { return []; }
+}
+
 function formatDate(value: string) {
   const date = new Date(value.includes("T") ? value : `${value.replace(" ", "T")}Z`);
   return Number.isNaN(date.getTime()) ? value : new Intl.DateTimeFormat("mn-MN", { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
@@ -38,7 +45,11 @@ export default async function AdminDashboard() {
   const canQuotes = actor.isAdmin || actor.permissions.includes("QUOTES_MANAGE");
   const canOrders = actor.isAdmin || actor.permissions.includes("ORDERS_MANAGE");
   const canNotifications = actor.isAdmin || actor.permissions.includes("NOTIFICATIONS_MANAGE");
-  const [quotes, orderRows, unreadRows] = await Promise.all([canQuotes || canDashboard ? loadQuotes() : [], canOrders || canDashboard ? loadOrders() : [],canNotifications?getDb().select({id:notifications.id}).from(notifications).where(and(eq(notifications.recipientType,"ADMIN"),eq(notifications.isRead,false))):[]]);
+  const [quotes, orderRows, unreadRows] = await Promise.all([
+    canQuotes || canDashboard ? loadQuotes() : [],
+    canOrders || canDashboard ? loadOrders() : [],
+    canNotifications ? loadUnreadNotifications() : [],
+  ]);
   const newCount = quotes.filter(item => item.status === "NEW").length;
   const activeCount = quotes.filter(item => ["REVIEWING", "CONTACTED"].includes(item.status)).length;
   const readyCount = quotes.filter(item => item.status === "QUOTE_READY").length;

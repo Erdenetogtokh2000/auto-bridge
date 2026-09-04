@@ -11,6 +11,7 @@ import "./global-sourcing-detail.css";
 import "./global-sourcing-map.css";
 import "./cinematic-hero.css";
 import "./hero-cover-showroom.css";
+import "./hero-cover-parent-fix.css";
 import { NetlifyAuthCallback } from "@/app/components/netlify-auth-callback";
 
 export const metadata: Metadata = {

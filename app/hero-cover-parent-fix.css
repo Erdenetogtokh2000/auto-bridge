@@ -1,0 +1,37 @@
+/* AUTO BRIDGE hero cover visibility fix.
+   The previous cinematic container had z-index:-1, which placed the whole cover behind the hero's solid background.
+   Keep the cover inside the hero stacking context and leave all live HTML content above it. */
+
+.global-sourcing-home .hero-slide {
+  isolation: isolate;
+}
+
+.global-sourcing-home .cinematic-film {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: max(680px, 100svh) !important;
+  background: transparent !important;
+}
+
+.global-sourcing-home .cinematic-film-poster {
+  z-index: 0 !important;
+}
+
+.global-sourcing-home .cinematic-film-vignette {
+  z-index: 1 !important;
+}
+
+.global-sourcing-home .hero-copy-cinematic,
+.global-sourcing-home .hero-market-labels,
+.global-sourcing-home .hero-carousel-controls {
+  position: relative;
+  z-index: 3 !important;
+}
+
+/* Keep the otherwise-empty visual layer from covering the supplied cover. */
+.global-sourcing-home .hero-slide:not(:has(.hero-copy-expo)) .hero-visual {
+  display: none !important;
+}

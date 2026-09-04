@@ -5,7 +5,7 @@ import { calculateQuote, type QuoteCalculationInput } from "@/lib/quote-calculat
 import { notificationValues } from "@/lib/notifications";
 import { getQuotesManager as getAdminUser } from "@/app/chatgpt-auth";
 
-const numericFields: (keyof QuoteCalculationInput)[] = ["vehiclePriceKrw", "purchaseFeeKrw", "inlandTransportKrw", "oceanFreightUsd", "krwMntRate", "usdMntRate", "customsMnt", "vatMnt", "otherCostsMnt", "depositMnt"];
+const numericFields: (keyof QuoteCalculationInput)[] = ["vehiclePriceKrw", "purchaseFeeKrw", "inlandTransportKrw", "oceanFreightUsd", "krwMntRate", "usdMntRate", "customsMnt", "exciseMnt", "vatMnt", "otherCostsMnt", "depositMnt"];
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const admin = await getAdminUser();
@@ -26,12 +26,13 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
   const productionYear = Number(payload.productionYear ?? 0);
   const mileageKm = Number(payload.mileageKm ?? 0);
   const fuelType = String(payload.fuelType ?? "").trim();
+  const engineCapacityCc = Math.max(Number(payload.engineCapacityCc ?? 0) || 0, 0);
   if (payload.markReady === true && (!vehicleMake || !vehicleModel || productionYear < 1980 || productionYear > 2100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail))) return Response.json({ error: "vehicle and customer details required" }, { status: 400 });
   const values = {
     vehicleName: String(payload.vehicleName ?? "").trim() || null,
     vehicleMake: vehicleMake || null, vehicleModel: vehicleModel || null,
-    productionYear: productionYear || null, mileageKm: Math.max(mileageKm || 0, 0), fuelType: fuelType || null,
-    ...numbers, depositMnt: totals.depositMnt,
+    productionYear: productionYear || null, mileageKm: Math.max(mileageKm || 0, 0), fuelType: fuelType || null, engineCapacityCc: Math.round(engineCapacityCc),
+    ...numbers, exciseMnt: Math.round(numbers.exciseMnt ?? 0), depositMnt: totals.depositMnt,
     totalMnt: totals.totalMnt,
     notes: String(payload.notes ?? "").trim() || null,
     updatedAt: now,

@@ -37,7 +37,7 @@ export function NetlifyLoginForm() {
       } else {
         const { error } = await getSupabase().auth.signInWithPassword({ email, password });
         if (error) throw error;
-        window.location.href = "/login";
+        window.location.href = "/auth/continue";
       }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Нэвтрэх үед алдаа гарлаа.");

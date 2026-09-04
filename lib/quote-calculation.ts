@@ -6,6 +6,7 @@ export type QuoteCalculationInput = {
   krwMntRate: number;
   usdMntRate: number;
   customsMnt: number;
+  exciseMnt?: number;
   vatMnt: number;
   otherCostsMnt: number;
   depositMnt: number;
@@ -28,12 +29,14 @@ export function calculateQuote(input: QuoteCalculationInput) {
   const koreaSubtotalKrw = input.vehiclePriceKrw + input.purchaseFeeKrw + input.inlandTransportKrw;
   const koreaSubtotalMnt = Math.round(koreaSubtotalKrw * input.krwMntRate);
   const oceanFreightMnt = Math.round(input.oceanFreightUsd * input.usdMntRate);
-  const totalMnt = koreaSubtotalMnt + oceanFreightMnt + input.customsMnt + input.vatMnt + input.otherCostsMnt;
+  const exciseMnt = Math.max(Math.round(input.exciseMnt ?? 0), 0);
+  const totalMnt = koreaSubtotalMnt + oceanFreightMnt + input.customsMnt + exciseMnt + input.vatMnt + input.otherCostsMnt;
   const paymentTerms = calculateVehiclePaymentTerms(koreaSubtotalMnt);
   return {
     koreaSubtotalKrw,
     koreaSubtotalMnt,
     oceanFreightMnt,
+    exciseMnt,
     totalMnt,
     depositMnt: paymentTerms.depositMnt,
     balanceMnt: paymentTerms.balanceMnt,

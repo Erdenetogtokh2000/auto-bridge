@@ -19,15 +19,22 @@ const SIGN_IN_PATH = "/login";
 const SIGN_OUT_PATH = "/logout";
 const CALLBACK_PATH = "/callback";
 
-// These are the initial staff/customer accounts supplied for the first
-// production rollout. They remain a safe fallback when platform environment
-// variables are not exposed to a particular server request.
-const ROLE_FALLBACK_EMAILS: Record<Exclude<AppRole, "MANAGER">, string[]> = {
+// Initial production accounts. Environment variables can add more accounts,
+// while these known addresses keep routing stable during rollout.
+const ROLE_FALLBACK_EMAILS: Record<AppRole, string[]> = {
   ADMIN: ["erdenetogtokh2000@gmail.com"],
+  MANAGER: ["g.iveel0609@gmail.com"],
   FINANCE: ["wisenewsolution@gmail.com"],
   TRANSPORT: ["tsagaangerelt2023@gmail.com"],
-  CUSTOMER: ["g.iveel0609@gmail.com"],
+  CUSTOMER: [],
 };
+
+// Managers can operate the commercial workflow (including prices/quotes,
+// orders, catalog, financing visibility and reports), but system settings
+// remain an administrator-only fallback capability.
+const MANAGER_FALLBACK_PERMISSIONS: AdminPermission[] = adminPermissionCodes.filter(
+  (code) => code !== "SETTINGS_MANAGE",
+);
 
 function normalizeEmail(value: string): string {
   return value.trim().replace(/\\/g, "").toLowerCase();
@@ -70,9 +77,9 @@ function configuredAdminEmails() {
   return configuredEmails("ADMIN_EMAILS");
 }
 
-function configuredEmails(key: "ADMIN_EMAILS" | "FINANCE_EMAILS" | "TRANSPORT_EMAILS" | "CUSTOMER_EMAILS") {
+function configuredEmails(key: "ADMIN_EMAILS" | "MANAGER_EMAILS" | "FINANCE_EMAILS" | "TRANSPORT_EMAILS" | "CUSTOMER_EMAILS") {
   const configured = process.env[key] ?? "";
-  const role = key.replace("_EMAILS", "") as Exclude<AppRole, "MANAGER">;
+  const role = key.replace("_EMAILS", "") as AppRole;
   return [...new Set([
     ...configured.split(/[ ,;]+/).map(normalizeEmail).filter(Boolean),
     ...ROLE_FALLBACK_EMAILS[role],
@@ -82,6 +89,7 @@ function configuredEmails(key: "ADMIN_EMAILS" | "FINANCE_EMAILS" | "TRANSPORT_EM
 function configuredRoleForEmail(email: string): AppRole | null {
   const normalized = normalizeEmail(email);
   if (configuredEmails("ADMIN_EMAILS").includes(normalized)) return "ADMIN";
+  if (configuredEmails("MANAGER_EMAILS").includes(normalized)) return "MANAGER";
   if (configuredEmails("FINANCE_EMAILS").includes(normalized)) return "FINANCE";
   if (configuredEmails("TRANSPORT_EMAILS").includes(normalized)) return "TRANSPORT";
   if (configuredEmails("CUSTOMER_EMAILS").includes(normalized)) return "CUSTOMER";
@@ -222,8 +230,13 @@ export async function getAdminStaffUser(required?: AdminPermission): Promise<Adm
   const user = await getChatGPTUser();
   if (!user) return null;
   const email = normalizeEmail(user.email);
-  if (configuredAdminEmails().includes(email)) {
+  const configuredRole = configuredRoleForEmail(email);
+  if (configuredRole === "ADMIN") {
     return { ...user, isAdmin: true, permissions: [...adminPermissionCodes] };
+  }
+  if (configuredRole === "MANAGER") {
+    if (required && !hasAdminPermission(MANAGER_FALLBACK_PERMISSIONS, required)) return null;
+    return { ...user, isAdmin: false, permissions: [...MANAGER_FALLBACK_PERMISSIONS] };
   }
   const [profile] = await getDb().select({ role: userProfiles.role, permissions: userProfiles.permissions })
     .from(userProfiles)
@@ -273,7 +286,8 @@ export async function getTransportUser(required?: UserPermission): Promise<Trans
     const permissions = effectivePermissionsForRole("TRANSPORT", profile.permissions, profile.permissionsCustomized);
     return required && !hasUserPermission(permissions, required) ? null : { ...user, isAdmin: false, permissions };
   }
-  const [assigned] = await getDb().select({ id: shipments.id }).from(shipments)
+  const [assigned] = await getDb().select({ id: shipments.id })
+    .from(shipments)
     .where(eq(shipments.transportEmployeeEmail, email)).limit(1);
   if (!assigned) return null;
   const permissions = defaultPermissionsForRole("TRANSPORT");

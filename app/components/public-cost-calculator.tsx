@@ -1,13 +1,26 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { ArrowRight, Calculator, Info, Link2, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { ArrowRight, Calculator, CheckCircle2, Info, Link2, LoaderCircle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { calculateLandedCost, type LandedCostCurrency, type LandedCostInput, type LandedCostMarket } from "@/lib/landed-cost";
 import { calculateVehicleImportTaxes, type VehicleFuelClass } from "@/lib/vehicle-import-taxes";
 
 const money = new Intl.NumberFormat("mn-MN", { maximumFractionDigits: 0 });
 const currentYear = new Date().getFullYear();
+
+type EncarResolvedVehicle = {
+  carId: string;
+  make: string | null;
+  model: string | null;
+  grade: string | null;
+  productionYear: number | null;
+  mileageKm: number | null;
+  fuelName: string | null;
+  fuelClass: VehicleFuelClass;
+  engineCapacityCc: number | null;
+  priceKrw: number | null;
+};
 
 const initialForm: LandedCostInput = {
   market: "KOREA", vehiclePrice: 39800000, vehicleCurrency: "KRW", purchaseFeeMnt: 0, inlandTransportMnt: 0,
@@ -28,6 +41,42 @@ export function PublicCostCalculator({ compact = false }: { compact?: boolean })
   const [productionYear, setProductionYear] = useState(currentYear - 3);
   const [engineCapacityCc, setEngineCapacityCc] = useState(2000);
   const [fuelClass, setFuelClass] = useState<VehicleFuelClass>("GASOLINE_DIESEL");
+  const [encarVehicle, setEncarVehicle] = useState<EncarResolvedVehicle | null>(null);
+  const [encarStatus, setEncarStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  useEffect(() => {
+    const trimmed = listingUrl.trim();
+    if (!trimmed || !/encar\.com/i.test(trimmed)) {
+      setEncarVehicle(null);
+      setEncarStatus("idle");
+      return;
+    }
+    const timer = window.setTimeout(async () => {
+      setEncarStatus("loading");
+      try {
+        const response = await fetch(`/api/encar/resolve?url=${encodeURIComponent(trimmed)}`, { cache: "no-store" });
+        if (!response.ok) throw new Error("lookup failed");
+        const payload = await response.json() as { vehicle?: EncarResolvedVehicle };
+        if (!payload.vehicle) throw new Error("vehicle missing");
+        const vehicle = payload.vehicle;
+        setEncarVehicle(vehicle);
+        setEncarStatus("success");
+        setForm((current) => ({
+          ...current,
+          market: "KOREA",
+          vehicleCurrency: "KRW",
+          vehiclePrice: vehicle.priceKrw ?? current.vehiclePrice,
+        }));
+        if (vehicle.productionYear) setProductionYear(vehicle.productionYear);
+        if (vehicle.engineCapacityCc !== null) setEngineCapacityCc(vehicle.engineCapacityCc);
+        setFuelClass(vehicle.fuelClass);
+      } catch {
+        setEncarVehicle(null);
+        setEncarStatus("error");
+      }
+    }, 550);
+    return () => window.clearTimeout(timer);
+  }, [listingUrl]);
 
   const automaticTaxes = useMemo(() => {
     const currencyRate = form.vehicleCurrency === "USD" ? form.usdMntRate : form.krwMntRate;
@@ -80,6 +129,9 @@ export function PublicCostCalculator({ compact = false }: { compact?: boolean })
   return <div className={`public-calculator ${compact ? "is-compact" : ""}`}>
     <section className="public-calculator-form">
       <div className="calculator-form-heading"><div><span>PRELIMINARY ESTIMATE</span><h2>Буух өртгөө тооцоолох</h2></div><Calculator size={25} /></div>
+      <label className="calculator-field calculator-url-field encar-first-field"><span>Encar зарын линк · автоматаар мэдээлэл татна</span><div className="calculator-input"><Link2 size={14} /><input type="url" value={listingUrl} onChange={(event) => setListingUrl(event.target.value)} placeholder="https://fem.encar.com/cars/detail/..." />{encarStatus === "loading" && <LoaderCircle className="encar-spinner" size={16} />}</div></label>
+      {encarStatus === "success" && encarVehicle && <div className="encar-autofill-status success"><CheckCircle2 size={17}/><div><strong>Encar мэдээлэл автоматаар орлоо</strong><span>{[encarVehicle.make, encarVehicle.model, encarVehicle.productionYear, encarVehicle.fuelName, encarVehicle.engineCapacityCc ? `${encarVehicle.engineCapacityCc.toLocaleString("mn-MN")} cc` : null, encarVehicle.mileageKm ? `${encarVehicle.mileageKm.toLocaleString("mn-MN")} км` : null].filter(Boolean).join(" · ")}</span></div></div>}
+      {encarStatus === "error" && <div className="encar-autofill-status error"><Info size={16}/><span>Encar-аас мэдээлэл автоматаар авч чадсангүй. Доорх талбаруудыг гараар засаж үргэлжлүүлж болно.</span></div>}
       <div className="calculator-fields">
         <label className="calculator-field"><span>Зах зээл</span><select value={form.market} onChange={(event) => updateMarket(event.target.value as LandedCostMarket)}><option value="KOREA">Солонгос</option><option value="USA">Америк</option></select></label>
         <label className="calculator-field"><span>Үнийн валют</span><select value={form.vehicleCurrency} onChange={(event) => setForm((current) => ({ ...current, vehicleCurrency: event.target.value as LandedCostCurrency }))}><option value="KRW">KRW — Вон</option><option value="USD">USD — Доллар</option></select></label>
@@ -93,8 +145,7 @@ export function PublicCostCalculator({ compact = false }: { compact?: boolean })
         {editableFieldLabels.slice(4).map(([field, label, unit]) => <label className="calculator-field" key={field}><span>{label}</span><div className="calculator-input"><input type="number" min="0" step="100" value={form[field] as number} onChange={(event) => updateNumber(field, event.target.value)} /><b>{unit}</b></div></label>)}
       </div>
       <div className="calculator-rate-box"><div><span>KRW → MNT ханш</span><div className="calculator-input"><input type="number" min="0" step="0.01" value={form.krwMntRate} onChange={(event) => updateNumber("krwMntRate", event.target.value)} /><b>₮</b></div></div><div><span>USD → MNT ханш</span><div className="calculator-input"><input type="number" min="0" step="1" value={form.usdMntRate} onChange={(event) => updateNumber("usdMntRate", event.target.value)} /><b>₮</b></div></div></div>
-      <label className="calculator-field calculator-url-field"><span>Зарын линк (заавал биш)</span><div className="calculator-input"><Link2 size={14} /><input type="url" value={listingUrl} onChange={(event) => setListingUrl(event.target.value)} placeholder="https://www.encar.com/..." /></div></label>
-      <div className="calculator-note"><Info size={15} /><span>Гаалийн татвар 5%, онцгой албан татвар нь үйлдвэрлэсэн он, хөдөлгүүрийн багтаамж, түлшний төрлөөс автоматаар сонгогдоно. НӨАТ нь гаалийн үнэ + гаалийн татвар + онцгой албан татварын нийлбэрийн 10%-иар тооцогдоно.{automaticTaxes.luxuryExciseMnt > 0 ? ` 360 сая ₮-өөс давсан гаалийн үнийн хэсэгт ${money.format(automaticTaxes.luxuryExciseMnt)} ₮ нэмэлт ОАТ тооцсон.` : ""} Эцсийн дүн нь гаалийн албан ёсны үнэлгээнээс шалтгаалан өөрчлөгдөж болно.</span></div>
+      <div className="calculator-note"><Info size={15} /><span>Encar линк танигдвал үйлдвэрлэсэн он, үнэ, хөдөлгүүрийн багтаамж, түлшний төрөл болон гүйлтийг боломжтой хэмжээнд автоматаар татна. Та татагдсан утгыг гараар засах боломжтой. Гаалийн татвар 5%, онцгой албан татвар нь үйлдвэрлэсэн он, хөдөлгүүрийн багтаамж, түлшний төрлөөс автоматаар сонгогдоно. НӨАТ нь гаалийн үнэ + гаалийн татвар + онцгой албан татварын нийлбэрийн 10%-иар тооцогдоно.{automaticTaxes.luxuryExciseMnt > 0 ? ` 360 сая ₮-өөс давсан гаалийн үнийн хэсэгт ${money.format(automaticTaxes.luxuryExciseMnt)} ₮ нэмэлт ОАТ тооцсон.` : ""} Эцсийн дүн нь гаалийн албан ёсны үнэлгээнээс шалтгаалан өөрчлөгдөж болно.</span></div>
     </section>
     <aside className="calculator-summary">
       <div className="calculator-summary-heading"><span>ЗАДАРГАА</span><h2>Монголд буух ойролцоох үнэ</h2></div>

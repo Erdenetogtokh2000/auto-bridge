@@ -42,7 +42,7 @@ export default async function QuoteInvoicePage({ params }: { params: Promise<{ i
         <div><span>ЗАХ ЗЭЭЛ</span><strong>{quote.market === "KOREA" ? "БНСУ" : quote.market}</strong><a href={quote.sourceUrl} target="_blank" rel="noreferrer">Зарын линк <ExternalLink/></a></div>
       </section>
 
-      <section className="invoice-vehicle"><span>СОНГОСОН АВТОМАШИН</span><h1>{(estimate.vehicleName ?? `${estimate.vehicleMake ?? ""} ${estimate.vehicleModel ?? ""}`.trim()) || "Автомашины нэр оруулаагүй"}</h1></section>
+      <section className="invoice-vehicle"><span>СОНГОСОН АВТОМАШИН</span><h1>{(estimate.vehicleName ?? `${estimate.vehicleMake ?? ""} ${estimate.vehicleModel ?? ""}`.trim()) || "Автомашины нэр оруулаагүй"}</h1><small>{estimate.productionYear ?? "—"} · {estimate.fuelType ?? "Түлш тодорхойгүй"}{estimate.engineCapacityCc ? ` · ${money.format(estimate.engineCapacityCc)} cc` : ""}</small></section>
 
       <table className="invoice-table">
         <thead><tr><th>Зардлын төрөл</th><th>Эх валют</th><th>Төгрөгөөр</th></tr></thead>
@@ -52,6 +52,7 @@ export default async function QuoteInvoicePage({ params }: { params: Promise<{ i
           <tr><td>Солонгос доторх тээвэр</td><td>{money.format(estimate.inlandTransportKrw)} KRW</td><td>{money.format(Math.round(estimate.inlandTransportKrw * estimate.krwMntRate))} ₮</td></tr>
           <tr><td>Олон улсын тээвэр</td><td>{money.format(estimate.oceanFreightUsd)} USD</td><td>{money.format(totals.oceanFreightMnt)} ₮</td></tr>
           <tr><td>Гаалийн татвар</td><td>-</td><td>{money.format(estimate.customsMnt)} ₮</td></tr>
+          <tr><td>Онцгой албан татвар</td><td>-</td><td>{money.format(estimate.exciseMnt)} ₮</td></tr>
           <tr><td>НӨАТ</td><td>-</td><td>{money.format(estimate.vatMnt)} ₮</td></tr>
           <tr><td>Бусад зардал</td><td>-</td><td>{money.format(estimate.otherCostsMnt)} ₮</td></tr>
         </tbody>

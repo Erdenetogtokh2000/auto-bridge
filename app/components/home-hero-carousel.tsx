@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CalendarDays, Calculator, CarFront, ChevronLeft, ChevronRight, MapPin, Pause, Play } from "lucide-react";
+import { ArrowRight, CalendarDays, CarFront, ChevronLeft, ChevronRight, MapPin, Pause, Play, Send } from "lucide-react";
 
 export type HeroExpo = {
   id: string;
@@ -28,7 +28,7 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
 
   useEffect(() => {
     if (paused || slides.length < 2) return;
-    const timer = window.setInterval(() => setActive((value) => (value + 1) % slides.length), 7000);
+    const timer = window.setInterval(() => setActive((value) => (value + 1) % slides.length), 9000);
     return () => window.clearInterval(timer);
   }, [paused, slides.length]);
 
@@ -38,21 +38,25 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
 
   const expo = current?.expo;
   const image = expo?.imageObjectKey ? `/api/expo-images/${encodeURIComponent(expo.id)}` : expo?.imageUrl;
-  const imageStyle = image ? { backgroundImage: `linear-gradient(90deg, rgba(7,22,47,.04), rgba(7,22,47,.18)), url("${image}")` } : undefined;
+  const imageStyle = image ? { backgroundImage: `linear-gradient(90deg, rgba(10,10,10,.12), rgba(10,10,10,.28)), url("${image}")` } : undefined;
 
   return <div className="hero-slide" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
     <div className={`hero-copy ${expo ? "hero-copy-expo" : ""}`} aria-live="polite">
       {expo ? <>
-        <div className="eyebrow expo-hero-eyebrow"><span /> УДАХГҮЙ БОЛОХ ЭКСПО</div>
+        <div className="eyebrow expo-hero-eyebrow"><span /> УДАХГҮЙ БОЛОХ АВТО ЭКСПО</div>
         <h1>{expo.title}</h1>
         <p>{expo.description ?? "Солонгос болон олон улсын автомашины шинэ загвар, технологийг нэг дороос үзээрэй."}</p>
         <div className="expo-hero-meta"><span><CalendarDays size={15} /> {formatDate(expo.startDate)} – {formatDate(expo.endDate)}</span><span><MapPin size={15} /> {expo.city}, {expo.country}</span></div>
         <a className="hero-expo-cta" href={`/expo/${encodeURIComponent(expo.id)}`}>Дэлгэрэнгүй үзэх <ArrowRight size={16} /></a>
       </> : <>
-        <div className="eyebrow"><span /> ПРЕМИУМ АВТОМАШИНЫ ИМПОРТЫН ШИЙДЭЛ</div>
-        <h1>Солонгосоос<br />Монгол хүртэл<br /><em>найдвартай.</em></h1>
-        <p>Баталгаатай автомашин, ил тод үнэ, найдвартай тээвэр — сонголтоос хүлээн авах хүртэл premium үйлчилгээг нэг дор.</p>
-        <div className="hero-actions"><a className="hero-action-primary" href="#vehicles"><CarFront size={18} /> Машин хайх <ArrowRight size={16} /></a><a className="hero-action-secondary" href="#calculator"><Calculator size={18} /> Үнийн тооцоо хийх <ArrowRight size={16} /></a></div>
+        <div className="eyebrow"><span /> GLOBAL AUTOMOTIVE SOURCING &amp; EXPORT</div>
+        <h1>GLOBAL AUTOMOTIVE<br /><em>SOURCING &amp; EXPORT</em></h1>
+        <p className="hero-brand-message">Таны сонголт. Дэлхийн зах зээл.</p>
+        <p className="hero-supporting-copy">Exceptional vehicles. Sourced without borders. Сонголтоос худалдан авалт, экспорт, тээвэр хүртэлх үйл явцыг AUTO BRIDGE нэг системд холбоно.</p>
+        <div className="hero-actions">
+          <a className="hero-action-primary" href="/vehicles"><CarFront size={18} /> МАШИН ХАЙХ <ArrowRight size={16} /></a>
+          <a className="hero-action-secondary" href="#quote"><Send size={17} /> МАШИН ЗАХИАЛАХ <ArrowRight size={16} /></a>
+        </div>
       </>}
     </div>
     <div className={`hero-visual ${expo ? "hero-visual-expo" : ""}`} style={imageStyle} aria-hidden="true" />

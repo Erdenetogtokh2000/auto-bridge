@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, CalendarDays, Calculator, CarFront, Check, ChevronLeft, ChevronRight, MapPin, Pause, Play } from "lucide-react";
+import { ArrowRight, CalendarDays, Calculator, CarFront, ChevronLeft, ChevronRight, MapPin, Pause, Play } from "lucide-react";
 
 export type HeroExpo = {
   id: string;
@@ -49,9 +49,9 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
         <div className="expo-hero-meta"><span><CalendarDays size={15} /> {formatDate(expo.startDate)} – {formatDate(expo.endDate)}</span><span><MapPin size={15} /> {expo.city}, {expo.country}</span></div>
         <a className="hero-expo-cta" href={`/expo/${encodeURIComponent(expo.id)}`}>Дэлгэрэнгүй үзэх <ArrowRight size={16} /></a>
       </> : <>
-        <div className="eyebrow"><span /> СОЛОНГОС · МОНГОЛ · АНУ</div>
+        <div className="eyebrow"><span /> ПРЕМИУМ АВТОМАШИНЫ ИМПОРТЫН ШИЙДЭЛ</div>
         <h1>Солонгосоос<br />Монгол хүртэл<br /><em>найдвартай.</em></h1>
-        <p>Баталгаатай автомашин, ил тод үнэ, найдвартай тээвэр — сонголтоос хүлээн авах хүртэл нэг дор.</p>
+        <p>Баталгаатай автомашин, ил тод үнэ, найдвартай тээвэр — сонголтоос хүлээн авах хүртэл premium үйлчилгээг нэг дор.</p>
         <div className="hero-actions"><a className="hero-action-primary" href="#vehicles"><CarFront size={18} /> Машин хайх <ArrowRight size={16} /></a><a className="hero-action-secondary" href="#calculator"><Calculator size={18} /> Үнийн тооцоо хийх <ArrowRight size={16} /></a></div>
       </>}
     </div>

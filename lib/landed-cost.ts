@@ -11,6 +11,7 @@ export type LandedCostInput = {
   krwMntRate: number;
   usdMntRate: number;
   customsMnt: number;
+  exciseMnt?: number;
   vatMnt: number;
   otherCostsMnt: number;
   depositMnt: number;
@@ -25,7 +26,11 @@ export function calculateLandedCost(input: LandedCostInput) {
   const originCostsMnt = round(input.purchaseFeeMnt + input.inlandTransportMnt);
   const vehicleSubtotalMnt = vehiclePriceMnt + originCostsMnt;
   const oceanFreightMnt = round(input.oceanFreightUsd * input.usdMntRate);
-  const totalMnt = vehiclePriceMnt + originCostsMnt + oceanFreightMnt + round(input.customsMnt) + round(input.vatMnt) + round(input.otherCostsMnt);
+  const customsMnt = round(input.customsMnt);
+  const exciseMnt = round(input.exciseMnt ?? 0);
+  const vatMnt = round(input.vatMnt);
+  const otherCostsMnt = round(input.otherCostsMnt);
+  const totalMnt = vehiclePriceMnt + originCostsMnt + oceanFreightMnt + customsMnt + exciseMnt + vatMnt + otherCostsMnt;
   const depositMnt = round(vehicleSubtotalMnt * DEPOSIT_RATE);
 
   return {
@@ -33,9 +38,10 @@ export function calculateLandedCost(input: LandedCostInput) {
     originCostsMnt,
     vehicleSubtotalMnt,
     oceanFreightMnt,
-    customsMnt: round(input.customsMnt),
-    vatMnt: round(input.vatMnt),
-    otherCostsMnt: round(input.otherCostsMnt),
+    customsMnt,
+    exciseMnt,
+    vatMnt,
+    otherCostsMnt,
     totalMnt,
     depositMnt,
     balanceMnt: Math.max(vehicleSubtotalMnt - depositMnt, 0),

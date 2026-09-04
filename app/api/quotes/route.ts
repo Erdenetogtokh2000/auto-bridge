@@ -3,6 +3,7 @@ import { notifications, quoteEstimates, quoteRequests, userProfiles } from "@/db
 import { notificationValues } from "@/lib/notifications";
 import { calculateQuote } from "@/lib/quote-calculation";
 import { calculateVehicleImportTaxes, normalizeVehicleFuelClass } from "@/lib/vehicle-import-taxes";
+import { fetchEncarVehicle, extractEncarCarId } from "@/lib/encar";
 
 function redirect(request: Request, path: string) {
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
@@ -31,26 +32,35 @@ export async function POST(request: Request) {
     const value = Number(formData.get(name) ?? fallback);
     return Number.isFinite(value) && value >= 0 && value <= 1_000_000_000_000_000 ? value : fallback;
   };
+
   if (sourceUrlInput && !/^https?:\/\//i.test(sourceUrlInput)) {
     return redirect(request, "/?quoteError=invalid-url#quote");
   }
   if (!requesterName || !requesterPhone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail)) {
     return redirect(request, "/?quoteError=contact-required#quote");
   }
+
+  const encarVehicle = !expoId && sourceUrlInput && extractEncarCarId(sourceUrlInput)
+    ? await fetchEncarVehicle(sourceUrlInput)
+    : null;
+  const shouldCreateEstimate = calculatorSubmitted || Boolean(encarVehicle);
+
   const id = `QR-${Date.now().toString(36).toUpperCase()}`;
-  const db=getDb();
+  const db = getDb();
   const now = new Date().toISOString();
-  const estimate = calculatorSubmitted ? (() => {
+
+  const estimate = shouldCreateEstimate ? (() => {
     const vehicleCurrency = String(formData.get("vehicleCurrency") ?? "KRW").toUpperCase() === "USD" ? "USD" : "KRW";
     const krwMntRate = numberValue("krwMntRate", 2.6) || 2.6;
     const usdMntRate = numberValue("usdMntRate", 3500) || 3500;
-    const vehiclePrice = numberValue("vehiclePrice");
-    const productionYear = Math.min(Math.max(Math.round(numberValue("productionYear", new Date().getFullYear() - 3)), 1980), new Date().getFullYear());
-    const fuelType = normalizeVehicleFuelClass(String(formData.get("fuelType") ?? "GASOLINE_DIESEL"));
-    const engineCapacityCc = fuelType === "ELECTRIC" ? 0 : Math.round(numberValue("engineCapacityCc", 2000));
+    const vehiclePrice = numberValue("vehiclePrice", encarVehicle?.priceKrw ?? 0) || encarVehicle?.priceKrw || 0;
+    const productionYear = Math.min(Math.max(Math.round(numberValue("productionYear", encarVehicle?.productionYear ?? new Date().getFullYear() - 3)), 1980), new Date().getFullYear());
+    const rawFuelType = String(formData.get("fuelType") ?? encarVehicle?.fuelClass ?? "GASOLINE_DIESEL");
+    const fuelType = normalizeVehicleFuelClass(rawFuelType);
+    const engineCapacityCc = fuelType === "ELECTRIC" ? 0 : Math.round(numberValue("engineCapacityCc", encarVehicle?.engineCapacityCc ?? 2000) || encarVehicle?.engineCapacityCc || 2000);
     const purchaseFeeMnt = numberValue("purchaseFeeMnt");
     const inlandTransportMnt = numberValue("inlandTransportMnt");
-    const oceanFreightUsd = numberValue("oceanFreightUsd");
+    const oceanFreightUsd = numberValue("oceanFreightUsd", 1800);
     const currencyRate = vehicleCurrency === "USD" ? usdMntRate : krwMntRate;
     const customsValueMnt = vehiclePrice * currencyRate + purchaseFeeMnt + inlandTransportMnt + oceanFreightUsd * usdMntRate;
     const taxes = calculateVehicleImportTaxes({ customsValueMnt, productionYear, engineCapacityCc, fuelClass: fuelType });
@@ -71,20 +81,44 @@ export async function POST(request: Request) {
       depositMnt: Math.round(numberValue("depositMnt")),
     };
     const totals = calculateQuote(numbers);
+    const vehicleMake = encarVehicle?.make ?? null;
+    const vehicleModel = encarVehicle?.model ?? null;
+    const vehicleName = [vehicleMake, vehicleModel, encarVehicle?.grade].filter(Boolean).join(" ") || null;
     const note = [
-      `Нийтийн тооцоолуураас үүссэн урьдчилсан дүн. Зах зээл: ${market}.`,
+      encarVehicle ? "Encar линкээс машины үндсэн мэдээллийг автоматаар татсан." : "Нийтийн тооцоолуураас үүссэн урьдчилсан дүн.",
+      `Зах зээл: ${market}.`,
       `Эх үнэ: ${vehiclePrice.toLocaleString("mn-MN")} ${vehicleCurrency}.`,
-      `Үйлдвэрлэсэн он: ${productionYear}, түлш: ${fuelType}, хөдөлгүүр: ${engineCapacityCc || "EV"} cc.`,
+      `Үйлдвэрлэсэн он: ${productionYear}, түлш: ${encarVehicle?.fuelName ?? fuelType}, хөдөлгүүр: ${engineCapacityCc || "EV"} cc.`,
+      encarVehicle?.mileageKm ? `Гүйлт: ${encarVehicle.mileageKm.toLocaleString("mn-MN")} км.` : "",
       `ОАТ: ${taxes.exciseMnt.toLocaleString("mn-MN")} ₮.`,
-      `Харилцагчийн өгсөн тооцооллыг админ баталгаажуулж шинэчилнэ.`,
-    ].join(" ");
-    return { id: `QE-${crypto.randomUUID()}`, quoteRequestId: id, productionYear, fuelType, engineCapacityCc, ...numbers, depositMnt: totals.depositMnt, totalMnt: totals.totalMnt, notes: note, createdAt: now, updatedAt: now };
+      "Харилцагчийн өгсөн болон автоматаар татсан мэдээллийг админ баталгаажуулж шинэчилнэ.",
+    ].filter(Boolean).join(" ");
+
+    return {
+      id: `QE-${crypto.randomUUID()}`,
+      quoteRequestId: id,
+      vehicleName,
+      vehicleMake,
+      vehicleModel,
+      productionYear,
+      mileageKm: encarVehicle?.mileageKm ?? 0,
+      fuelType,
+      engineCapacityCc,
+      ...numbers,
+      depositMnt: totals.depositMnt,
+      totalMnt: totals.totalMnt,
+      notes: note,
+      createdAt: now,
+      updatedAt: now,
+    };
   })() : null;
+
   await db.batch([
     db.insert(quoteRequests).values({ id, sourceUrl, market, requesterName, requesterPhone, requesterEmail, updatedAt: now }),
     db.insert(userProfiles).values({ id: `USR-${crypto.randomUUID()}`, email: requesterEmail, fullName: requesterName, phone: requesterPhone, role: "CUSTOMER", status: "ACTIVE", createdBy: "PUBLIC_QUOTE", updatedAt: now }).onConflictDoUpdate({ target: userProfiles.email, set: { fullName: requesterName, phone: requesterPhone, updatedAt: now } }),
-    db.insert(notifications).values(notificationValues({recipientType:"ADMIN",type:"QUOTE_REQUEST",title:expoId?"Шинэ Expo бүртгэлийн хүсэлт":"Шинэ үнийн хүсэлт",message:expoId?`${requesterName} ${expoTitle||"Expo"}-д бүртгүүлэх хүсэлт илгээлээ.`:`${requesterName} автомашины үнийн хүсэлт илгээлээ.`,href:`/admin#quotes`,actorEmail:requesterEmail})),
+    db.insert(notifications).values(notificationValues({ recipientType: "ADMIN", type: "QUOTE_REQUEST", title: expoId ? "Шинэ Expo бүртгэлийн хүсэлт" : "Шинэ үнийн хүсэлт", message: expoId ? `${requesterName} ${expoTitle || "Expo"}-д бүртгүүлэх хүсэлт илгээлээ.` : `${requesterName} автомашины үнийн хүсэлт илгээлээ.${encarVehicle ? " Encar мэдээлэл автоматаар танигдсан." : ""}`, href: "/admin#quotes", actorEmail: requesterEmail })),
     ...(estimate ? [db.insert(quoteEstimates).values(estimate)] : []),
   ]);
+
   return redirect(request, `/request-received?ref=${encodeURIComponent(id)}`);
 }

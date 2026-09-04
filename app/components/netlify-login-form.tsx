@@ -50,7 +50,7 @@ export function NetlifyLoginForm() {
     setBusy(true);
     try {
       const { error } = await getSupabase().auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/login`,
+        redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
       });
       if (error) throw error;
       setMessage("Нууц үг сэргээх холбоосыг и-мэйлээр илгээлээ.");

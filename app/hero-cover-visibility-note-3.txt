@@ -1,1 +1,0 @@
-No functional behavior changed. This branch only corrects the hero image stacking context and loads the final CSS override.

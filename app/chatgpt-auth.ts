@@ -100,7 +100,10 @@ export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const user = await getRawChatGPTUser();
   if (!user) return null;
   const email = normalizeEmail(user.email);
-  if (configuredAdminEmails().includes(email)) return user;
+  // Production/fallback staff accounts resolve directly from the authenticated
+  // email, matching the original chatgpt.site behavior. A temporary database
+  // outage or missing DATABASE_URL must not turn a successful login into a 500.
+  if (configuredRoleForEmail(email)) return user;
   const [profile] = await getDb().select({ status: userProfiles.status }).from(userProfiles)
     .where(eq(userProfiles.email, email)).limit(1);
   return profile?.status === "SUSPENDED" ? null : user;

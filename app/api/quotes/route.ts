@@ -2,6 +2,7 @@ import { getDb } from "@/db";
 import { notifications, quoteEstimates, quoteRequests, userProfiles } from "@/db/schema";
 import { notificationValues } from "@/lib/notifications";
 import { calculateQuote } from "@/lib/quote-calculation";
+import { calculateVehicleImportTaxes, normalizeVehicleFuelClass } from "@/lib/vehicle-import-taxes";
 
 function redirect(request: Request, path: string) {
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
@@ -44,13 +45,40 @@ export async function POST(request: Request) {
     const krwMntRate = numberValue("krwMntRate", 2.6) || 2.6;
     const usdMntRate = numberValue("usdMntRate", 3500) || 3500;
     const vehiclePrice = numberValue("vehiclePrice");
+    const productionYear = Math.min(Math.max(Math.round(numberValue("productionYear", new Date().getFullYear() - 3)), 1980), new Date().getFullYear());
+    const fuelType = normalizeVehicleFuelClass(String(formData.get("fuelType") ?? "GASOLINE_DIESEL"));
+    const engineCapacityCc = fuelType === "ELECTRIC" ? 0 : Math.round(numberValue("engineCapacityCc", 2000));
+    const purchaseFeeMnt = numberValue("purchaseFeeMnt");
+    const inlandTransportMnt = numberValue("inlandTransportMnt");
+    const oceanFreightUsd = numberValue("oceanFreightUsd");
+    const currencyRate = vehicleCurrency === "USD" ? usdMntRate : krwMntRate;
+    const customsValueMnt = vehiclePrice * currencyRate + purchaseFeeMnt + inlandTransportMnt + oceanFreightUsd * usdMntRate;
+    const taxes = calculateVehicleImportTaxes({ customsValueMnt, productionYear, engineCapacityCc, fuelClass: fuelType });
     const vehiclePriceKrw = Math.round(vehicleCurrency === "USD" ? vehiclePrice * usdMntRate / krwMntRate : vehiclePrice);
-    const purchaseFeeKrw = Math.round(numberValue("purchaseFeeMnt") / krwMntRate);
-    const inlandTransportKrw = Math.round(numberValue("inlandTransportMnt") / krwMntRate);
-    const numbers = { vehiclePriceKrw, purchaseFeeKrw, inlandTransportKrw, oceanFreightUsd: numberValue("oceanFreightUsd"), krwMntRate, usdMntRate, customsMnt: Math.round(numberValue("customsMnt")), vatMnt: Math.round(numberValue("vatMnt")), otherCostsMnt: Math.round(numberValue("otherCostsMnt")), depositMnt: Math.round(numberValue("depositMnt")) };
+    const purchaseFeeKrw = Math.round(purchaseFeeMnt / krwMntRate);
+    const inlandTransportKrw = Math.round(inlandTransportMnt / krwMntRate);
+    const numbers = {
+      vehiclePriceKrw,
+      purchaseFeeKrw,
+      inlandTransportKrw,
+      oceanFreightUsd,
+      krwMntRate,
+      usdMntRate,
+      customsMnt: taxes.customsMnt,
+      exciseMnt: taxes.exciseMnt,
+      vatMnt: taxes.vatMnt,
+      otherCostsMnt: Math.round(numberValue("otherCostsMnt")),
+      depositMnt: Math.round(numberValue("depositMnt")),
+    };
     const totals = calculateQuote(numbers);
-    const note = [`Нийтийн тооцоолуураас үүссэн урьдчилсан дүн. Зах зээл: ${market}.`, `Эх үнэ: ${vehiclePrice.toLocaleString("mn-MN")} ${vehicleCurrency}.`, `Харилцагчийн өгсөн тооцооллыг админ баталгаажуулж шинэчилнэ.`].join(" ");
-    return { id: `QE-${crypto.randomUUID()}`, quoteRequestId: id, ...numbers, depositMnt: totals.depositMnt, totalMnt: totals.totalMnt, notes: note, createdAt: now, updatedAt: now };
+    const note = [
+      `Нийтийн тооцоолуураас үүссэн урьдчилсан дүн. Зах зээл: ${market}.`,
+      `Эх үнэ: ${vehiclePrice.toLocaleString("mn-MN")} ${vehicleCurrency}.`,
+      `Үйлдвэрлэсэн он: ${productionYear}, түлш: ${fuelType}, хөдөлгүүр: ${engineCapacityCc || "EV"} cc.`,
+      `ОАТ: ${taxes.exciseMnt.toLocaleString("mn-MN")} ₮.`,
+      `Харилцагчийн өгсөн тооцооллыг админ баталгаажуулж шинэчилнэ.`,
+    ].join(" ");
+    return { id: `QE-${crypto.randomUUID()}`, quoteRequestId: id, productionYear, fuelType, engineCapacityCc, ...numbers, depositMnt: totals.depositMnt, totalMnt: totals.totalMnt, notes: note, createdAt: now, updatedAt: now };
   })() : null;
   await db.batch([
     db.insert(quoteRequests).values({ id, sourceUrl, market, requesterName, requesterPhone, requesterEmail, updatedAt: now }),

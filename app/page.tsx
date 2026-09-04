@@ -77,7 +77,7 @@ export default async function Home() {
           <span>БНСУ · МОНГОЛ · АНУ</span>
           <div className="topline-links">
             <span><MapPin size={13} /> Seoul, Korea</span>
-            <a href="#contact">Тусламж</a>
+            <a href="/#contact">Тусламж</a>
             <span className="language-links"><a href="/">MN</a><a href="/ko">한국어</a><ChevronRight size={12} /></span>
           </div>
         </div>
@@ -85,25 +85,25 @@ export default async function Home() {
 
       <header className="main-header">
         <div className="container nav-wrap">
-          <a className="brand" href="#top" aria-label="AUTO BRIDGE нүүр">
+          <a className="brand" href="/" aria-label="AUTO BRIDGE нүүр">
             <BrandLogo />
           </a>
           <nav className="desktop-nav" aria-label="Үндсэн цэс">
-            <a className="active" href="#top">Нүүр</a>
-            <a href="#vehicles">Машин хайх</a>
-            <a href="#calculator">Үнийн тооцоо</a>
-            <a href="#tracking">Тээвэр шалгах</a>
-            <a href="#expo">Экспо</a>
-            <a href="#news">Мэдээ</a>
-            <a href="#about">Бидний тухай</a>
-            <a href="#contact">Холбоо барих</a>
+            <a className="active" href="/#top">Нүүр</a>
+            <a href="/vehicles">Машин хайх</a>
+            <a href="/calculator">Үнийн тооцоо</a>
+            <a href="/#tracking">Тээвэр шалгах</a>
+            <a href="/expo">Авто экспо</a>
+            <a href="/news">Мэдээ</a>
+            <a href="/#about">Бидний тухай</a>
+            <a href="/#contact">Холбоо барих</a>
           </nav>
           <div className="nav-actions">
             <a className="nav-phone" href="tel:+97670113322"><strong>☎ 7011-3322</strong><small>Даваа–Баасан 09:00–18:00</small></a>
             <a className="language-pill" href="/">MN <ChevronRight size={13} /></a>
             <a className="login-link" href={accountPath}>{accountLabel}</a>
-            <a className="primary-button small" href="#quote">Үнийн санал авах <ArrowRight size={15} /></a>
-            <details className="mobile-menu"><summary aria-label="Цэс нээх"><Menu size={22} /></summary><div><a href="#vehicles">Машин хайх</a><a href="#calculator">Үнийн тооцоо</a><a href="#tracking">Тээврийн явц</a><a href="#expo">Экспо</a><a href="#news">Мэдээ</a><a href={accountPath}>{accountLabel}</a></div></details>
+            <a className="primary-button small" href="/#quote">Үнийн санал авах <ArrowRight size={15} /></a>
+            <details className="mobile-menu"><summary aria-label="Цэс нээх"><Menu size={22} /></summary><div><a href="/#top">Нүүр</a><a href="/vehicles">Машин хайх</a><a href="/calculator">Үнийн тооцоо</a><a href="/#tracking">Тээврийн явц</a><a href="/expo">Авто экспо</a><a href="/news">Мэдээ</a><a href="/#about">Бидний тухай</a><a href="/#contact">Холбоо барих</a><a href={accountPath}>{accountLabel}</a></div></details>
           </div>
         </div>
       </header>
@@ -135,7 +135,7 @@ export default async function Home() {
             </div>
             <div className="quote-footer">
               <span><ShieldCheck size={16} /> Таны мэдээлэл хамгаалагдана</span>
-              <a href="#calculator">Гааль, татвар тооцоолох <ChevronRight size={14} /></a>
+              <a href="/calculator">Гааль, татвар тооцоолох <ChevronRight size={14} /></a>
             </div>
           </form>
         </div>
@@ -173,7 +173,7 @@ export default async function Home() {
           </div>
           <div className="expo-actions">
             <a className="outline-button" href="/expo">Бүх үзэсгэлэн харах <ArrowRight size={17} /></a>
-            {nextExpo && <details className="expo-register"><summary>Экспод бүртгүүлэх <ArrowRight size={15} /></summary><form action="/api/quotes" method="post"><input type="hidden" name="vehicleUrl" value={`https://korea-auto-import.erdenetogtokh2000.chatgpt.site/expo/${nextExpo.id}`} /><input type="hidden" name="market" value="EXPO" /><input type="hidden" name="expoId" value={nextExpo.id} /><input type="hidden" name="expoTitle" value={nextExpo.title} /><label><span>Нэр</span><input name="requesterName" required placeholder="Таны нэр" /></label><label><span>Утас</span><input name="requesterPhone" required placeholder="9911 2233" /></label><label><span>И-мэйл</span><input name="requesterEmail" type="email" required placeholder="name@example.com" /></label><button type="submit">Хүсэлт илгээх <ArrowRight size={14} /></button></form></details>}
+            {nextExpo && <details className="expo-register"><summary>Экспод бүртгүүлэх <ArrowRight size={15} /></summary><form action="/api/quotes" method="post"><input type="hidden" name="vehicleUrl" value={`https://autobridge.mn/expo/${nextExpo.id}`} /><input type="hidden" name="market" value="EXPO" /><input type="hidden" name="expoId" value={nextExpo.id} /><input type="hidden" name="expoTitle" value={nextExpo.title} /><label><span>Нэр</span><input name="requesterName" required placeholder="Таны нэр" /></label><label><span>Утас</span><input name="requesterPhone" required placeholder="9911 2233" /></label><label><span>И-мэйл</span><input name="requesterEmail" type="email" required placeholder="name@example.com" /></label><button type="submit">Хүсэлт илгээх <ArrowRight size={14} /></button></form></details>}
           </div>
         </div>
       </section>
@@ -200,7 +200,7 @@ export default async function Home() {
                 </div>
               </article>
             );})}
-          </div>:<div className="home-catalog-empty"><CarFront/><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын линкийг илгээж үнийн санал авах боломжтой.</p></div><a href="#quote">Үнийн санал авах <ArrowRight/></a></div>}
+          </div>:<div className="home-catalog-empty"><CarFront/><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын линкийг илгээж үнийн санал авах боломжтой.</p></div><a href="/#quote">Үнийн санал авах <ArrowRight/></a></div>}
         </div>
       </section>
 
@@ -248,10 +248,9 @@ export default async function Home() {
 
       <footer id="contact">
         <div className="container footer-inner">
-          <div className="brand footer-brand">
-            <span className="brand-mark"><span className="brand-k">A</span></span>
-            <span className="brand-copy"><strong>AUTO <em>BRIDGE</em></strong><small>СОЛОНГОС · МОНГОЛ · АНУ</small></span>
-          </div>
+          <a className="brand footer-brand" href="/" aria-label="AUTO BRIDGE нүүр">
+            <BrandLogo />
+          </a>
           <p>Сонголтоос хүргэлт хүртэл нэг системд.</p>
           <span className="footer-links"><a href="/privacy">Нууцлал</a><a href="/terms">Үйлчилгээний нөхцөл</a><span>© 2026 AUTO BRIDGE</span></span>
         </div>

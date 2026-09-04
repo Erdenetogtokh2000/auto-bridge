@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./phase12.css";
 import "./dashboard-typography.css";
+import "./luxury-theme.css";
 import { NetlifyAuthCallback } from "@/app/components/netlify-auth-callback";
 
 export const metadata: Metadata = {

@@ -4,6 +4,7 @@ import "./phase12.css";
 import "./dashboard-typography.css";
 import "./luxury-theme.css";
 import "./public-pages-luxury.css";
+import "./quote-flow-luxury.css";
 import { NetlifyAuthCallback } from "@/app/components/netlify-auth-callback";
 
 export const metadata: Metadata = {

@@ -3,8 +3,16 @@ import { notifications, quoteEstimates, quoteRequests, userProfiles } from "@/db
 import { notificationValues } from "@/lib/notifications";
 import { calculateQuote } from "@/lib/quote-calculation";
 
-function redirect(path: string) {
-  return new Response(null, { status: 303, headers: { Location: path } });
+function redirect(request: Request, path: string) {
+  const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
+  const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const renderHost = process.env.RENDER_EXTERNAL_HOSTNAME?.trim();
+  const publicOrigin = renderHost
+    ? `https://${renderHost}`
+    : forwardedHost
+      ? `${forwardedProto === "http" ? "http" : "https"}://${forwardedHost}`
+      : new URL(request.url).origin;
+  return Response.redirect(new URL(path, publicOrigin), 303);
 }
 
 export async function POST(request: Request) {
@@ -23,10 +31,10 @@ export async function POST(request: Request) {
     return Number.isFinite(value) && value >= 0 && value <= 1_000_000_000_000_000 ? value : fallback;
   };
   if (sourceUrlInput && !/^https?:\/\//i.test(sourceUrlInput)) {
-    return redirect("/?quoteError=invalid-url#quote");
+    return redirect(request, "/?quoteError=invalid-url#quote");
   }
   if (!requesterName || !requesterPhone || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(requesterEmail)) {
-    return redirect("/?quoteError=contact-required#quote");
+    return redirect(request, "/?quoteError=contact-required#quote");
   }
   const id = `QR-${Date.now().toString(36).toUpperCase()}`;
   const db=getDb();
@@ -50,5 +58,5 @@ export async function POST(request: Request) {
     db.insert(notifications).values(notificationValues({recipientType:"ADMIN",type:"QUOTE_REQUEST",title:expoId?"Шинэ Expo бүртгэлийн хүсэлт":"Шинэ үнийн хүсэлт",message:expoId?`${requesterName} ${expoTitle||"Expo"}-д бүртгүүлэх хүсэлт илгээлээ.`:`${requesterName} автомашины үнийн хүсэлт илгээлээ.`,href:`/admin#quotes`,actorEmail:requesterEmail})),
     ...(estimate ? [db.insert(quoteEstimates).values(estimate)] : []),
   ]);
-  return redirect(`/request-received?ref=${encodeURIComponent(id)}`);
+  return redirect(request, `/request-received?ref=${encodeURIComponent(id)}`);
 }

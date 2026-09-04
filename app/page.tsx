@@ -21,6 +21,7 @@ import { expos, vehicles } from "@/db/schema";
 import { PublicCostCalculator } from "@/app/components/public-cost-calculator";
 import { HomeHeroCarousel, type HeroExpo } from "@/app/components/home-hero-carousel";
 import { BrandLogo } from "@/app/components/brand-logo";
+import { getAuthenticatedRole, roleHomePath } from "@/app/chatgpt-auth";
 
 const marketCards = [
   {
@@ -63,6 +64,9 @@ const marketLabel:Record<string,string>={KOREA:"Солонгос",USA:"Амер�
 
 export default async function Home() {
   const[vehicleCards,heroExpos]=await Promise.all([loadFeaturedVehicles(),loadHeroExpos()]);
+  const role = await getAuthenticatedRole();
+  const accountPath = role ? roleHomePath(role) : "/login";
+  const accountLabel = role ? "Кабинет" : "Нэвтрэх";
   const nextExpo = heroExpos[0] ?? null;
   const nextExpoImage = nextExpo?.imageObjectKey ? `/api/expo-images/${encodeURIComponent(nextExpo.id)}` : nextExpo?.imageUrl ?? null;
   const expoBackgroundStyle = nextExpoImage ? { backgroundImage: `url("${nextExpoImage}")` } : undefined;
@@ -97,9 +101,9 @@ export default async function Home() {
           <div className="nav-actions">
             <a className="nav-phone" href="tel:+97670113322"><strong>☎ 7011-3322</strong><small>Даваа–Баасан 09:00–18:00</small></a>
             <a className="language-pill" href="/">MN <ChevronRight size={13} /></a>
-            <a className="login-link" href="/login">Нэвтрэх</a>
+            <a className="login-link" href={accountPath}>{accountLabel}</a>
             <a className="primary-button small" href="#quote">Үнийн санал авах <ArrowRight size={15} /></a>
-            <details className="mobile-menu"><summary aria-label="Цэс нээх"><Menu size={22} /></summary><div><a href="#vehicles">Машин хайх</a><a href="#calculator">Үнийн тооцоо</a><a href="#tracking">Тээврийн явц</a><a href="#expo">Экспо</a><a href="#news">Мэдээ</a><a href="/login">Нэвтрэх</a></div></details>
+            <details className="mobile-menu"><summary aria-label="Цэс нээх"><Menu size={22} /></summary><div><a href="#vehicles">Машин хайх</a><a href="#calculator">Үнийн тооцоо</a><a href="#tracking">Тээврийн явц</a><a href="#expo">Экспо</a><a href="#news">Мэдээ</a><a href={accountPath}>{accountLabel}</a></div></details>
           </div>
         </div>
       </header>

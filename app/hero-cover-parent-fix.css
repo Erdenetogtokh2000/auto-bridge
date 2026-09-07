@@ -1,27 +1,66 @@
-/* AUTO BRIDGE hero cover visibility fix.
-   The previous cinematic container had z-index:-1, which placed the whole cover behind the hero's solid background.
-   Keep the cover inside the hero stacking context and leave all live HTML content above it. */
+/* AUTO BRIDGE homepage hero cover — final direct-image implementation.
+   The cover is rendered as a real <img> instead of nested CSS background layers,
+   eliminating previous stacking-context conflicts while preserving all live hero content. */
 
 .global-sourcing-home .hero-slide {
+  position: relative !important;
   isolation: isolate;
+  overflow: hidden !important;
 }
 
-.global-sourcing-home .cinematic-film {
+/* Disable the older cinematic background system completely on the default homepage hero. */
+.global-sourcing-home .cinematic-film,
+.global-sourcing-home .cinematic-film-poster,
+.global-sourcing-home .cinematic-film-shot,
+.global-sourcing-home .cinematic-film-headlight-glow,
+.global-sourcing-home .cinematic-film-light-sweep,
+.global-sourcing-home .cinematic-film-vignette,
+.global-sourcing-home .cinematic-film-grain {
+  display: none !important;
+}
+
+.global-sourcing-home .hero-cover-direct {
   position: absolute !important;
   inset: 0 !important;
   z-index: 0 !important;
   width: 100% !important;
   height: 100% !important;
   min-height: max(680px, 100svh) !important;
-  background: transparent !important;
+  overflow: hidden;
+  background: #050b14;
+  pointer-events: none;
 }
 
-.global-sourcing-home .cinematic-film-poster {
-  z-index: 0 !important;
+.global-sourcing-home .hero-cover-direct > img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  filter: none !important;
+  transform: none !important;
 }
 
-.global-sourcing-home .cinematic-film-vignette {
-  z-index: 1 !important;
+/* Only shade the text side; keep the vehicles/showroom on the right clearly visible. */
+.global-sourcing-home .hero-cover-direct-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(90deg,
+      rgba(5, 11, 20, .82) 0%,
+      rgba(5, 11, 20, .62) 24%,
+      rgba(5, 11, 20, .30) 42%,
+      rgba(5, 11, 20, .08) 58%,
+      rgba(5, 11, 20, .02) 100%),
+    linear-gradient(180deg,
+      rgba(5, 11, 20, .08) 0%,
+      transparent 58%,
+      rgba(5, 11, 20, .18) 100%);
 }
 
 .global-sourcing-home .hero-copy-cinematic,
@@ -31,7 +70,39 @@
   z-index: 3 !important;
 }
 
-/* Keep the otherwise-empty visual layer from covering the supplied cover. */
+/* Keep the otherwise-empty visual layer from masking the real cover image. */
 .global-sourcing-home .hero-slide:not(:has(.hero-copy-expo)) .hero-visual {
   display: none !important;
+}
+
+@media (max-width: 980px) {
+  .global-sourcing-home .hero-cover-direct > img {
+    object-position: 62% center !important;
+  }
+
+  .global-sourcing-home .hero-cover-direct-overlay {
+    background:
+      linear-gradient(90deg,
+        rgba(5,11,20,.84) 0%,
+        rgba(5,11,20,.62) 38%,
+        rgba(5,11,20,.24) 66%,
+        rgba(5,11,20,.08) 100%),
+      linear-gradient(180deg, rgba(5,11,20,.08) 0%, transparent 52%, rgba(5,11,20,.24) 100%);
+  }
+}
+
+@media (max-width: 680px) {
+  .global-sourcing-home .hero-cover-direct > img {
+    object-position: 70% center !important;
+  }
+
+  .global-sourcing-home .hero-cover-direct-overlay {
+    background:
+      linear-gradient(180deg,
+        rgba(5,11,20,.30) 0%,
+        rgba(5,11,20,.20) 32%,
+        rgba(5,11,20,.50) 72%,
+        rgba(5,11,20,.78) 100%),
+      linear-gradient(90deg, rgba(5,11,20,.52) 0%, rgba(5,11,20,.18) 70%, rgba(5,11,20,.10) 100%);
+  }
 }

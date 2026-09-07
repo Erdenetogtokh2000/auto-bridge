@@ -22,20 +22,22 @@ function formatDate(value: string) {
   return value.replaceAll("-", ".");
 }
 
-function CinematicAutomotiveFilm() {
+function HeroCoverImage() {
   return (
-    <div className="cinematic-film" aria-hidden="true">
-      <div className="cinematic-film-poster" />
-      <div className="cinematic-film-shot film-shot-silhouette" />
-      <div className="cinematic-film-shot film-shot-grille" />
-      <div className="cinematic-film-shot film-shot-headlight" />
-      <div className="cinematic-film-shot film-shot-body" />
-      <div className="cinematic-film-shot film-shot-wheel" />
-      <div className="cinematic-film-shot film-shot-full" />
-      <div className="cinematic-film-headlight-glow" />
-      <div className="cinematic-film-light-sweep" />
-      <div className="cinematic-film-vignette" />
-      <div className="cinematic-film-grain" />
+    <div className="hero-cover-direct" aria-hidden="true">
+      <img
+        src="/images/auto-bridge-cover-showroom.webp"
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+        onError={(event) => {
+          const image = event.currentTarget;
+          if (image.dataset.fallback === "true") return;
+          image.dataset.fallback = "true";
+          image.src = "/images/korea-mongolia-vehicle-import-hero.png";
+        }}
+      />
+      <div className="hero-cover-direct-overlay" />
     </div>
   );
 }
@@ -62,7 +64,7 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
 
   return (
     <div className="hero-slide" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
-      {!expo && <CinematicAutomotiveFilm />}
+      {!expo && <HeroCoverImage />}
 
       <div className={`hero-copy ${expo ? "hero-copy-expo" : "hero-copy-cinematic"}`} aria-live="polite">
         {expo ? <>

@@ -26,7 +26,7 @@ function HeroCoverImage() {
   return (
     <div className="hero-cover-direct" aria-hidden="true">
       <img
-        src="/images/auto-bridge-cover-showroom.webp"
+        src="/images/auto-bridge-cover-night-showroom.webp"
         alt=""
         fetchPriority="high"
         decoding="async"

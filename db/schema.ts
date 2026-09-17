@@ -41,7 +41,7 @@ export const vehicles = pgTable("vehicles", {
   vin: text("vin"),
   fuelType: text("fuel_type"), trim: text("trim"), color: text("color"), engineCapacityCc: integer("engine_capacity_cc"),
   priceKrw: integer("price_krw"), priceAmount: doublePrecision("price_amount"), priceCurrency: text("price_currency").default("KRW"),
-  imageUrl: text("image_url"), imageObjectKey: text("image_object_key"), description: text("description"),
+  imageUrl: text("image_url"), imageObjectKey: text("image_object_key"), galleryImageUrls: text("gallery_image_urls").notNull().default("[]"), description: text("description"),
   isPublished: boolean("is_published").notNull().default(false),
   isFeatured: boolean("is_featured").notNull().default(false),
   status: text("status").notNull().default("AVAILABLE"),

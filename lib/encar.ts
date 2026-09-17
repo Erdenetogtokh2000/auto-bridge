@@ -13,6 +13,7 @@ export type EncarVehicleSummary = {
   engineCapacityCc: number | null;
   priceKrw: number | null;
   imageUrl: string | null;
+  imageUrls: string[];
 };
 
 const ENCAR_HOSTS = new Set(["encar.com", "www.encar.com", "fem.encar.com", "m.encar.com"]);
@@ -80,6 +81,7 @@ export async function fetchEncarVehicle(rawUrl: string): Promise<EncarVehicleSum
     const photos = Array.isArray(payload.photos) ? payload.photos as Array<Record<string, unknown>> : [];
 
     const priceManwon = positiveNumber(advertisement.price);
+    const imageUrls = [...new Set(photos.map((photo) => String(photo.path ?? "").trim()).filter(Boolean).map((path) => path.startsWith("http") ? path : `https://ci.encar.com${path}`))];
     const photoPath = String(photos.find((photo) => photo.type === "OUTER")?.path ?? photos[0]?.path ?? "").trim();
     const imageUrl = photoPath ? (photoPath.startsWith("http") ? photoPath : `https://ci.encar.com${photoPath}`) : null;
     const fuelName = String(spec.fuelName ?? "").trim() || null;
@@ -97,6 +99,7 @@ export async function fetchEncarVehicle(rawUrl: string): Promise<EncarVehicleSum
       engineCapacityCc: positiveNumber(spec.displacement) ? Math.round(Number(spec.displacement)) : null,
       priceKrw: priceManwon ? Math.round(priceManwon * 10_000) : null,
       imageUrl,
+      imageUrls,
     };
   } catch {
     return null;

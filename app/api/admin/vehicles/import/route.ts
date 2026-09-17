@@ -1,5 +1,5 @@
 import { getCatalogManager as getAdminUser } from "@/app/chatgpt-auth";
-import { importVehicleFromUrl } from "@/lib/vehicle-source-import";
+import { importVehicleFromUrl, VehicleImportError } from "@/lib/vehicle-source-import";
 
 export async function POST(request: Request) {
   const admin = await getAdminUser();
@@ -11,7 +11,10 @@ export async function POST(request: Request) {
     const vehicle = await importVehicleFromUrl(url);
     if (!vehicle) return Response.json({ error: "listing could not be imported" }, { status: 422 });
     return Response.json({ vehicle });
-  } catch {
+  } catch (error) {
+    if (error instanceof VehicleImportError) {
+      return Response.json({ error: error.message, code: error.code }, { status: error.status });
+    }
     return Response.json({ error: "listing service unavailable" }, { status: 502 });
   }
 }

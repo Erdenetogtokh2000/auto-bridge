@@ -31,13 +31,18 @@ export function normalizeVehicleForm(formData: FormData) {
   const color = String(formData.get("color") ?? "").trim();
   const fuelType = String(formData.get("fuelType") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
+  let galleryImageUrls: string[] = [];
+  try {
+    const parsed = JSON.parse(String(formData.get("galleryImageUrls") ?? "[]"));
+    if (Array.isArray(parsed)) galleryImageUrls = [...new Set(parsed.map(String).filter(value => /^https?:\/\//i.test(value)))].slice(0, 80);
+  } catch { throw new Error("INVALID_GALLERY"); }
   if (vin.length > 32 || trim.length > 160 || color.length > 80 || fuelType.length > 80 || description.length > 1200) throw new Error("INVALID_TEXT");
   return {
     stockNo, sourceMarket, listingUrl: optionalUrl(formData.get("listingUrl")),
     make, model, productionYear, mileageKm: Math.round(mileageKm), vin: vin || null, fuelType: fuelType || null,
     trim: trim || null, color: color || null, engineCapacityCc: engineCapacityCc ? Math.round(engineCapacityCc) : null,
     priceAmount, priceCurrency, priceKrw: priceCurrency === "KRW" ? Math.round(priceAmount) : null,
-    imageUrl: optionalUrl(formData.get("imageUrl")), description: description || null,
+    imageUrl: optionalUrl(formData.get("imageUrl")), galleryImageUrls: JSON.stringify(galleryImageUrls), description: description || null,
     status, isPublished: formData.get("isPublished") === "true", isFeatured: formData.get("isFeatured") === "true",
   };
 }

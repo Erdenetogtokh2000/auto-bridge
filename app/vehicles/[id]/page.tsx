@@ -20,6 +20,9 @@ export default async function PublicVehicleDetail({ params }: { params: Promise<
   if (!v) return <main className="catalog-page"><PublicHeader section="Автомашины каталог" /><section className="container catalog-empty"><CarFront /><h2>Автомашин олдсонгүй</h2><a href="/vehicles"><ArrowLeft /> Каталог руу буцах</a></section></main>;
 
   const image = v.imageObjectKey ? `/api/vehicle-images/${encodeURIComponent(v.id)}` : v.imageUrl;
+  let gallery: string[] = [];
+  try { gallery = JSON.parse(v.galleryImageUrls ?? "[]"); } catch { gallery = []; }
+  gallery = [...new Set([image, ...gallery].filter((value): value is string => Boolean(value)))];
   const price = Number(v.priceAmount ?? v.priceKrw ?? 0);
 
   return <main className="catalog-page vehicle-showroom-page">
@@ -49,6 +52,9 @@ export default async function PublicVehicleDetail({ params }: { params: Promise<
           </div>
         </div>
       </div>
+      {gallery.length > 1 && <section className="vehicle-photo-gallery" aria-label="Автомашины зургийн цомог">
+        {gallery.map((photo,index)=><a key={photo} href={photo} target="_blank" rel="noreferrer"><img src={photo} alt={`${v.make} ${v.model} зураг ${index+1}`} loading={index<4?"eager":"lazy"}/></a>)}
+      </section>}
 
       <div className="vehicle-showroom-sections">
         <section>

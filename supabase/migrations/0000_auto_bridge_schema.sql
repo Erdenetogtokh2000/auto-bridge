@@ -228,6 +228,7 @@ CREATE TABLE "vehicles" (
 	"price_currency" text DEFAULT 'KRW',
 	"image_url" text,
 	"image_object_key" text,
+	"gallery_image_urls" text DEFAULT '[]' NOT NULL,
 	"description" text,
 	"is_published" boolean DEFAULT false NOT NULL,
 	"is_featured" boolean DEFAULT false NOT NULL,

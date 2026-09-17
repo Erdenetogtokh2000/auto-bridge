@@ -317,6 +317,7 @@
 .catalog-page .vehicle-public-actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 10px; }
 .catalog-page .vehicle-public-actions .admin-add { color: #111; background: var(--ab-gold); border-color: var(--ab-gold); }
 .catalog-page .vehicle-public-actions .document-download-link { color: var(--ab-gold-light); border-color: rgba(185,164,122,.38); background: transparent; }
+.catalog-page .vehicle-photo-gallery { margin-top: 18px; display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }.catalog-page .vehicle-photo-gallery a { height: 170px; overflow: hidden; border: 1px solid rgba(243,241,236,.10); border-radius: 4px; background: #151515; }.catalog-page .vehicle-photo-gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }.catalog-page .vehicle-photo-gallery a:hover img { transform: scale(1.035); }
 
 /* Operational dashboard brand treatment: practical, not marketing */
 .dashboard-sidebar { --sidebar: #111111; --sidebar-foreground: #dedbd4; --sidebar-primary: #b9a47a; --sidebar-primary-foreground: #111111; --sidebar-accent: #1c1c1c; --sidebar-accent-foreground: #ffffff; --sidebar-border: #2a2a2a; }
@@ -433,6 +434,7 @@
   .catalog-page .vehicle-public-detail-card { grid-template-columns: 1fr; }
   .catalog-page .vehicle-public-image { min-height: 330px; }
   .catalog-page .vehicle-public-copy { padding: 28px 22px; }
+  .catalog-page .vehicle-photo-gallery { grid-template-columns: repeat(2,minmax(0,1fr)); }.catalog-page .vehicle-photo-gallery a { height: 130px; }
   .catalog-page .vehicle-public-specs { grid-template-columns: 1fr; }
 }
 

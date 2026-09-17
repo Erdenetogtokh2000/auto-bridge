@@ -21,6 +21,17 @@ export type ImportedVehicle = {
   description: string | null;
 };
 
+export class VehicleImportError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+    public readonly status = 502,
+  ) {
+    super(message);
+    this.name = "VehicleImportError";
+  }
+}
+
 const CARS_HOSTS = new Set(["cars.com", "www.cars.com"]);
 
 function clean(value: unknown) {
@@ -54,6 +65,107 @@ function extractListingId(url: URL) {
     ?? url.searchParams.get("listing_id")
     ?? url.pathname.match(/([a-f0-9]{8}-[a-f0-9-]{27,})/i)?.[1]
     ?? `CARS-${Date.now()}`;
+}
+
+function engineCapacityFromText(value: unknown) {
+  const match = String(value ?? "").match(/(\d+(?:\.\d+)?)\s*l\b/i);
+  return match ? Math.round(Number(match[1]) * 1000) : null;
+}
+
+type ApifyCarsRecord = Record<string, unknown> & {
+  listingId?: unknown;
+  stockNumber?: unknown;
+  title?: unknown;
+  year?: unknown;
+  make?: unknown;
+  model?: unknown;
+  trim?: unknown;
+  price?: unknown;
+  mileage?: unknown;
+  vin?: unknown;
+  fuelType?: unknown;
+  exteriorColor?: unknown;
+  engine?: unknown;
+  photos?: unknown;
+  primaryThumbnail?: unknown;
+  description?: unknown;
+  sellerNotes?: unknown;
+  adDescription?: unknown;
+};
+
+async function fetchCarsVehicleViaApify(url: URL, token: string): Promise<ImportedVehicle | null> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 110_000);
+  try {
+    const endpoint = new URL("https://api.apify.com/v2/acts/memo23~cars-scraper/run-sync-get-dataset-items");
+    endpoint.searchParams.set("format", "json");
+    endpoint.searchParams.set("clean", "true");
+    endpoint.searchParams.set("timeout", "100");
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        startUrls: [url.toString()],
+        maxItems: 1,
+        maxConcurrency: 1,
+        fetchDetails: true,
+        fetchBatteryReport: false,
+        enrichEmails: false,
+        fetchDealerPhone: false,
+        fetchDealerProfile: false,
+      }),
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    if (!response.ok) {
+      if (response.status === 401 || response.status === 402 || response.status === 403) {
+        throw new VehicleImportError(
+          "CARS_PROVIDER_AUTH_FAILED",
+          "Cars.com импортын API token буруу эсвэл Apify-ийн үнэгүй credit дууссан байна.",
+          503,
+        );
+      }
+      throw new VehicleImportError("CARS_PROVIDER_UNAVAILABLE", "Cars.com мэдээллийн үйлчилгээ түр хариу өгөхгүй байна.", 503);
+    }
+    const records = await response.json().catch(() => null) as ApifyCarsRecord[] | null;
+    const record = Array.isArray(records) ? records[0] : null;
+    if (!record) return null;
+    const photos = uniqueImages([record.photos, record.primaryThumbnail]);
+    const miles = numeric(record.mileage);
+    const listingId = clean(record.listingId) ?? extractListingId(url);
+    return {
+      source: "CARS_COM",
+      sourceMarket: "USA",
+      stockNo: clean(record.stockNumber) ?? `US-${listingId}`.toUpperCase().slice(0, 80),
+      listingUrl: url.toString(),
+      make: clean(record.make),
+      model: clean(record.model),
+      trim: clean(record.trim),
+      productionYear: yearFrom(record.year ?? record.title),
+      mileageKm: miles ? Math.round(miles * 1.609344) : null,
+      vin: clean(record.vin),
+      fuelType: clean(record.fuelType),
+      color: clean(record.exteriorColor),
+      engineCapacityCc: engineCapacityFromText(record.engine),
+      priceAmount: numeric(record.price),
+      priceCurrency: "USD",
+      imageUrl: photos[0] ?? null,
+      imageUrls: photos,
+      description: clean(record.description ?? record.sellerNotes ?? record.adDescription),
+    };
+  } catch (error) {
+    if (error instanceof VehicleImportError) throw error;
+    if (error instanceof Error && error.name === "AbortError") {
+      throw new VehicleImportError("CARS_PROVIDER_TIMEOUT", "Cars.com мэдээлэл татах хугацаа хэтэрлээ. Дахин оролдоно уу.", 504);
+    }
+    throw new VehicleImportError("CARS_PROVIDER_UNAVAILABLE", "Cars.com мэдээллийн үйлчилгээтэй холбогдож чадсангүй.", 503);
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 async function fetchCarsVehicle(url: URL): Promise<ImportedVehicle | null> {
@@ -129,6 +241,16 @@ export async function importVehicleFromUrl(rawUrl: string): Promise<ImportedVehi
       imageUrls: vehicle.imageUrls, description: null,
     };
   }
-  if (CARS_HOSTS.has(url.hostname.toLowerCase())) return fetchCarsVehicle(url);
+  if (CARS_HOSTS.has(url.hostname.toLowerCase())) {
+    const apifyToken = process.env.APIFY_TOKEN?.trim();
+    if (apifyToken) return fetchCarsVehicleViaApify(url, apifyToken);
+    const direct = await fetchCarsVehicle(url);
+    if (direct) return direct;
+    throw new VehicleImportError(
+      "CARS_PROVIDER_NOT_CONFIGURED",
+      "Cars.com автомат импортын APIFY_TOKEN Render дээр тохируулагдаагүй байна.",
+      503,
+    );
+  }
   return null;
 }

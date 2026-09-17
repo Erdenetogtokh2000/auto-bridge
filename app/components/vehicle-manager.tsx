@@ -50,7 +50,7 @@ export function VehicleManager({vehicles}:{vehicles:ManagedVehicle[]}){
         imageUrl:vehicle.imageUrl??vehicle.imageUrls?.[0]??current.imageUrl,galleryImageUrls:JSON.stringify(vehicle.imageUrls??[]),description:vehicle.description??current.description,
       }));
       toast.success(`${payload.vehicle.imageUrls?.length??(payload.vehicle.imageUrl?1:0)} зурагтай автомашины мэдээллийг татлаа. Хадгалахын өмнө шалгана уу.`);
-    }catch{toast.error("Энэ зараас мэдээлэл автоматаар татаж чадсангүй. Линкээ шалгах эсвэл мэдээллийг гараар оруулна уу.");}
+    }catch(error){toast.error(error instanceof Error&&error.message&&error.message!=="IMPORT_FAILED"?error.message:"Энэ зараас мэдээлэл автоматаар татаж чадсангүй. Линкээ шалгах эсвэл мэдээллийг гараар оруулна уу.");}
     finally{setImportBusy(false);}
   }
   async function submit(event:FormEvent<HTMLFormElement>){event.preventDefault();setBusy(true);try{const data=new FormData();Object.entries(form).forEach(([key,value])=>{if(key!=="id"&&key!=="imageObjectKey"&&value!==null)data.set(key,String(value));});const file=fileRef.current?.files?.[0];if(file)data.set("imageFile",file);const response=await fetch(editing?`/api/admin/vehicles/${encodeURIComponent(form.id)}`:"/api/admin/vehicles",{method:editing?"PATCH":"POST",body:data});if(!response.ok)throw new Error();toast.success(editing?"Автомашины мэдээллийг шинэчиллээ.":"Автомашин каталогт нэмэгдлээ.");setOpen(false);router.refresh();}catch{toast.error("Автомашиныг хадгалахад алдаа гарлаа. Stock ID болон талбаруудыг шалгана уу.");}finally{setBusy(false);}}

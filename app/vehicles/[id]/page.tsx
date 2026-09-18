@@ -60,14 +60,14 @@ export default async function PublicVehicleDetail({ params }: { params: Promise<
         <section>
           <div><FileCheck2 size={20} /><span>INSPECTION &amp; HISTORY</span></div>
           <h2>Үзлэг ба түүхийн мэдээлэл</h2>
-          <p>Одоогийн database-д тусдаа inspection report эсвэл vehicle-history record хадгалагдаагүй. Боломжтой түүх, үзлэгийн мэдээллийг эх зар болон менежерийн баталгаажуулалтаар шалгана.</p>
+          <p>Автомашины түүх, үзлэгийн мэдээллийг эх зар болон нийлүүлэгчийн баримтад тулгуурлан боломжтой хүрээнд нягтална. Нэмэлт тайлан шаардлагатай бол менежерт хүсэлт гаргаж болно.</p>
           {v.listingUrl && <a href={v.listingUrl} target="_blank" rel="noreferrer">Эх мэдээлэл шалгах <ExternalLink size={14} /></a>}
         </section>
         <section>
           <div><Ship size={20} /><span>EXPORT &amp; LOGISTICS</span></div>
           <h2>Экспорт ба тээврийн дараагийн алхам</h2>
-          <p>Үнийн санал батлагдсаны дараа одоо байгаа захиалга, төлбөр, баримт бичиг, тээврийн workflow-оор үргэлжилнэ. Тээврийн бодит төлөв хувийн кабинетад харагдана.</p>
-          <a href="/#quote">Энэ машиныг хүсэлт болгох <ArrowRight size={14} /></a>
+          <p>Үнийн санал батлагдсаны дараа худалдан авалт, төлбөр, баримт бичиг, экспорт болон тээврийн үйл явц эхэлнэ. Та тээврийн явцыг хувийн кабинетаас хянах боломжтой.</p>
+          <a href="/#quote">Энэ автомашинаар хүсэлт илгээх <ArrowRight size={14} /></a>
         </section>
       </div>
     </section>

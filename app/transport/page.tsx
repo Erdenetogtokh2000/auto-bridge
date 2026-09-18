@@ -148,8 +148,8 @@ export default async function TransportDashboard() {
           <div>
             <strong>Тээврийн явцыг 09:00 болон 18:00 цагт шинэчилнэ үү</strong>
             <p>
-              Байршил, төлөв, ETA болон тайлбар нь харилцагчийн хэсэгт шууд
-              харагдана.
+              Байршил, төлөв, тооцоолсон ирэх хугацаа болон тайлбар нь
+              харилцагчийн хэсэгт шууд харагдана.
             </p>
           </div>
           <a href="#shipments">Тээврүүд</a>
@@ -210,7 +210,7 @@ function ShipmentTable({
               <TableHead>АВТОМАШИН</TableHead>
               <TableHead>КОНТЕЙНЕР / B/L</TableHead>
               <TableHead>ОДООГИЙН БАЙРШИЛ</TableHead>
-              <TableHead>ETA</TableHead>
+              <TableHead>ИРЭХ ХУГАЦАА</TableHead>
               <TableHead>ТӨЛӨВ</TableHead>
               <TableHead />
             </TableRow>

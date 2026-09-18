@@ -89,11 +89,11 @@ export function HomeHeroCarousel({ expos }: { expos: HeroExpo[] }) {
       </div>}
 
       <div className={`hero-visual ${expo ? "hero-visual-expo" : ""}`} style={imageStyle} aria-hidden="true" />
-      {slides.length > 1 && <div className="hero-carousel-controls" aria-label="Cover слайд удирдах">
-        <button type="button" onClick={() => move(-1)} aria-label="Өмнөх slide"><ChevronLeft size={16} /></button>
-        <div className="hero-carousel-dots">{slides.map((slide, index) => <button key={slide.expo?.id ?? "default"} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`${index + 1}-р slide руу очих`} aria-current={index === active ? "true" : undefined} />)}</div>
+      {slides.length > 1 && <div className="hero-carousel-controls" aria-label="Нүүр зургийн слайд удирдах">
+        <button type="button" onClick={() => move(-1)} aria-label="Өмнөх слайд"><ChevronLeft size={16} /></button>
+        <div className="hero-carousel-dots">{slides.map((slide, index) => <button key={slide.expo?.id ?? "default"} type="button" className={index === active ? "active" : ""} onClick={() => setActive(index)} aria-label={`${index + 1}-р слайд руу очих`} aria-current={index === active ? "true" : undefined} />)}</div>
         <button type="button" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Автомат солилтыг эхлүүлэх" : "Автомат солилтыг зогсоох"}>{paused ? <Play size={14} /> : <Pause size={14} />}</button>
-        <button type="button" onClick={() => move(1)} aria-label="Дараагийн slide"><ChevronRight size={16} /></button>
+        <button type="button" onClick={() => move(1)} aria-label="Дараагийн слайд"><ChevronRight size={16} /></button>
       </div>}
     </div>
   );

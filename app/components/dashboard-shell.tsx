@@ -68,7 +68,7 @@ const roleConfig = {
     ],
   },
   finance: {
-    label: "ББСБ ажилтан",
+    label: "Санхүүгийн ажилтан",
     name: "Санхүүжилтийн баг",
     code: "FINANCE",
     items: [

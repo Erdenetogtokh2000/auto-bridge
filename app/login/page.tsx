@@ -14,12 +14,12 @@ export default function LoginPage() {
           </a>
         </div>
         <p className="login-kicker">НЭГДСЭН НЭВТРЭХ ХЭСЭГ</p>
-        <h1 id="login-title">Бүртгэлээрээ нэвтэрнэ үү</h1>
-        <p className="login-intro">Нэг удаа нэвтэрсний дараа таны эрхийг таньж, харилцагч, тээвэр, ББСБ эсвэл админы зөв хэсэгт автоматаар оруулна.</p>
+        <h1 id="login-title">Бүртгэлдээ нэвтэрнэ үү</h1>
+        <p className="login-intro">Нэвтэрсний дараа систем таны эрхийг таньж, харилцагч, тээвэр, санхүү эсвэл админы тохирох хэсэгт автоматаар шилжүүлнэ.</p>
         <NetlifyLoginForm />
         <div className="login-points">
-          <span><CheckCircle2 size={15} /> Нэг холбоосоор бүх эрх</span>
-          <span><ShieldCheck size={15} /> Аюулгүй эрхийн шалгалт</span>
+          <span><CheckCircle2 size={15} /> Нэг бүртгэлээр бүх үйлчилгээнд</span>
+          <span><ShieldCheck size={15} /> Аюулгүй нэвтрэлт, эрхийн хамгаалалт</span>
         </div>
         <a className="login-home-link" href="/">Нүүр хуудас руу буцах</a>
       </section>

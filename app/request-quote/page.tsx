@@ -42,5 +42,5 @@ export default async function RequestQuotePage({ searchParams }: { searchParams:
     fuelType,
     listingUrl,
   };
-  return <main className="quote-request-page"><PublicHeader section="Үнийн санал хүсэх" /><section className="quote-request-hero"><div className="container"><p><FileCheck2 /> QUOTE WORKFLOW</p><h1>Тооцооллоо үнийн саналын хүсэлт болгох</h1><span>Мэдээллээ илгээсний дараа админ машины мэдээлэл, ханш, татвар болон тээврийн нөхцөлийг баталгаажуулна.</span></div></section><section className="quote-request-content"><div className="container"><PublicQuoteRequestForm initial={initial} /></div></section></main>;
+  return <main className="quote-request-page"><PublicHeader section="Үнийн санал хүсэх" /><section className="quote-request-hero"><div className="container"><p><FileCheck2 /> QUOTE REQUEST</p><h1>Урьдчилсан тооцоогоор үнийн санал хүсэх</h1><span>Хүсэлт илгээсний дараа манай ажилтан автомашины мэдээлэл, ханш, татвар болон тээврийн нөхцөлийг нягталж, эцсийн саналыг бэлтгэнэ.</span></div></section><section className="quote-request-content"><div className="container"><PublicQuoteRequestForm initial={initial} /></div></section></main>;
 }

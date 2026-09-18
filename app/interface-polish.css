@@ -181,3 +181,475 @@
     font-size: 30px;
   }
 }
+
+/* Site-wide editorial typography: clear Mongolian text hierarchy without
+   changing the established AUTO BRIDGE layout or interaction patterns. */
+body {
+  font-family: Inter, "Noto Sans", "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+strong,
+b {
+  text-wrap: balance;
+}
+
+p,
+li,
+small,
+span {
+  overflow-wrap: break-word;
+}
+
+.desktop-nav,
+.login-link,
+.language-pill,
+.subpage-nav > span,
+.subpage-actions a {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.premium-section-heading > p,
+.premium-section-heading > div + div > p,
+.global-sourcing-map-intro p,
+.expo-copy > p,
+.verification-copy > p,
+.legal-card > p,
+.vehicle-public-description,
+.korean-services p {
+  font-size: 16px;
+  line-height: 1.72;
+}
+
+.section-kicker,
+.eyebrow,
+.cinematic-hero-overline,
+.calculator-form-heading > div > span,
+.calculator-summary-heading > span,
+.quote-request-hero p,
+.calculator-hero p,
+.catalog-hero > .container > p,
+.expo-hero > .container > p {
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: .12em;
+}
+
+.premium-section-heading h2,
+.global-sourcing-map-intro h2,
+.expo-copy h2,
+.section-heading h2 {
+  font-size: clamp(32px, 3.15vw, 46px);
+  line-height: 1.14;
+  letter-spacing: -.035em;
+}
+
+.curated-copy > small,
+.curated-specs small,
+.curated-price a,
+.curated-price > span {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.curated-copy h3 {
+  font-size: 22px;
+  line-height: 1.22;
+}
+
+.curated-specs b {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.global-sourcing-map-intro small,
+.global-map-disclaimer,
+.global-map-hint {
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.global-map-popover-heading span,
+.global-map-popover-list span,
+.global-map-popover > a,
+.global-map-mobile-tabs button {
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.luxury-site .calculator-field select,
+.luxury-site .calculator-input,
+.calculator-page .calculator-field select,
+.calculator-page .calculator-input,
+.quote-request-form input {
+  min-height: 44px;
+}
+
+.global-map-popover-heading strong {
+  font-size: 27px;
+  line-height: 1.15;
+}
+
+.market-card > p,
+.market-bottom,
+.expo-date span,
+.expo-date small {
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.market-card h3 {
+  font-size: 24px;
+  line-height: 1.22;
+}
+
+.market-text,
+.expo-meta,
+.expo-location-bottom,
+.expo-actions a,
+.expo-register summary {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.how-scroll article h3,
+.why-grid article h3 {
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.how-scroll article p,
+.why-grid article p {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.verification-points span,
+.logistics-route b,
+.logistics-actions a,
+.service-grid strong,
+.final-cta a {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.service-grid small,
+.footer-inner p,
+.footer-links {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* Calculator and quote flow */
+.luxury-site .calculator-form-heading h2,
+.calculator-page .calculator-form-heading h2,
+.quote-request-page .calculator-form-heading h2 {
+  font-size: 24px;
+  line-height: 1.25;
+}
+
+.luxury-site .calculator-field > span,
+.luxury-site .calculator-rate-box > div > span,
+.calculator-page .calculator-field > span,
+.calculator-page .calculator-rate-box > div > span,
+.quote-request-form label > span {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.luxury-site .calculator-field select,
+.luxury-site .calculator-input,
+.luxury-site .calculator-input input,
+.luxury-site .calculator-input b,
+.calculator-page .calculator-field select,
+.calculator-page .calculator-input,
+.calculator-page .calculator-input input,
+.calculator-page .calculator-input b,
+.quote-request-form input {
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.luxury-site .calculator-note,
+.calculator-page .calculator-note,
+.quote-request-intro,
+.encar-autofill-status,
+.quick-encar-preview {
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.luxury-site .calculator-lines span,
+.luxury-site .calculator-lines strong,
+.luxury-site .calculator-balance span,
+.luxury-site .calculator-balance strong,
+.calculator-page .calculator-lines span,
+.calculator-page .calculator-lines strong,
+.calculator-page .calculator-balance span,
+.calculator-page .calculator-balance strong,
+.quote-request-summary > div span,
+.quote-request-summary > div b {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.luxury-site .calculator-total span,
+.calculator-page .calculator-total span {
+  font-size: 12px;
+}
+
+.luxury-site .calculator-total small,
+.luxury-site .calculator-disclaimer,
+.calculator-page .calculator-total small,
+.calculator-page .calculator-disclaimer {
+  font-size: 12.5px;
+  line-height: 1.55;
+}
+
+.calculator-cta,
+.quote-panel > label,
+.url-field button,
+.quote-contact-fields span,
+.quote-contact-fields input,
+.quote-footer,
+.calculator-back a {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.url-field input {
+  min-height: 48px;
+  font-size: 15px;
+}
+
+.quote-contact-fields label {
+  grid-template-columns: minmax(96px, auto) 1fr;
+}
+
+.quote-contact-fields input {
+  min-height: 44px;
+}
+
+.calculator-hero > .container > span,
+.quote-request-hero > .container > span,
+.expo-hero > .container > span {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.calculator-hero-points {
+  font-size: 14px;
+}
+
+/* Catalog, expo, detail and legal pages */
+.catalog-search input,
+.catalog-search button,
+.catalog-filter-bar input,
+.catalog-filter-bar button,
+.expo-filter button,
+.expo-filter input,
+.expo-filter > span {
+  font-size: 14px;
+}
+
+.catalog-toolbar,
+.catalog-info > small,
+.catalog-info > p,
+.catalog-card-actions a,
+.vehicle-public-copy > span,
+.vehicle-public-copy > p,
+.vehicle-public-specs small,
+.vehicle-public-actions a,
+.back-link {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.catalog-info h2 {
+  font-size: 21px;
+  line-height: 1.25;
+}
+
+.catalog-description,
+.vehicle-showroom-sections p,
+.expo-description,
+.expo-event-copy > p,
+.expo-event-copy details p,
+.catalog-empty p,
+.expo-empty p {
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.catalog-info > div > span,
+.catalog-info > div > strong,
+.vehicle-public-specs b,
+.vehicle-showroom-sections a,
+.expo-public-meta,
+.expo-event-actions a,
+.expo-event-copy details summary {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.expo-event-copy small,
+.expo-event-date span {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.expo-event-copy h2,
+.vehicle-showroom-sections h2,
+.legal-card h2 {
+  font-size: 23px;
+  line-height: 1.28;
+}
+
+.legal-card h1 {
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1.12;
+}
+
+/* Authentication */
+.login-intro {
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.login-kicker {
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: .12em;
+}
+
+.login-card input,
+.login-primary,
+.login-home-link,
+.login-points span,
+.login-card form + p,
+.login-card button,
+.login-card form + p + div,
+.login-card form + div {
+  font-size: 14px !important;
+  line-height: 1.45;
+}
+
+/* Operations portals */
+.dashboard-sidebar,
+.dashboard-inset {
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+.dashboard-nav-label,
+.dashboard-title-wrap > div > span,
+.dashboard-inset .panel-heading span,
+.dashboard-inset .dashboard-section-heading > div > span,
+.dashboard-inset .live-data-chip {
+  font-size: 12px !important;
+  line-height: 1.4;
+  letter-spacing: .07em;
+}
+
+.dashboard-nav-button,
+.dashboard-footer a,
+.dashboard-user strong,
+.dashboard-actions input,
+.role-chip {
+  font-size: 14px !important;
+  line-height: 1.4;
+}
+
+.dashboard-user small,
+.dashboard-inset .stat-card > small,
+.dashboard-inset .admin-alert small,
+.dashboard-inset .admin-table td small,
+.dashboard-inset .admin-shortcuts small {
+  font-size: 12.5px !important;
+  line-height: 1.5;
+}
+
+.dashboard-title-wrap h1 {
+  font-size: 26px !important;
+  line-height: 1.2;
+}
+
+.dashboard-subtitle {
+  font-size: 15.5px !important;
+  line-height: 1.65;
+}
+
+.dashboard-inset .stat-card > span,
+.dashboard-inset .operations-bars span,
+.dashboard-inset .operations-bars b,
+.dashboard-inset .admin-alert strong,
+.dashboard-inset .admin-table td,
+.dashboard-inset .admin-table td strong,
+.dashboard-inset .admin-table td a,
+.dashboard-inset .admin-shortcuts strong,
+.dashboard-inset .quote-empty p,
+.dashboard-inset .quote-empty a,
+.dashboard-inset label > span,
+.dashboard-inset input,
+.dashboard-inset select,
+.dashboard-inset textarea,
+.dashboard-inset button {
+  font-size: 14px !important;
+  line-height: 1.5;
+}
+
+.dashboard-inset .panel-heading h2,
+.dashboard-inset .dashboard-section-heading h2 {
+  font-size: 21px !important;
+  line-height: 1.3;
+}
+
+.dashboard-inset .admin-table th {
+  font-size: 12px !important;
+  line-height: 1.4;
+}
+
+.dashboard-inset .quote-empty h3 {
+  font-size: 18px !important;
+  line-height: 1.35;
+}
+
+@media (max-width: 760px) {
+  .container {
+    width: min(100% - 32px, 1180px);
+  }
+
+  .premium-section-heading h2,
+  .global-sourcing-map-intro h2,
+  .expo-copy h2,
+  .section-heading h2 {
+    font-size: 30px;
+  }
+
+  .premium-section-heading > p,
+  .global-sourcing-map-intro p,
+  .expo-copy > p,
+  .verification-copy > p {
+    font-size: 15px;
+  }
+
+  .dashboard-title-wrap h1 {
+    font-size: 22px !important;
+  }
+}

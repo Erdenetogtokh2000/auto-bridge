@@ -41,7 +41,7 @@ async function AdminOrderContent({ id }: { id: string }) {
     <a className="back-link" href="/admin"><ArrowLeft size={14}/> Удирдлагын самбар</a>
     <section className="admin-order-hero">
       <div className="admin-order-icon"><CarFront/></div>
-      <div><span>{order.orderNo ?? order.id} · {vehicle.sourceMarket}</span><h2>{vehicle.make} {vehicle.model}</h2><p>{vehicle.productionYear} · {vehicle.mileageKm?.toLocaleString("mn-MN") ?? 0} км · {order.customerName ?? order.customerEmail}</p>{vehicle.listingUrl && <a href={vehicle.listingUrl} target="_blank" rel="noreferrer">Эх зарын линк <ExternalLink/></a>}</div>
+      <div><span>{order.orderNo ?? order.id} · {vehicle.sourceMarket}</span><h2>{vehicle.make} {vehicle.model}</h2><p>{vehicle.productionYear} · {vehicle.mileageKm?.toLocaleString("mn-MN") ?? 0} км · {order.customerName ?? order.customerEmail}</p>{vehicle.listingUrl && <a href={vehicle.listingUrl} target="_blank" rel="noreferrer">Эх зарын холбоос <ExternalLink/></a>}</div>
       <strong>{orderStatusLabel(order.status)}</strong>
     </section>
     <PaymentManager orderId={order.id} totalAmountMnt={order.totalAmountMnt} payments={paymentRows.map((item) => ({ ...item, receiptDocumentId: documentRows.find((document) => document.paymentId === item.id)?.id ?? null }))}/>

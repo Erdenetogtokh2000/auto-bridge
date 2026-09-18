@@ -3,8 +3,8 @@ import Link from "next/link";
 import { PublicHeader } from "@/app/components/public-header";
 
 const items = [
-  { eyebrow: "AUTO EXPO", title: "Олон улсын авто экспо", text: "Ойрын хугацаанд болох автомашин, mobility болон технологийн үзэсгэлэнгүүдийг нэг дороос харна.", href: "/expo", icon: CalendarDays },
-  { eyebrow: "CATALOG", title: "Шинэ автомашины сонголтууд", text: "Солонгос, Монгол болон Америкийн зах зээлээс нэмэгдсэн автомашины мэдээллийг шалгана.", href: "/vehicles", icon: CarFront },
+  { eyebrow: "AUTO EXPO", title: "Олон улсын авто экспо", text: "Удахгүй болох автомашин, хөдөлгөөнт технологийн үзэсгэлэнгүүдийн мэдээллийг нэг дороос аваарай.", href: "/expo", icon: CalendarDays },
+  { eyebrow: "CATALOG", title: "Автомашины шинэ сонголтууд", text: "Солонгос, Монгол, Америкийн зах зээлээс шинээр нэмэгдсэн автомашинуудыг үзээрэй.", href: "/vehicles", icon: CarFront },
   { eyebrow: "GUIDE", title: "Импортын өртгийн тооцоо", text: "Автомашины үнэ, тээвэр, гааль болон НӨАТ-ын урьдчилсан дүнг автоматаар тооцоолно.", href: "/calculator", icon: Calculator },
 ];
 
@@ -22,7 +22,7 @@ export default function NewsPage() {
       <div className="container">
         <div className="section-heading split">
           <div><p className="section-kicker">ШИНЭ МЭДЭЭЛЭЛ</p><h2>Танд хэрэгтэй мэдээлэл</h2></div>
-          <p>Нийтлэл, зөвлөмжийн санг үе шаттай нэмнэ. Одоогоор системийн бодит үйлчилгээ, авто экспо болон каталогиос шууд мэдээлэл авах боломжтой.</p>
+          <p>Импорт, сонголт, тээврийн зөвлөмж болон зах зээлийн мэдээллийг тогтмол шинэчилнэ. Одоогоор каталог, авто экспо, өртгийн тооцоолуурыг ашиглах боломжтой.</p>
         </div>
         <div className="market-grid">
           {items.map((item, index) => { const Icon = item.icon; return <Link className={`market-card ${index === 0 ? "cobalt" : index === 1 ? "navy" : "silver"}`} href={item.href} key={item.title}>

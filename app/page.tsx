@@ -26,42 +26,42 @@ const marketCards = [
   {
     eyebrow: "KOREA STOCK",
     title: "Солонгосоос захиалах",
-    text: "Encar болон бусад эх сурвалжаас сонгосон автомашинаа захиална.",
-    meta: "Шинэ сонголтууд өдөр бүр",
+    text: "Encar болон бусад баталгаатай эх сурвалжаас сонгосон автомашинаа захиалаарай.",
+    meta: "Сонголт тогтмол шинэчлэгдэнэ",
     market: "KOREA",
   },
   {
     eyebrow: "READY IN MONGOLIA",
     title: "Монголд бэлэн",
-    text: "Тээвэр, гаалийн процесс дууссан, шууд үзэж сонгох боломжтой автомашинууд.",
+    text: "Тээвэр, гаалийн бүрдүүлэлт дууссан автомашинуудыг шууд үзэж, сонгох боломжтой.",
     meta: "Шууд худалдан авах",
     market: "MONGOLIA",
   },
   {
     eyebrow: "USA ORDER",
     title: "Америкаас захиалах",
-    text: "АНУ-ын зах зээлээс сонгосон автомашины үнэ, тээврийн нэгдсэн тооцоо авна.",
-    meta: "Тооцоолсон буух үнэ",
+    text: "АНУ-ын зах зээлээс сонгосон автомашиныхаа үнэ, тээвэр, татварын нэгдсэн тооцоог аваарай.",
+    meta: "Монголд буух урьдчилсан өртөг",
     market: "USA",
   },
 ];
 
 const trustItems = ["GLOBAL SOURCING", "VERIFIED VEHICLES", "TRANSPARENT PROCESS", "SECURE DELIVERY"];
 const howSteps = [
-  ["01", "Таны хүсэлт", "Зарын линк, каталог эсвэл хүссэн машины мэдээллээ илгээнэ."],
-  ["02", "Дэлхийн зах зээлээс хайх", "Боломжит эх сурвалж, үнэ болон нөхцөлийг харьцуулна."],
-  ["03", "Машин шалгах", "Боломжтой түүх, үзлэг, баримтын мэдээллийг нягтална."],
-  ["04", "Худалдан авалт", "Баталгаажсан саналын дагуу худалдан авалтын процесс үргэлжилнэ."],
-  ["05", "Экспорт ба тээвэр", "Баримт бичиг, порт, тээврийн үе шатыг нэг урсгалаар хянана."],
-  ["06", "Монголд хүргэлт", "Захиалгын төлөв, бичиг баримт, төлбөрийн мэдээллээ кабинетаас харна."],
+  ["01", "Хүсэлтээ илгээх", "Зарын холбоос, каталогоос сонгосон машин эсвэл хүссэн загварынхаа мэдээллийг илгээнэ."],
+  ["02", "Зах зээлээс хайх", "Боломжит эх сурвалж, үнэ, нөхцөлийг харьцуулж хамгийн тохиромжтой сонголтыг санал болгоно."],
+  ["03", "Мэдээллийг нягтлах", "Боломжтой хүрээнд автомашины түүх, үзлэг болон баримт бичгийн мэдээллийг шалгана."],
+  ["04", "Худалдан авалтыг баталгаажуулах", "Таны зөвшөөрсөн үнийн санал, нөхцөлийн дагуу худалдан авалтыг үргэлжлүүлнэ."],
+  ["05", "Экспорт, тээврийг зохион байгуулах", "Баримт бичиг, боомт болон тээврийн үе шат бүрийг нэг дороос хянана."],
+  ["06", "Монголд хүлээлгэн өгөх", "Захиалга, төлбөр, баримт бичиг, тээврийн мэдээллээ хувийн кабинетаас хянана."],
 ] as const;
 const verificationPoints = ["Exterior", "Interior", "Engine", "Chassis", "Documents", "Vehicle history"];
 const logisticsSteps = ["VEHICLE", "INSPECTION", "PREPARATION", "PORT", "SHIPPING", "DESTINATION"];
 const whyItems = [
-  ["GLOBAL ACCESS", "Олон улсын автомашины зах зээлтэй холбогдоно."],
-  ["VERIFIED QUALITY", "Машин болон баримт бичгийн мэдээллийг боломжтой хүрээнд нягтална."],
-  ["TRANSPARENT PROCESS", "Үе шат бүрийн мэдээллийг ойлгомжтой харуулна."],
-  ["END-TO-END DELIVERY", "Сонголтоос хүргэлт хүртэл зохион байгуулна."],
+  ["GLOBAL ACCESS", "Олон улсын автомашины зах зээлээс өргөн сонголт санал болгоно."],
+  ["VERIFIED QUALITY", "Автомашин болон баримт бичгийн мэдээллийг боломжтой хүрээнд нягтална."],
+  ["TRANSPARENT PROCESS", "Захиалгын үе шат бүрийг ойлгомжтой, нээлттэй харуулна."],
+  ["END-TO-END DELIVERY", "Сонголтоос эхлээд Монголд хүлээлгэн өгөх хүртэл зохион байгуулна."],
 ] as const;
 
 export const dynamic = "force-dynamic";
@@ -145,7 +145,7 @@ export default async function Home() {
         <div className="container">
           <div className="premium-section-heading">
             <div><p className="section-kicker">CURATED VEHICLES</p><h2>Шилдэг сонголтууд</h2></div>
-            <div><p>Бидний санал болгож буй чанартай автомашинууд</p><a href="/vehicles">Бүх автомашин харах <ArrowRight size={16} /></a></div>
+            <div><p>Шалгаруулсан автомашины шинэ сонголтууд</p><a href="/vehicles">Бүх автомашиныг үзэх <ArrowRight size={16} /></a></div>
           </div>
           {vehicleCards.length ? <div className="curated-grid">
             {vehicleCards.map((vehicle) => {
@@ -169,7 +169,7 @@ export default async function Home() {
                 </div>
               </article>;
             })}
-          </div> : <div className="home-catalog-empty"><CarFront /><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын линкийг илгээж үнийн санал авах боломжтой.</p></div><a href="/#quote">Үнийн санал авах <ArrowRight /></a></div>}
+          </div> : <div className="home-catalog-empty"><CarFront /><div><h3>Каталог шинэчлэгдэж байна</h3><p>Та хүссэн автомашиныхаа зарын холбоосыг илгээж үнийн санал авах боломжтой.</p></div><a href="/#quote">Үнийн санал авах <ArrowRight /></a></div>}
         </div>
       </section>
 
@@ -181,8 +181,8 @@ export default async function Home() {
               <h2>SOURCED WITHOUT BORDERS</h2>
             </div>
             <div>
-              <p>Japan, Korea, China, Europe, UAE, USA зэрэг олон улсын зах зээлээс боломжит эх сурвалжийг харьцуулж, таны хүссэн автомашины sourcing нөхцөлийг нэг дороос шалгана.</p>
-              <small>Map дээрх sourcing point дээр hover, focus эсвэл дарж тухайн зах зээлийн боломжит чиглэлүүдийг хараарай.</small>
+              <p>Япон, Солонгос, Хятад, Европ, АНЭУ, АНУ-ын зах зээлээс автомашины олдоц, үнэ, экспортын нөхцөлийг харьцуулна.</p>
+              <small>Газрын зураг дээрх зах зээлийг сонгож, боломжит эх үүсвэр болон үйлчилгээний чиглэлийг хараарай.</small>
             </div>
           </div>
           <GlobalSourcingMap />
@@ -211,7 +211,7 @@ export default async function Home() {
 
       <section className="how-section" id="how-it-works">
         <div className="container">
-          <div className="premium-section-heading"><div><p className="section-kicker">HOW IT WORKS</p><h2>Сонголтоос хүргэлт хүртэл</h2></div><p>Энэ нь үйлчилгээний ерөнхий визуал тайлбар. Системийн бодит төлөв, эрх, workflow өөрчлөгдөөгүй.</p></div>
+          <div className="premium-section-heading"><div><p className="section-kicker">HOW IT WORKS</p><h2>Сонголтоос хүргэлт хүртэл</h2></div><p>Автомашин сонгохоос эхлээд Монголд хүлээлгэн өгөх хүртэлх үйл явцыг зургаан тодорхой үе шаттайгаар зохион байгуулна.</p></div>
           <div className="how-scroll">{howSteps.map(([number, title, text]) => <article key={number}><span>{number}</span><h3>{title}</h3><p>{text}</p></article>)}</div>
         </div>
       </section>
@@ -219,25 +219,25 @@ export default async function Home() {
       <section className="verification-section">
         <div className="container verification-layout">
           <div className="verification-visual"><div className="verification-car"><CarFront size={150} strokeWidth={0.65} /></div><div className="verification-scan-line" /></div>
-          <div className="verification-copy"><p className="section-kicker">INSPECTION &amp; VERIFICATION</p><h2>WE DON’T JUST<br />SOURCE CARS.<br /><em>WE VERIFY THEM.</em></h2><p>Эх зар, нийлүүлэгч болон тухайн автомашинд байгаа мэдээллийн хүрээнд машин, баримт бичгийн мэдээллийг нягтална. Боломжгүй шалгалтыг баталгаатай мэтээр харуулахгүй.</p><div className="verification-points">{verificationPoints.map((point) => <span key={point}><ShieldCheck size={15} />{point}</span>)}</div></div>
+          <div className="verification-copy"><p className="section-kicker">INSPECTION &amp; VERIFICATION</p><h2>WE DON’T JUST<br />SOURCE CARS.<br /><em>WE VERIFY THEM.</em></h2><p>Эх зар, нийлүүлэгч болон тухайн автомашинд бүртгэгдсэн мэдээлэлд тулгуурлан машин, баримт бичгийг боломжтой хүрээнд нягтална. Баталгаажуулах боломжгүй мэдээллийг урьдчилан тодорхой тайлбарлана.</p><div className="verification-points">{verificationPoints.map((point) => <span key={point}><ShieldCheck size={15} />{point}</span>)}</div></div>
         </div>
       </section>
 
       <section className="logistics-section" id="tracking">
         <div className="container">
-          <div className="premium-section-heading"><div><p className="section-kicker">LOGISTICS</p><h2>Тээврийн явцыг ойлгомжтой харна.</h2></div><p>Захиалгын бодит төлөв, төлбөр, бичиг баримт, тээврийн шинэчлэл нь одоо байгаа кабинетаар үргэлжлэн ажиллана.</p></div>
+          <div className="premium-section-heading"><div><p className="section-kicker">LOGISTICS</p><h2>Тээврийн явцаа нэг дороос хянаарай</h2></div><p>Захиалгын төлөв, төлбөр, баримт бичиг болон тээврийн шинэчлэлийг хувийн кабинетаас цаг тухайд нь харах боломжтой.</p></div>
           <div className="logistics-route">{logisticsSteps.map((step, index) => <div key={step}><span>{String(index + 1).padStart(2, "0")}</span><b>{step}</b></div>)}</div>
           <div className="logistics-actions"><a href={accountPath}>Кабинет руу орох <ArrowRight size={15} /></a></div>
         </div>
       </section>
 
       <section className="why-section" id="about">
-        <div className="container"><div className="premium-section-heading"><div><p className="section-kicker">WHY AUTO BRIDGE</p><h2>Илүү тод, илүү хариуцлагатай процесс.</h2></div><p>Таны сонголт. Дэлхийн зах зээл.</p></div><div className="why-grid">{whyItems.map(([title, text], index) => <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></div>
+        <div className="container"><div className="premium-section-heading"><div><p className="section-kicker">WHY AUTO BRIDGE</p><h2>Ил тод, хариуцлагатай үйлчилгээ</h2></div><p>Таны сонголтыг дэлхийн автомашины зах зээлтэй холбоно.</p></div><div className="why-grid">{whyItems.map(([title, text], index) => <article key={title}><span>0{index + 1}</span><h3>{title}</h3><p>{text}</p></article>)}</div></div>
       </section>
 
       <section className="quote-calculator-section" id="quote">
         <div className="container">
-          <div className="premium-section-heading"><div><p className="section-kicker">REQUEST &amp; CALCULATE</p><h2>Линкээс буух өртөг хүртэл.</h2></div><p>Encar эсвэл бусад зарын линк → машины мэдээлэл → татвар → тээвэр → Монголд буух урьдчилсан өртөг гэсэн одоо байгаа урсгал хэвээр.</p></div>
+          <div className="premium-section-heading"><div><p className="section-kicker">REQUEST &amp; CALCULATE</p><h2>Зарын холбоосоос нийт өртөг хүртэл</h2></div><p>Encar эсвэл Cars.com зарын холбоосыг оруулаад автомашины мэдээлэл, татвар, тээвэр болон Монголд буух урьдчилсан өртгийг нэг дор тооцоолоорой.</p></div>
           <div className="quote-band"><EncarQuickQuote /></div>
           <div className="calculator-section embedded-calculator"><PublicCostCalculator compact /></div>
         </div>
@@ -246,7 +246,7 @@ export default async function Home() {
       <section className="service-strip">
         <div className="container service-grid">
           <div><Truck size={25} /><span><strong>Нэгдсэн тээвэр</strong><small>Боомтоос хүлээлгэн өгөх хүртэл</small></span></div>
-          <div><FileCheck2 size={25} /><span><strong>Цахим баримт</strong><small>Гэрээ, invoice, BL нэг дор</small></span></div>
+          <div><FileCheck2 size={25} /><span><strong>Цахим баримт</strong><small>Гэрээ, нэхэмжлэх, тээврийн баримт нэг дор</small></span></div>
           <div><Calculator size={25} /><span><strong>Ил тод тооцоо</strong><small>Үнэ, татвар, төлбөрийн задаргаа</small></span></div>
           <div><Search size={25} /><span><strong>Явцын хяналт</strong><small>Захиалга бүрийн бодит төлөв</small></span></div>
         </div>

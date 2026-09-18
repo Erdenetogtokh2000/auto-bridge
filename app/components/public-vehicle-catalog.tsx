@@ -52,8 +52,8 @@ export function PublicVehicleCatalog({ vehicles, initialMarket = "ALL" }: { vehi
     <section className="catalog-hero">
       <div className="container">
         <p>PREMIUM VEHICLE COLLECTION</p>
-        <h1>Танд тохирох автомашинаа хайх</h1>
-        <div className="catalog-search"><Search /><input aria-label="Автомашин хайх" value={q} onChange={e => setQ(e.target.value)} placeholder="Марк, загвар, Stock ID..." /><Select value={market} onValueChange={setMarket}><SelectTrigger aria-label="Зах зээл сонгох"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ALL">Бүх зах зээл</SelectItem><SelectItem value="KOREA">Солонгос</SelectItem><SelectItem value="USA">Америк</SelectItem><SelectItem value="MONGOLIA">Монголд бэлэн</SelectItem></SelectContent></Select></div>
+        <h1>Танд тохирох автомашинаа олоорой</h1>
+        <div className="catalog-search"><Search /><input aria-label="Автомашин хайх" value={q} onChange={e => setQ(e.target.value)} placeholder="Марк, загвар, бүртгэлийн дугаар..." /><Select value={market} onValueChange={setMarket}><SelectTrigger aria-label="Зах зээл сонгох"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="ALL">Бүх зах зээл</SelectItem><SelectItem value="KOREA">Солонгос</SelectItem><SelectItem value="USA">Америк</SelectItem><SelectItem value="MONGOLIA">Монголд бэлэн</SelectItem></SelectContent></Select></div>
       </div>
     </section>
     <section className="container catalog-content">
@@ -64,7 +64,7 @@ export function PublicVehicleCatalog({ vehicles, initialMarket = "ALL" }: { vehi
         <input aria-label="Доод үнэ" type="number" min="0" value={min} onChange={e => setMin(e.target.value)} placeholder="Доод үнэ" />
         <input aria-label="Дээд үнэ" type="number" min="0" value={max} onChange={e => setMax(e.target.value)} placeholder="Дээд үнэ" />
       </div>
-      <div className="catalog-toolbar"><span>Нийт <strong>{filtered.length}</strong> сонголт</span><span>Админы шинэчилсэн бодит каталог</span></div>
+      <div className="catalog-toolbar"><span>Нийт <strong>{filtered.length}</strong> автомашин</span><span>Каталогийн мэдээллийг тогтмол шинэчилнэ</span></div>
       {filtered.length ? <div className="catalog-grid">{filtered.map(v => <article className="catalog-card" key={v.id}>
         <div className={`catalog-photo ${image(v) ? "has-image" : ""}`}>{image(v) ? <img loading="lazy" decoding="async" src={image(v) ?? ""} alt={`${v.make} ${v.model}`} /> : <CarFront />}<span>{marketLabels[v.sourceMarket]}</span><em className={`public-stock-status ${v.status.toLowerCase()}`}>{statusLabels[v.status]}</em></div>
         <div className="catalog-info"><small>{v.productionYear} · {v.fuelType ?? "Түлш тодорхойгүй"} · {v.stockNo}</small><h2>{v.make} {v.model}</h2><p>{v.mileageKm.toLocaleString("mn-MN")} км{v.trim ? ` · ${v.trim}` : ""}</p>{v.description && <p className="catalog-description">{v.description}</p>}<div><span>Үндсэн үнэ</span><strong>{v.priceAmount > 0 ? `${v.priceAmount.toLocaleString("mn-MN")} ${v.priceCurrency}` : "Үнэ санал болгоно"}</strong></div><div className="catalog-card-actions">{v.listingUrl && <a href={v.listingUrl} target="_blank" rel="noreferrer">Эх зар <ExternalLink /></a>}<a href={`/vehicles/${encodeURIComponent(v.id)}`}>Дэлгэрэнгүй <ArrowRight /></a></div></div>

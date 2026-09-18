@@ -53,7 +53,7 @@ export default async function AdminFinancingDashboard() {
       </section>
 
       <section className="dashboard-panel admin-table-panel order-table-panel" id="financing-requests">
-        <div className="dashboard-section-heading"><div><span>САНХҮҮЖИЛТИЙН ХҮСЭЛТ</span><h2>ББСБ-д илгээгдсэн хүсэлтүүд</h2></div><span className="live-data-chip">LIVE DATA · {rows.length}</span></div>
+        <div className="dashboard-section-heading"><div><span>САНХҮҮЖИЛТИЙН ХҮСЭЛТ</span><h2>ББСБ-д илгээгдсэн хүсэлтүүд</h2></div><span className="live-data-chip">ШУУД ӨГӨГДӨЛ · {rows.length}</span></div>
         {rows.length ? <div className="financing-admin-list">{rows.map(row => <article className="financing-admin-row" key={row.id}>
           <div><span className="financing-admin-order">{row.orderNo}</span><h3>{row.vehicleName}</h3><p>{requestTypeLabels[row.requestType] ?? row.requestType} · {row.customerName} · {row.customerEmail}</p></div>
           <div><small>Хүссэн дүн</small><strong>{money(row.requestedAmountMnt)}</strong></div>

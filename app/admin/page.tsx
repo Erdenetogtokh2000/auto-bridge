@@ -80,7 +80,7 @@ export default async function AdminDashboard() {
         </section>
         <section className="dashboard-panel quote-next-actions">
           <div className="panel-heading"><div><span>ДАРААГИЙН ҮЙЛДЭЛ</span><h2>Анхаарах ажлууд</h2></div><ClipboardList size={20}/></div>
-          <div className="admin-alert"><i className={newCount ? "critical" : "info"}/><span><strong>{newCount} шинэ хүсэлт судлах</strong><small>Зарын линк болон машины мэдээллийг шалгана</small></span><ArrowRight size={14}/></div>
+          <div className="admin-alert"><i className={newCount ? "critical" : "info"}/><span><strong>{newCount} шинэ хүсэлт судлах</strong><small>Зарын холбоос болон автомашины мэдээллийг шалгана</small></span><ArrowRight size={14}/></div>
           <div className="admin-alert"><i/><span><strong>{unassignedCount} хүсэлт ажилтангүй</strong><small>Хариуцсан нэгжийг сонгож хуваарилна</small></span><ArrowRight size={14}/></div>
           <div className="admin-alert"><i className="info"/><span><strong>{readyCount} санал илгээхэд бэлэн</strong><small>Үнийн саналын файлыг дараагийн шатанд холбоно</small></span><ArrowRight size={14}/></div>
         </section>
@@ -88,7 +88,7 @@ export default async function AdminDashboard() {
       </>}
 
       {canQuotes&&<section className="dashboard-panel admin-table-panel quote-table-panel" id="quotes">
-        <div className="dashboard-section-heading"><div><span>ҮНИЙН ХҮСЭЛТ</span><h2>Харилцагчаас ирсэн хүсэлтүүд</h2></div><span className="live-data-chip">LIVE DATA · {quotes.length}</span></div>
+        <div className="dashboard-section-heading"><div><span>ҮНИЙН ХҮСЭЛТ</span><h2>Харилцагчаас ирсэн хүсэлтүүд</h2></div><span className="live-data-chip">ШУУД ӨГӨГДӨЛ · {quotes.length}</span></div>
         {quotes.length ? (
           <Table className="admin-table quote-table">
             <TableHeader><TableRow><TableHead>ДУГААР / ОГНОО</TableHead><TableHead>ХАРИЛЦАГЧ</TableHead><TableHead>МАШИНЫ ЛИНК</TableHead><TableHead>ХАРИУЦСАН / ТӨЛӨВ / САНАЛ</TableHead></TableRow></TableHeader>
@@ -100,12 +100,12 @@ export default async function AdminDashboard() {
             </TableRow>)}</TableBody>
           </Table>
         ) : (
-          <div className="quote-empty"><Inbox size={31}/><h3>Үнийн хүсэлт хараахан ирээгүй байна</h3><p>Нүүр хуудасны машины линк, нэр, утасны хэсгийг бөглөж туршихад хүсэлт энд шууд нэмэгдэнэ.</p><a href="/#quote">Туршилтын хүсэлт илгээх <ArrowRight size={14}/></a></div>
+          <div className="quote-empty"><Inbox size={31}/><h3>Үнийн хүсэлт хараахан ирээгүй байна</h3><p>Нүүр хуудасны зарын холбоос, нэр, утасны талбарыг бөглөж хүсэлт илгээхэд энд автоматаар нэмэгдэнэ.</p><a href="/#quote">Туршилтын хүсэлт илгээх <ArrowRight size={14}/></a></div>
         )}
       </section>}
 
       {canOrders&&<section className="dashboard-panel admin-table-panel order-table-panel" id="orders">
-        <div className="dashboard-section-heading"><div><span>ЗАХИАЛГЫН БҮРТГЭЛ</span><h2>Баталгаажсан захиалгууд</h2></div><span className="live-data-chip">LIVE DATA · {orderRows.length}</span></div>
+        <div className="dashboard-section-heading"><div><span>ЗАХИАЛГЫН БҮРТГЭЛ</span><h2>Баталгаажсан захиалгууд</h2></div><span className="live-data-chip">ШУУД ӨГӨГДӨЛ · {orderRows.length}</span></div>
         {orderRows.length ? <Table className="admin-table quote-table order-table">
           <TableHeader><TableRow><TableHead>ЗАХИАЛГА</TableHead><TableHead>АВТОМАШИН</TableHead><TableHead>ХАРИЛЦАГЧ</TableHead><TableHead>ТӨЛБӨР / ТӨЛӨВ</TableHead></TableRow></TableHeader>
           <TableBody>{orderRows.map(({order,vehicle})=><TableRow key={order.id}>

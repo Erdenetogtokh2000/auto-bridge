@@ -15,21 +15,84 @@
   right: max(32px, calc((100vw - 1440px) / 2));
 }
 
-/* The source artwork uses dark navy lettering, so give it a light premium plaque. */
-.global-sourcing-home .main-header .brand {
-  flex: 0 0 auto;
+/* The source artwork uses dark navy lettering. A shared light plaque keeps the
+   exact logo readable on every dark and light surface across the application. */
+.brand-logo-frame {
+  box-sizing: border-box;
+  width: fit-content;
+  max-width: 100%;
   padding: 5px 10px;
-  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
   background: rgba(248, 247, 243, .96);
-  border: 1px solid rgba(255, 255, 255, .28);
+  border: 1px solid rgba(255, 255, 255, .32);
   border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+
+.brand-logo-frame .brand-logo-image {
+  object-position: center;
+  filter: contrast(1.10) saturate(1.06);
+}
+
+.global-sourcing-home .main-header .brand {
+  flex: 0 0 auto;
 }
 
 .global-sourcing-home .main-header .brand-logo-image {
   width: 196px;
   height: 46px;
-  filter: contrast(1.08) saturate(1.05);
+}
+
+.subpage-nav .brand-logo-frame,
+.korean-home .main-header .brand-logo-frame {
+  padding: 4px 9px;
+}
+
+.dashboard-brand .brand-logo-frame {
+  padding: 3px 6px;
+  box-shadow: none;
+}
+
+.dashboard-brand .dashboard-brand-logo {
+  padding: 0;
+  background: transparent;
+}
+
+.login-brand .brand-logo-frame {
+  padding: 5px 10px;
+}
+
+.footer-brand .brand-logo-frame,
+.invoice-brand .brand-logo-frame {
+  box-shadow: none;
+}
+
+.state-brand {
+  width: fit-content;
+  margin: 0 auto 24px;
+  display: block;
+}
+
+.state-brand .brand-logo-image {
+  width: 205px;
+  height: 48px;
+}
+
+.access-denied a.state-brand {
+  height: auto;
+  padding: 0;
+  display: block;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+.access-denied > div > .state-brand + svg {
+  margin-top: 8px;
 }
 
 /* Match the breakdown text to the listing-link label for comfortable reading. */
@@ -96,12 +159,21 @@
   }
 
   .global-sourcing-home .main-header .brand {
-    padding: 4px 7px;
+    padding: 0;
   }
 
   .global-sourcing-home .main-header .brand-logo-image {
     width: 154px;
     height: 38px;
+  }
+
+  .brand-logo-frame {
+    padding: 4px 7px;
+  }
+
+  .state-brand .brand-logo-image {
+    width: 170px;
+    height: 42px;
   }
 
   .luxury-site .calculator-summary-heading h2,

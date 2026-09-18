@@ -19,8 +19,8 @@ export function PublicQuoteRequestForm({ initial }: { initial: QuoteInitial }) {
   const totals = useMemo(() => calculateLandedCost(initial), [initial]);
   return <div className="quote-request-layout">
     <section className="quote-request-form">
-      <div className="calculator-form-heading"><div><span>QUOTE REQUEST</span><h2>Тооцоогоо үнийн санал болгох</h2></div><Link2 size={24} /></div>
-      <p className="quote-request-intro">Таны тооцооллын дүнг админ шалгаж, машины мэдээллийг баталгаажуулаад албан ёсны үнийн санал бэлтгэнэ.</p>
+      <div className="calculator-form-heading"><div><span>QUOTE REQUEST</span><h2>Үнийн саналын хүсэлт илгээх</h2></div><Link2 size={24} /></div>
+      <p className="quote-request-intro">Таны оруулсан тооцоог манай ажилтан нягталж, автомашины мэдээлэл болон зардлыг баталгаажуулсны дараа албан ёсны үнийн санал бэлтгэнэ.</p>
       <form action="/api/quotes" method="post">
         <input type="hidden" name="calculatorSubmitted" value="true" />
         <input type="hidden" name="market" value={initial.market} />
@@ -39,7 +39,7 @@ export function PublicQuoteRequestForm({ initial }: { initial: QuoteInitial }) {
         <input type="hidden" name="vatMnt" value={initial.vatMnt} />
         <input type="hidden" name="otherCostsMnt" value={initial.otherCostsMnt} />
         <input type="hidden" name="depositMnt" value={totals.depositMnt} />
-        <label><span>Автомашины зарын линк</span><input name="listingUrl" type="url" value={initial.listingUrl} readOnly={Boolean(initial.listingUrl)} placeholder="https://www.encar.com/..." /></label>
+        <label><span>Автомашины зарын холбоос</span><input name="listingUrl" type="url" value={initial.listingUrl} readOnly={Boolean(initial.listingUrl)} placeholder="https://www.encar.com/..." /></label>
         <div className="quote-request-fields"><label><span>Нэр</span><input name="requesterName" required placeholder="Таны нэр" /></label><label><span>Утасны дугаар</span><input name="requesterPhone" required inputMode="tel" placeholder="9911 2233" /></label><label><span>И-мэйл</span><input name="requesterEmail" required type="email" placeholder="name@example.com" /></label></div>
         <button className="calculator-cta" type="submit">Үнийн санал хүсэх <ArrowRight size={15} /></button>
       </form>

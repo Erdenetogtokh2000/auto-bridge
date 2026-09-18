@@ -50,7 +50,7 @@ export function EncarQuickQuote() {
       <div><span>PREMIUM QUICK QUOTE</span><h2>Үнийн тооцоо авах</h2></div>
       <CircleDollarSign size={29} />
     </div>
-    <label htmlFor="vehicle-url">Encar эсвэл бусад зарын линк</label>
+    <label htmlFor="vehicle-url">Encar эсвэл бусад зарын холбоос</label>
     <div className="url-field">
       <Link2 size={18} />
       <input id="vehicle-url" name="vehicleUrl" type="url" required value={vehicleUrl} onChange={(event) => setVehicleUrl(event.target.value)} placeholder="https://fem.encar.com/cars/detail/..." />

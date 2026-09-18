@@ -39,7 +39,7 @@ export default async function QuoteInvoicePage({ params }: { params: Promise<{ i
       <section className="invoice-meta">
         <div><span>ХАРИЛЦАГЧ</span><strong>{quote.requesterName ?? "Нэр оруулаагүй"}</strong><small>{quote.requesterPhone ?? "Утас оруулаагүй"} · {quote.requesterEmail ?? "И-мэйлгүй"}</small></div>
         <div><span>ҮҮССЭН ОГНОО</span><strong>{displayDate(estimate.updatedAt)}</strong><small>Хүчинтэй: {displayDate(validUntil.toISOString())} хүртэл</small></div>
-        <div><span>ЗАХ ЗЭЭЛ</span><strong>{quote.market === "KOREA" ? "БНСУ" : quote.market}</strong><a href={quote.sourceUrl} target="_blank" rel="noreferrer">Зарын линк <ExternalLink/></a></div>
+        <div><span>ЗАХ ЗЭЭЛ</span><strong>{quote.market === "KOREA" ? "БНСУ" : quote.market}</strong><a href={quote.sourceUrl} target="_blank" rel="noreferrer">Зарын холбоос <ExternalLink/></a></div>
       </section>
 
       <section className="invoice-vehicle"><span>СОНГОСОН АВТОМАШИН</span><h1>{(estimate.vehicleName ?? `${estimate.vehicleMake ?? ""} ${estimate.vehicleModel ?? ""}`.trim()) || "Автомашины нэр оруулаагүй"}</h1><small>{estimate.productionYear ?? "—"} · {estimate.fuelType ?? "Түлш тодорхойгүй"}{estimate.engineCapacityCc ? ` · ${money.format(estimate.engineCapacityCc)} cc` : ""}</small></section>

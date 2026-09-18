@@ -20,56 +20,56 @@ type Market = {
 const markets: Market[] = [
   {
     code: "KOREA",
-    name: "Korea",
-    eyebrow: "PRIMARY SOURCING MARKET",
+    name: "Солонгос",
+    eyebrow: "ҮНДСЭН ЗАХ ЗЭЭЛ",
     x: 900,
     y: 244,
-    details: ["Encar & dealer listings", "Premium used vehicles", "EV & hybrid selection", "Export-ready sourcing"],
+    details: ["Encar болон дилерийн зар", "Чанартай хуучин автомашин", "Цахилгаан болон хосолмол хөдөлгүүртэй сонголт", "Экспортод бэлэн автомашин"],
     href: "/vehicles?market=KOREA",
   },
   {
     code: "JAPAN",
-    name: "Japan",
-    eyebrow: "AUCTION & PREMIUM USED",
+    name: "Япон",
+    eyebrow: "ДУУДЛАГА ХУДАЛДАА БА ЧАНАРТАЙ СОНГОЛТ",
     x: 974,
     y: 252,
-    details: ["Auction channels", "Premium used vehicles", "Performance cars", "Luxury SUVs"],
+    details: ["Дуудлага худалдааны сувгууд", "Чанартай хуучин автомашин", "Спорт загварын автомашин", "Дээд зэрэглэлийн SUV"],
     href: "/#quote",
   },
   {
     code: "CHINA",
-    name: "China",
-    eyebrow: "EV & NEW VEHICLE SOURCING",
+    name: "Хятад",
+    eyebrow: "ЦАХИЛГААН БА ШИНЭ АВТОМАШИН",
     x: 848,
     y: 298,
-    details: ["EV & NEV selection", "New vehicle sourcing", "Premium brands", "Export availability check"],
+    details: ["EV болон NEV сонголт", "Шинэ автомашины захиалга", "Дээд зэрэглэлийн брэндүүд", "Экспортын боломжийн шалгалт"],
     href: "/#quote",
   },
   {
     code: "EUROPE",
-    name: "Europe",
-    eyebrow: "PREMIUM & PERFORMANCE",
+    name: "Европ",
+    eyebrow: "ДЭЭД ЗЭРЭГЛЭЛ БА ӨНДӨР ҮЗҮҮЛЭЛТ",
     x: 590,
     y: 192,
-    details: ["Luxury vehicles", "Performance models", "Certified used options", "Specialist dealer sourcing"],
+    details: ["Тансаг зэрэглэлийн автомашин", "Өндөр үзүүлэлттэй загвар", "Баталгаажсан хуучин автомашин", "Мэргэшсэн дилерийн санал"],
     href: "/#quote",
   },
   {
     code: "UAE",
     name: "UAE",
-    eyebrow: "GCC PREMIUM MARKET",
+    eyebrow: "GCC-ИЙН ДЭЭД ЗЭРЭГЛЭЛИЙН ЗАХ ЗЭЭЛ",
     x: 674,
     y: 320,
-    details: ["Luxury SUVs", "Performance vehicles", "Dealer listings", "Export availability check"],
+    details: ["Тансаг зэрэглэлийн SUV", "Өндөр үзүүлэлттэй автомашин", "Дилерийн зарууд", "Экспортын боломжийн шалгалт"],
     href: "/#quote",
   },
   {
     code: "USA",
     name: "USA",
-    eyebrow: "AUCTION & DEALER MARKET",
+    eyebrow: "ДУУДЛАГА ХУДАЛДАА БА ДИЛЕРИЙН ЗАХ ЗЭЭЛ",
     x: 205,
     y: 248,
-    details: ["Auction listings", "Dealer network listings", "SUVs & trucks", "Premium used vehicles"],
+    details: ["Дуудлага худалдааны зар", "Дилерийн сүлжээний зар", "SUV болон ачааны автомашин", "Чанартай хуучин автомашин"],
     href: "/vehicles?market=USA",
   },
 ];
@@ -94,8 +94,8 @@ export function GlobalSourcingMap() {
 
   return (
     <div className="global-map-shell">
-      <div className="global-map-canvas" aria-label="AUTO BRIDGE олон улсын sourcing зах зээлийн interactive map">
-        <svg className="global-map-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} role="img" aria-label="Дэлхийн sourcing зах зээлийн зураглал">
+      <div className="global-map-canvas" aria-label="AUTO BRIDGE-ийн олон улсын автомашины зах зээлийн интерактив зураглал">
+        <svg className="global-map-svg" viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`} role="img" aria-label="Олон улсын автомашины зах зээлийн зураглал">
           <defs>
             <linearGradient id="ab-map-fill" x1="0" x2="1" y1="0" y2="1">
               <stop offset="0" stopColor="#2a2a28" />
@@ -146,7 +146,7 @@ export function GlobalSourcingMap() {
           </g>
         </svg>
 
-        <div className="global-map-markers" aria-label="Sourcing markets">
+        <div className="global-map-markers" aria-label="Автомашин нийлүүлэх зах зээлүүд">
           {markets.map((market) => {
             const isActive = market.code === active.code;
             return (
@@ -159,7 +159,7 @@ export function GlobalSourcingMap() {
                 onFocus={() => setActiveCode(market.code)}
                 onClick={() => setActiveCode(market.code)}
                 aria-pressed={isActive}
-                aria-label={`${market.name} sourcing мэдээлэл`}
+                aria-label={`${market.name} зах зээлийн мэдээлэл`}
               >
                 <span className="global-map-marker-dot"><i /></span>
                 <b>{market.code}</b>
@@ -176,19 +176,19 @@ export function GlobalSourcingMap() {
           <div className="global-map-popover-list">
             {active.details.map((detail) => <span key={detail}>{detail}</span>)}
           </div>
-          <a href={active.href}>Explore sourcing <ArrowUpRight size={15} /></a>
+          <a href={active.href}>Сонголтыг үзэх <ArrowUpRight size={15} /></a>
         </aside>
 
-        <div className="global-map-hint">Hover, focus эсвэл дарж зах зээлийн мэдээлэл харна уу</div>
+        <div className="global-map-hint">Зах зээлийн тэмдэглэгээг сонгож дэлгэрэнгүй мэдээллийг хараарай</div>
       </div>
 
-      <div className="global-map-mobile-tabs" aria-label="Sourcing market selector">
+      <div className="global-map-mobile-tabs" aria-label="Зах зээл сонгох">
         {markets.map((market) => (
           <button key={market.code} type="button" className={market.code === active.code ? "is-active" : ""} onClick={() => setActiveCode(market.code)}>{market.code}</button>
         ))}
       </div>
 
-      <p className="global-map-disclaimer">Зураглал нь AUTO BRIDGE-ийн боломжит sourcing хүрээг танилцуулна. Тухайн автомашины бодит олдоц, үнэ, экспортын нөхцөлийг хүсэлт бүрээр менежер баталгаажуулна.</p>
+      <p className="global-map-disclaimer">Энэхүү зураглал нь AUTO BRIDGE-ийн автомашин нийлүүлэх боломжит зах зээлүүдийг танилцуулна. Тухайн автомашины олдоц, үнэ болон экспортын нөхцөлийг хүсэлт бүрээр менежер баталгаажуулна.</p>
     </div>
   );
 }

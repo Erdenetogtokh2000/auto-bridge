@@ -212,7 +212,7 @@ async function VehicleDetailContent({ id }: { id: string }) {
           </div>
           {vehicle.listingUrl && (
             <a href={vehicle.listingUrl} target="_blank" rel="noreferrer">
-              Эх зарын линк <ExternalLink size={14} />
+              Эх зарын холбоос <ExternalLink size={14} />
             </a>
           )}
         </div>

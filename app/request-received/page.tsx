@@ -1,10 +1,12 @@
 import { ArrowLeft, CheckCircle2, Clock3, Link2 } from "lucide-react";
+import { BrandLogo } from "@/app/components/brand-logo";
 
 export default async function RequestReceived({ searchParams }: { searchParams: Promise<{ ref?: string }> }) {
   const { ref } = await searchParams;
   return (
     <main className="success-page">
       <section className="success-card">
+        <a className="state-brand" href="/" aria-label="AUTO BRIDGE нүүр"><BrandLogo /></a>
         <div className="success-icon"><CheckCircle2 size={38} /></div>
         <p className="section-kicker">ХҮСЭЛТ АМЖИЛТТАЙ</p>
         <h1>Үнийн саналын хүсэлтийг хүлээн авлаа</h1>

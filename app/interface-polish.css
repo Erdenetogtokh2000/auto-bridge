@@ -1,0 +1,111 @@
+/* Final homepage and calculator presentation refinements. */
+
+/* The real cover image spans the viewport; only the live copy stays on the content grid. */
+.global-sourcing-home .hero > .hero-layout {
+  width: 100% !important;
+  max-width: none !important;
+  margin-inline: 0 !important;
+}
+
+.global-sourcing-home .hero-copy-cinematic {
+  margin-left: max(32px, calc((100vw - 1440px) / 2));
+}
+
+.global-sourcing-home .hero-market-labels {
+  right: max(32px, calc((100vw - 1440px) / 2));
+}
+
+/* The source artwork uses dark navy lettering, so give it a light premium plaque. */
+.global-sourcing-home .main-header .brand {
+  flex: 0 0 auto;
+  padding: 5px 10px;
+  overflow: hidden;
+  background: rgba(248, 247, 243, .96);
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+
+.global-sourcing-home .main-header .brand-logo-image {
+  width: 196px;
+  height: 46px;
+  filter: contrast(1.08) saturate(1.05);
+}
+
+/* Match the breakdown text to the listing-link label for comfortable reading. */
+.luxury-site .calculator-field > span,
+.luxury-site .calculator-rate-box > div > span,
+.luxury-site .calculator-lines span,
+.luxury-site .calculator-lines strong,
+.luxury-site .calculator-balance span,
+.luxury-site .calculator-balance strong,
+.calculator-page .calculator-lines span,
+.calculator-page .calculator-lines strong,
+.calculator-page .calculator-balance span,
+.calculator-page .calculator-balance strong {
+  font-size: 12px;
+}
+
+.luxury-site .calculator-field select,
+.luxury-site .calculator-input,
+.luxury-site .calculator-input input,
+.luxury-site .calculator-input b {
+  font-size: 13px;
+}
+
+.luxury-site .calculator-note,
+.luxury-site .calculator-total small,
+.luxury-site .calculator-disclaimer {
+  font-size: 11px;
+}
+
+.luxury-site .calculator-summary-heading,
+.calculator-page .calculator-summary-heading {
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  text-align: center;
+}
+
+.luxury-site .calculator-summary-heading h2,
+.calculator-page .calculator-summary-heading h2 {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 18px;
+  font-size: clamp(31px, 2.25vw, 42px);
+  line-height: 1.04;
+  text-align: center;
+}
+
+.encar-autofill-status.loading {
+  color: #aeb7c3;
+  background: rgba(201, 161, 90, .045);
+  border-color: rgba(201, 161, 90, .20);
+}
+
+@media (max-width: 760px) {
+  .global-sourcing-home .hero-copy-cinematic {
+    margin-inline: 20px;
+  }
+
+  .global-sourcing-home .hero-market-labels {
+    right: auto;
+    left: 20px;
+  }
+
+  .global-sourcing-home .main-header .brand {
+    padding: 4px 7px;
+  }
+
+  .global-sourcing-home .main-header .brand-logo-image {
+    width: 154px;
+    height: 38px;
+  }
+
+  .luxury-site .calculator-summary-heading h2,
+  .calculator-page .calculator-summary-heading h2 {
+    font-size: 30px;
+  }
+}

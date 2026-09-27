@@ -6,12 +6,13 @@ import { bootstrapTokenConfigured, hashPassword, matchesBootstrapToken, normaliz
 const OWNER_EMAIL = "erdenetogtokh2000@gmail.com";
 
 export async function GET() {
-  if (!bootstrapTokenConfigured()) return Response.json({ available: false }, { status: 503, headers: { "Cache-Control": "no-store" } });
   try {
     const [setup] = await getDb().select({ id: authBootstrap.id }).from(authBootstrap).where(eq(authBootstrap.id, "owner")).limit(1);
-    return Response.json({ available: !setup }, { headers: { "Cache-Control": "no-store" } });
+    if (setup) return Response.json({ state: "complete" }, { headers: { "Cache-Control": "no-store" } });
+    if (!bootstrapTokenConfigured()) return Response.json({ state: "missing_secret" }, { status: 503, headers: { "Cache-Control": "no-store" } });
+    return Response.json({ state: "ready" }, { headers: { "Cache-Control": "no-store" } });
   } catch {
-    return Response.json({ available: false }, { status: 503, headers: { "Cache-Control": "no-store" } });
+    return Response.json({ state: "unavailable" }, { status: 503, headers: { "Cache-Control": "no-store" } });
   }
 }
 

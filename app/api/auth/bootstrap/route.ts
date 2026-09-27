@@ -55,6 +55,8 @@ export async function POST(request: Request) {
         : stage === "save_setup_marker"
           ? "Нэвтрэх мэдээлэл хадгалагдсан ч D1 анхны тохиргоог баталгаажуулж чадсангүй. Дахин оролдоно уу."
           : "Анхны тохиргооны хүсэлтийг боловсруулахад алдаа гарлаа.";
-    return Response.json({ error: message, stage }, { status: 500, headers: { "Cache-Control": "no-store" } });
+    const safeHashCodes = ["AUTH_HASH_SALT_FAILED", "AUTH_HASH_IMPORT_FAILED", "AUTH_HASH_DERIVE_FAILED", "AUTH_HASH_ENCODE_FAILED"];
+    const diagnostic = error instanceof Error && safeHashCodes.includes(error.message) ? error.message : undefined;
+    return Response.json({ error: message, stage, ...(diagnostic ? { diagnostic } : {}) }, { status: 500, headers: { "Cache-Control": "no-store" } });
   }
 }

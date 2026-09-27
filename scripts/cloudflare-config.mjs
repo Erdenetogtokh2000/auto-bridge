@@ -1,9 +1,6 @@
 import { writeFile } from "node:fs/promises";
 
-const hyperdriveId = process.env.CLOUDFLARE_HYPERDRIVE_ID?.trim();
-if (!hyperdriveId) {
-  throw new Error("Set CLOUDFLARE_HYPERDRIVE_ID to the Hyperdrive configuration ID");
-}
+const databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID?.trim() || "a4476a3a-ea13-43b4-bf8e-2c1196930f33";
 
 const config = {
   name: "auto-bridge",
@@ -11,7 +8,12 @@ const config = {
   compatibility_date: "2026-09-27",
   compatibility_flags: ["nodejs_compat"],
   observability: { traces: { enabled: true } },
-  hyperdrive: [{ binding: "HYPERDRIVE", id: hyperdriveId }],
+  d1_databases: [{
+    binding: "DB",
+    database_name: "auto-bridge-db",
+    database_id: databaseId,
+    migrations_dir: "migrations/d1",
+  }],
   images: { binding: "IMAGES" },
 };
 

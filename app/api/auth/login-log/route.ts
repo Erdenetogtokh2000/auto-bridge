@@ -17,8 +17,8 @@ export async function POST(request: Request) {
 
   try {
     const db = getDb();
-    await db.transaction(async (tx) => {
-      await tx.insert(userLoginLogs).values({
+    await db.batch([
+      db.insert(userLoginLogs).values({
         id: `LOG-${crypto.randomUUID()}`,
         email: user.email.toLowerCase(),
         role,
@@ -27,11 +27,11 @@ export async function POST(request: Request) {
         userAgent,
         source: "LOGIN_FORM",
         loggedInAt: now,
-      });
-      await tx.update(userProfiles)
+      }),
+      db.update(userProfiles)
         .set({ lastLoginAt: now, updatedAt: now })
-        .where(eq(userProfiles.email, user.email.toLowerCase()));
-    });
+        .where(eq(userProfiles.email, user.email.toLowerCase())),
+    ]);
     return Response.json({ ok: true });
   } catch {
     return Response.json({ ok: false }, { status: 202 });

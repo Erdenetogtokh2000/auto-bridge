@@ -6,7 +6,6 @@ interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   BUCKET: R2Bucket;
-  HYPERDRIVE?: { connectionString: string };
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -29,9 +28,7 @@ interface ExecutionContext {
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    if (env.HYPERDRIVE) {
-      globalThis.autoBridgeHyperdriveConnectionString = env.HYPERDRIVE.connectionString;
-    }
+    globalThis.autoBridgeD1Database = env.DB;
     const url = new URL(request.url);
 
     if (url.pathname === "/_vinext/image") {

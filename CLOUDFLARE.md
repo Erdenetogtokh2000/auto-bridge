@@ -1,39 +1,56 @@
-# AUTO BRIDGE Cloudflare migration
+# AUTO BRIDGE on Cloudflare
 
-This deploys the Next.js app and API routes to Cloudflare Workers with Vinext.
-The existing Supabase PostgreSQL, Auth and Storage remain in place; no data
-copy or schema reset is part of this deployment.
+The Cloudflare deployment uses Workers for the app and D1 for its relational
+application data. The D1 binding is `DB`; its ID is supplied through
+`CLOUDFLARE_D1_DATABASE_ID` (the default is the `auto-bridge-db` database
+created for this project). Worker tracing is enabled in the generated Wrangler
+configuration.
 
-Workers tracing is enabled for request and runtime visibility. The current
-Auto Bridge code is a web application, not a Cloudflare Agent/AI SDK workflow,
-so it will not appear as an agent session until agent calls are added and
-instrumented with a supported Cloudflare integration.
+## Current migration scope
 
-## Before deploying
+- App tables are being converted from PostgreSQL to SQLite/D1.
+- Supabase Auth and Supabase Storage are still used. Moving those services is
+  a separate migration and is not implied by moving the application tables.
+- Creating D1 does not copy existing rows. Do not switch production traffic
+  until data has been exported from Supabase, imported into D1, and verified.
+- The current D1 schema contains 14 app tables. The first migration is in
+  `migrations/d1/` and can be regenerated with `npm run db:generate:d1`.
 
-1. In Cloudflare Hyperdrive, create a configuration for the **direct** Supabase
-   PostgreSQL connection string. Hyperdrive handles pooling. Copy its ID.
-2. Make sure the Cloudflare account has Workers Images transformations enabled
-   for the `IMAGES` binding used by the existing image route.
-3. Configure the Worker runtime values in Cloudflare: `NEXT_PUBLIC_SUPABASE_URL`,
-   `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `ADMIN_EMAILS`, `MANAGER_EMAILS`,
-   `FINANCE_EMAILS`, `TRANSPORT_EMAILS`, `CUSTOMER_EMAILS`, and `APIFY_TOKEN`
-   if vehicle import uses it. The Supabase URL and publishable key must also
-   be present **at build time** so browser code has the correct values.
-   Do not place the database password, service role key, or API tokens in Git.
-4. In Supabase Auth URL configuration, add the preview `*.workers.dev` origin
-   and later `https://autobridge.mn` to the allowed redirect URLs, matching the
-   app's `/auth/callback` flow. Preserve the current production values.
+## Build and deploy
 
-## Build and preview
+The Cloudflare build generates an ignored `wrangler.jsonc` and builds the
+Worker:
 
-Set `CLOUDFLARE_HYPERDRIVE_ID` and `CLOUDFLARE_ACCOUNT_ID` in the deployment
-environment, then run `npm ci` and `npm run build:cloudflare`. This generates an
-ignored `wrangler.jsonc` with the Hyperdrive binding and builds the Worker.
-Deploy first to its Workers preview URL with `npm run deploy:cloudflare`.
+```sh
+npm run build:cloudflare
+```
 
-Check the home page, vehicle list, quote submission, customer login, role
-permissions, order and payment views, and upload/download before connecting
-the domain. Once verified, attach `autobridge.mn` and `www.autobridge.mn` to the
-Worker in Cloudflare and update DNS there. Keep the existing Render service
-until the live domain and the Supabase callback flow pass those checks.
+Set the Cloudflare Workers Builds build variable `CLOUDFLARE_D1_DATABASE_ID`
+if deploying to a different D1 database. The existing Supabase public URL and
+publishable key must also be available at build time for the browser bundle.
+
+Before deploying, apply D1 migrations to the target database:
+
+```sh
+npx wrangler d1 migrations apply auto-bridge-db --remote
+```
+
+Then deploy the Worker:
+
+```sh
+npx wrangler deploy
+```
+
+Set runtime variables and secrets in Worker Settings → Variables and Secrets.
+Keep `APIFY_TOKEN` and other credentials as secrets. Add role email lists as
+plain variables. Preserve the existing production service and domain until
+the D1 import and application flows are verified on the `workers.dev` URL.
+
+## Required checks before production cutover
+
+1. Export Supabase rows and import them into D1 with foreign-key order intact.
+2. Compare row counts and key records for all 14 tables.
+3. Test login, quotes, quote estimates, vehicle catalog, orders, payments,
+   financing, shipment updates, and notifications.
+4. Verify Supabase Auth callbacks and existing document/image links.
+5. Only after those checks pass, connect `autobridge.mn` and update DNS.

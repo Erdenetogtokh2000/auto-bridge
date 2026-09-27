@@ -71,6 +71,26 @@ export function isRemoteVehicleImage(value: string) {
   } catch { return false; }
 }
 
+async function fetchRemoteVehicleImage(imageUrl: string, signal: AbortSignal) {
+  let url = new URL(imageUrl);
+  for (let redirects = 0; redirects <= 3; redirects++) {
+    let response: Response;
+    try {
+      response = await fetch(url, { redirect: "manual", signal, headers: { Accept: "image/jpeg,image/png,image/webp" } });
+    } catch (error) {
+      const cause = error instanceof Error && error.cause instanceof Error ? `: ${error.cause.message}` : "";
+      throw new Error(`IMAGE_FETCH_FAILED ${url.hostname}: ${error instanceof Error ? error.message : String(error)}${cause}`);
+    }
+    if (![301, 302, 303, 307, 308].includes(response.status)) return response;
+    const location = response.headers.get("location");
+    if (!location) throw new Error(`IMAGE_REDIRECT_MISSING_LOCATION ${url.hostname}`);
+    const next = new URL(location, url);
+    if (!isRemoteVehicleImage(next.toString())) throw new Error(`IMAGE_REDIRECT_UNTRUSTED_HOST ${next.hostname}`);
+    url = next;
+  }
+  throw new Error(`IMAGE_TOO_MANY_REDIRECTS ${url.hostname}`);
+}
+
 export async function storeRemoteVehicleImage(
   vehicleId: string,
   imageUrl: string,
@@ -82,9 +102,9 @@ export async function storeRemoteVehicleImage(
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15_000);
   try {
-    const response = await fetch(imageUrl, { redirect: "error", signal: controller.signal, headers: { Accept: "image/jpeg,image/png,image/webp" } });
+    const response = await fetchRemoteVehicleImage(imageUrl, controller.signal);
     if (!response.ok || !response.body || Number(response.headers.get("content-length") || 0) > 5 * 1024 * 1024)
-      throw new Error("Эх зургийг татаж чадсангүй эсвэл 5 MB-аас том байна.");
+      throw new Error(`IMAGE_BAD_RESPONSE ${new URL(imageUrl).hostname} HTTP ${response.status}, length ${response.headers.get("content-length") ?? "unknown"}`);
     const reader = response.body.getReader();
     const chunks: Uint8Array[] = [];
     let size = 0;

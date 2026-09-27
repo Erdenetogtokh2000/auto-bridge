@@ -14,6 +14,10 @@ const config = {
     database_id: databaseId,
     migrations_dir: "migrations/d1",
   }],
+  r2_buckets: [{
+    binding: "BUCKET",
+    bucket_name: "auto-bridge-files",
+  }],
   images: { binding: "IMAGES" },
 };
 

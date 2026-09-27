@@ -12,7 +12,7 @@ import {
   Ship,
   Truck,
 } from "lucide-react";
-import { and, asc, desc, eq, gte, ne } from "drizzle-orm";
+import { and, asc, desc, eq, gte, isNull, ne } from "drizzle-orm";
 import { getDb } from "@/db";
 import { expos, vehicles } from "@/db/schema";
 import { PublicCostCalculator } from "@/app/components/public-cost-calculator";
@@ -69,7 +69,7 @@ export const dynamic = "force-dynamic";
 async function loadFeaturedVehicles() {
   try {
     return await getDb().select().from(vehicles)
-      .where(and(eq(vehicles.isPublished, true), ne(vehicles.status, "ARCHIVED")))
+      .where(and(eq(vehicles.isPublished, true), ne(vehicles.status, "ARCHIVED"), isNull(vehicles.sourceMissingAt)))
       .orderBy(desc(vehicles.isFeatured), desc(vehicles.createdAt)).limit(4);
   } catch {
     return [];

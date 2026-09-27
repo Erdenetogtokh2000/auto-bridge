@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { syncSourceListings } from "./source-listing-lifecycle";
 
 interface Env {
   ASSETS: Fetcher;
@@ -28,6 +29,9 @@ interface ExecutionContext {
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
 const worker = {
+  async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
+    ctx.waitUntil(syncSourceListings(env.DB, env.BUCKET));
+  },
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     globalThis.autoBridgeD1Database = env.DB;
     globalThis.autoBridgeR2Bucket = env.BUCKET;

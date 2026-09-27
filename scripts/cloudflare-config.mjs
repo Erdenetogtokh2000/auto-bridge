@@ -20,6 +20,7 @@ const config = {
     bucket_name: "auto-bridge-files",
   }],
   images: { binding: "IMAGES" },
+  triggers: { crons: ["0 */6 * * *"] },
 };
 
 await writeFile(new URL("../wrangler.jsonc", import.meta.url), `${JSON.stringify(config, null, 2)}\n`);

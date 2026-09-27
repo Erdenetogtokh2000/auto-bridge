@@ -44,6 +44,7 @@ export const vehicles = sqliteTable("vehicles", {
   imageUrl: text("image_url"), imageObjectKey: text("image_object_key"), galleryImageUrls: text("gallery_image_urls").notNull().default("[]"), description: text("description"),
   isPublished: integer("is_published", { mode: "boolean" }).notNull().default(false),
   isFeatured: integer("is_featured", { mode: "boolean" }).notNull().default(false),
+  sourceMissingAt: text("source_missing_at"),
   status: text("status").notNull().default("AVAILABLE"),
   createdBy: text("created_by"), createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`), updatedAt: text("updated_at"),
 });

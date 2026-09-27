@@ -6,9 +6,9 @@ import { getVehicleBucket } from "@/lib/vehicle-catalog";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [vehicle] = await getDb().select({ imageObjectKey: vehicles.imageObjectKey, galleryImageUrls: vehicles.galleryImageUrls, isPublished: vehicles.isPublished }).from(vehicles).where(eq(vehicles.id, id)).limit(1);
+  const [vehicle] = await getDb().select({ imageObjectKey: vehicles.imageObjectKey, galleryImageUrls: vehicles.galleryImageUrls, isPublished: vehicles.isPublished, sourceMissingAt: vehicles.sourceMissingAt }).from(vehicles).where(eq(vehicles.id, id)).limit(1);
   if (!vehicle) return Response.json({ error: "image not found" }, { status: 404 });
-  if (!vehicle.isPublished && !await getAdminUser()) return Response.json({ error: "image not found" }, { status: 404 });
+  if ((!vehicle.isPublished || vehicle.sourceMissingAt) && !await getAdminUser()) return Response.json({ error: "image not found" }, { status: 404 });
   const filename = new URL(request.url).searchParams.get("image");
   let key = vehicle.imageObjectKey;
   if (filename !== null) {
@@ -23,5 +23,5 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   if (!key) return Response.json({ error: "image not found" }, { status: 404 });
   const object = await getVehicleBucket().get(key);
   if (!object) return Response.json({ error: "image not found" }, { status: 404 });
-  return new Response(object.body, { headers: { "content-type": object.httpMetadata?.contentType ?? "image/jpeg", "cache-control": vehicle.isPublished ? "public, max-age=86400" : "private, no-store", "x-content-type-options": "nosniff" } });
+  return new Response(object.body, { headers: { "content-type": object.httpMetadata?.contentType ?? "image/jpeg", "cache-control": vehicle.isPublished && !vehicle.sourceMissingAt ? "public, max-age=86400" : "private, no-store", "x-content-type-options": "nosniff" } });
 }

@@ -1,4 +1,4 @@
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, isNull, ne } from "drizzle-orm";
 import { ArrowLeft, ArrowRight, Calculator, CarFront, ExternalLink, FileCheck2, Ship } from "lucide-react";
 import { PublicHeader } from "@/app/components/public-header";
 import { getDb } from "@/db";
@@ -16,7 +16,7 @@ function inferredDrive(trim: string | null) {
 
 export default async function PublicVehicleDetail({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [v] = await getDb().select().from(vehicles).where(and(eq(vehicles.id, id), eq(vehicles.isPublished, true), ne(vehicles.status, "ARCHIVED"))).limit(1);
+  const [v] = await getDb().select().from(vehicles).where(and(eq(vehicles.id, id), eq(vehicles.isPublished, true), ne(vehicles.status, "ARCHIVED"), isNull(vehicles.sourceMissingAt))).limit(1);
   if (!v) return <main className="catalog-page"><PublicHeader section="Автомашины каталог" /><section className="container catalog-empty"><CarFront /><h2>Автомашин олдсонгүй</h2><a href="/vehicles"><ArrowLeft /> Каталог руу буцах</a></section></main>;
 
   const image = v.imageObjectKey ? `/api/vehicle-images/${encodeURIComponent(v.id)}` : v.imageUrl;

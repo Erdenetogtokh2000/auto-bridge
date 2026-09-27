@@ -1,0 +1,1 @@
+ALTER TABLE `vehicles` ADD `source_missing_at` text;

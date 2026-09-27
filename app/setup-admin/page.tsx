@@ -29,8 +29,8 @@ export default function SetupAdminPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ token: data.get("token"), password: data.get("password"), confirmPassword: data.get("confirmPassword") }),
       });
-      const body = await response.json() as { error?: string };
-      if (!response.ok) throw new Error(body.error ?? "Тохиргоо хадгалагдсангүй.");
+      const body = await response.json() as { error?: string; diagnostic?: string };
+      if (!response.ok) throw new Error(body.diagnostic ? `${body.error ?? "Тохиргоо хадгалагдсангүй."} (${body.diagnostic})` : body.error ?? "Тохиргоо хадгалагдсангүй.");
       setSetupState("complete");
       setMessage("Admin нууц үг үүслээ. Одоо нэвтрэх хэсэгт орж нэвтэрнэ үү.");
       event.currentTarget.reset();

@@ -1,6 +1,7 @@
 import { and, eq, isNull, ne } from "drizzle-orm";
 import { ArrowLeft, ArrowRight, Calculator, CarFront, ExternalLink, FileCheck2, Ship } from "lucide-react";
 import { PublicHeader } from "@/app/components/public-header";
+import { VehiclePhotoGallery } from "@/app/components/vehicle-photo-gallery";
 import { getDb } from "@/db";
 import { vehicles } from "@/db/schema";
 
@@ -29,8 +30,7 @@ export default async function PublicVehicleDetail({ params }: { params: Promise<
     <PublicHeader section="Автомашины дэлгэрэнгүй" />
     <section className="container vehicle-public-detail">
       <a className="back-link" href="/vehicles"><ArrowLeft size={14} /> Каталог руу буцах</a>
-      <div className="vehicle-public-detail-card">
-        <div className={`vehicle-public-image ${image ? "has-image" : ""}`}>{image ? <img src={image} alt={`${v.make} ${v.model}`} /> : <CarFront size={125} />}</div>
+      <VehiclePhotoGallery photos={gallery} name={`${v.make} ${v.model}`}>
         <div className="vehicle-public-copy">
           <span>{v.sourceMarket} · {v.stockNo} · {v.status}</span>
           <h1>{v.make} {v.model}</h1>
@@ -51,10 +51,7 @@ export default async function PublicVehicleDetail({ params }: { params: Promise<
             {v.listingUrl && <a className="document-download-link" href={v.listingUrl} target="_blank" rel="noreferrer">Эх зар үзэх <ExternalLink size={14} /></a>}
           </div>
         </div>
-      </div>
-      {gallery.length > 1 && <section className="vehicle-photo-gallery" aria-label="Автомашины зургийн цомог">
-        {gallery.map((photo,index)=><a key={photo} href={photo} target="_blank" rel="noreferrer"><img src={photo} alt={`${v.make} ${v.model} зураг ${index+1}`} loading={index<4?"eager":"lazy"}/></a>)}
-      </section>}
+      </VehiclePhotoGallery>
 
       <div className="vehicle-showroom-sections">
         <section>

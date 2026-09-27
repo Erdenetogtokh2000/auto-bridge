@@ -1,14 +1,21 @@
 import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
-import { authBootstrap, authCredentials } from "@/db/schema";
-import { bootstrapTokenConfigured, hashPassword, matchesBootstrapToken, normalizeAuthEmail, requestIsSameOrigin } from "@/lib/cloudflare-auth";
+import { authBootstrap, authCredentials, authLoginAttempts } from "@/db/schema";
+import { bootstrapTokenConfigured, hashPassword, isBrokenBootstrapHash, matchesBootstrapToken, normalizeAuthEmail, requestIsSameOrigin, sha256 } from "@/lib/cloudflare-auth";
 
 const OWNER_EMAIL = "erdenetogtokh2000@gmail.com";
 
 export async function GET() {
   try {
-    const [setup] = await getDb().select({ id: authBootstrap.id }).from(authBootstrap).where(eq(authBootstrap.id, "owner")).limit(1);
-    if (setup) return Response.json({ state: "complete" }, { headers: { "Cache-Control": "no-store" } });
+    const db = getDb();
+    const [setup] = await db.select({ id: authBootstrap.id }).from(authBootstrap).where(eq(authBootstrap.id, "owner")).limit(1);
+    if (setup) {
+      const [credential] = await db.select({ passwordHash: authCredentials.passwordHash }).from(authCredentials)
+        .where(eq(authCredentials.email, normalizeAuthEmail(OWNER_EMAIL))).limit(1);
+      const state = credential && isBrokenBootstrapHash(credential.passwordHash) && bootstrapTokenConfigured()
+        ? "repair_required" : "complete";
+      return Response.json({ state }, { headers: { "Cache-Control": "no-store" } });
+    }
     if (!bootstrapTokenConfigured()) return Response.json({ state: "missing_secret" }, { status: 503, headers: { "Cache-Control": "no-store" } });
     return Response.json({ state: "ready" }, { headers: { "Cache-Control": "no-store" } });
   } catch {
@@ -33,9 +40,12 @@ export async function POST(request: Request) {
     stage = "check_setup";
     const db = getDb();
     const [existingSetup] = await db.select({ id: authBootstrap.id }).from(authBootstrap).where(eq(authBootstrap.id, "owner")).limit(1);
-    if (existingSetup) return Response.json({ error: "Анхны админ тохиргоо аль хэдийн хийгдсэн байна." }, { status: 409 });
-
     const email = normalizeAuthEmail(OWNER_EMAIL);
+    const [credential] = await db.select({ passwordHash: authCredentials.passwordHash }).from(authCredentials)
+      .where(eq(authCredentials.email, email)).limit(1);
+    if (existingSetup && (!credential || !isBrokenBootstrapHash(credential.passwordHash)))
+      return Response.json({ error: "Анхны админ тохиргоо аль хэдийн хийгдсэн байна." }, { status: 409 });
+
     stage = "hash_password";
     const passwordHash = await hashPassword(password);
     const now = new Date().toISOString();
@@ -44,6 +54,15 @@ export async function POST(request: Request) {
       .onConflictDoUpdate({ target: authCredentials.email, set: { passwordHash, updatedAt: now } });
     stage = "save_setup_marker";
     await db.insert(authBootstrap).values({ id: "owner", completedAt: now }).onConflictDoNothing();
+    // The holder of the bootstrap token can clear their own lockout after repair.
+    // A failed cleanup must not turn a successfully saved credential into a false failure.
+    try {
+      const address = request.headers.get("cf-connecting-ip") ?? "unknown";
+      const attemptKey = await sha256(`${email}|${address}`);
+      await db.delete(authLoginAttempts).where(eq(authLoginAttempts.attemptKey, attemptKey));
+    } catch {
+      console.error("Admin bootstrap login lock cleanup failed");
+    }
     return Response.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     // Log only a stage and error type. Never log request data, credentials, or SQL values.

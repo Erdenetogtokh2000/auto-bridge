@@ -8,10 +8,7 @@ import { fetchEncarVehicle, extractEncarCarId } from "@/lib/encar";
 function redirect(request: Request, path: string) {
   const forwardedHost = request.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const forwardedProto = request.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
-  const renderHost = process.env.RENDER_EXTERNAL_HOSTNAME?.trim();
-  const publicOrigin = renderHost
-    ? `https://${renderHost}`
-    : forwardedHost
+  const publicOrigin = forwardedHost
       ? `${forwardedProto === "http" ? "http" : "https"}://${forwardedHost}`
       : new URL(request.url).origin;
   return Response.redirect(new URL(path, publicOrigin), 303);

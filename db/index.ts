@@ -4,6 +4,11 @@ import * as schema from "./schema";
 
 let pool: pg.Pool | undefined;
 
+declare global {
+  // Set by the Cloudflare Worker entry for the duration of each invocation.
+  var autoBridgeHyperdriveConnectionString: string | undefined;
+}
+
 function normalizedDatabaseUrl(raw: string) {
   try {
     const databaseUrl = new URL(raw);
@@ -29,19 +34,27 @@ function normalizedDatabaseUrl(raw: string) {
 }
 
 export function getDb() {
-  const rawConnectionString = process.env.DATABASE_URL;
+  const hyperdriveConnectionString = globalThis.autoBridgeHyperdriveConnectionString;
+  const rawConnectionString = hyperdriveConnectionString ?? process.env.DATABASE_URL;
   if (!rawConnectionString) {
     throw new Error("DATABASE_URL is not configured");
   }
 
-  const connectionString = normalizedDatabaseUrl(rawConnectionString);
+  const connectionString = hyperdriveConnectionString
+    ? rawConnectionString
+    : normalizedDatabaseUrl(rawConnectionString);
 
-  pool ??= new pg.Pool({
+  // Worker sockets cannot be reused across requests. Hyperdrive pools the
+  // origin connections, so create a small driver pool per invocation.
+  const client = hyperdriveConnectionString ? new pg.Pool({
+    connectionString,
+    max: 1,
+  }) : pool ??= new pg.Pool({
     connectionString,
     // Supabase requires an encrypted connection from Render.
     ssl: { rejectUnauthorized: false },
   });
-  const database = drizzle(pool, { schema });
+  const database = drizzle(client, { schema });
   return Object.assign(database, {
     // D1 exposed batch(); keep the existing application contract while
     // Postgres executes the prepared statements concurrently.

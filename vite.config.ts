@@ -43,6 +43,8 @@ export default defineConfig(async () => {
   // Wrangler snapshots its log path while the Cloudflare plugin is imported.
   const { cloudflare } = await import("@cloudflare/vite-plugin");
 
+  const standaloneCloudflare = process.env.AUTO_BRIDGE_CLOUDFLARE === "1";
+
   return {
     server: {
       host: "0.0.0.0",
@@ -53,11 +55,13 @@ export default defineConfig(async () => {
     },
     plugins: [
       vinext(),
-      sites(),
+      ...(!standaloneCloudflare ? [sites()] : []),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
         inspectorPort: false,
-        config: localBindingConfig,
+        ...(standaloneCloudflare
+          ? { configPath: "wrangler.jsonc" }
+          : { config: localBindingConfig }),
       }),
     ],
   };

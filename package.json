@@ -19,7 +19,7 @@
     "build:vinext": "vinext build",
     "start:vinext": "vinext start",
     "build:cloudflare": "node scripts/cloudflare-config.mjs && AUTO_BRIDGE_CLOUDFLARE=1 vite build",
-    "deploy:cloudflare": "npm run build:cloudflare && wrangler deploy"
+    "deploy:cloudflare": "wrangler d1 migrations apply auto-bridge-db --remote && wrangler deploy"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

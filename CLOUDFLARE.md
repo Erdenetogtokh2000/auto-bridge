@@ -35,10 +35,11 @@ Before deploying, apply D1 migrations to the target database:
 npx wrangler d1 migrations apply auto-bridge-db --remote
 ```
 
-Then deploy the Worker:
+Then deploy the Worker (the deploy script applies any pending D1 migrations
+before publishing):
 
 ```sh
-npx wrangler deploy
+npm run deploy:cloudflare
 ```
 
 Set runtime variables and secrets in Worker Settings → Variables and Secrets.

@@ -4,7 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { BrandLogo } from "@/app/components/brand-logo";
 
 export default function SetupAdminPage() {
-  const [setupState, setSetupState] = useState<"loading" | "ready" | "missing_secret" | "complete" | "unavailable">("loading");
+  const [setupState, setSetupState] = useState<"loading" | "ready" | "repair_required" | "missing_secret" | "complete" | "unavailable">("loading");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -12,7 +12,7 @@ export default function SetupAdminPage() {
     fetch("/api/auth/bootstrap", { cache: "no-store" })
       .then(async (response) => {
         const body = await response.json() as { state?: string };
-        if (body.state === "ready" || body.state === "missing_secret" || body.state === "complete") setSetupState(body.state);
+        if (body.state === "ready" || body.state === "repair_required" || body.state === "missing_secret" || body.state === "complete") setSetupState(body.state);
         else setSetupState("unavailable");
       })
       .catch(() => setSetupState("unavailable"));
@@ -47,7 +47,8 @@ export default function SetupAdminPage() {
       <p className="login-kicker">CLOUDFLARE НЭВТРЭЛТ</p>
       <h1 id="setup-admin-title">Admin нэвтрэлтийг тохируулах</h1>
       <p className="login-intro">Анхны admin нууц үгийг D1-д хамгаалалттай хэлбэрээр хадгална. Нууц үгээ өөр хүнд бүү дамжуулаарай.</p>
-      {setupState === "loading" ? <p role="status">Тохиргоог шалгаж байна…</p> : setupState === "ready" ? <form onSubmit={submit} style={{ display: "grid", gap: 12, marginTop: 22 }}>
+      {setupState === "repair_required" && <p role="status">Өмнөх тохиргоонд нэвтрэх нууц үг буруу хэлбэрээр хадгалагдсан. Cloudflare тохиргооны код, шинэ admin нууц үгээ дахин оруулж засна уу.</p>}
+      {setupState === "loading" ? <p role="status">Тохиргоог шалгаж байна…</p> : setupState === "ready" || setupState === "repair_required" ? <form onSubmit={submit} style={{ display: "grid", gap: 12, marginTop: 22 }}>
         <input name="token" type="password" aria-label="Анхны тохиргооны код" placeholder="Cloudflare тохиргооны код" autoComplete="off" required minLength={32} style={{ minHeight: 46, padding: "0 14px", border: "1px solid #ccd5e2", borderRadius: 4 }} />
         <input name="password" type="password" aria-label="Шинэ admin нууц үг" placeholder="Шинэ нууц үг (12+ тэмдэгт)" autoComplete="new-password" minLength={12} required style={{ minHeight: 46, padding: "0 14px", border: "1px solid #ccd5e2", borderRadius: 4 }} />
         <input name="confirmPassword" type="password" aria-label="Admin нууц үг давтах" placeholder="Шинэ нууц үгээ давтах" autoComplete="new-password" minLength={12} required style={{ minHeight: 46, padding: "0 14px", border: "1px solid #ccd5e2", borderRadius: 4 }} />

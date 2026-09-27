@@ -35,10 +35,28 @@ export async function sha256(value: string) {
 
 export async function hashPassword(password: string) {
   const salt = new Uint8Array(16);
-  crypto.getRandomValues(salt);
-  const key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: PBKDF2_ITERATIONS }, key, 256);
-  return `pbkdf2-sha256$${PBKDF2_ITERATIONS}$${encodeBase64Url(salt)}$${encodeBase64Url(new Uint8Array(bits))}`;
+  try {
+    crypto.getRandomValues(salt);
+  } catch {
+    throw new Error("AUTH_HASH_SALT_FAILED");
+  }
+  let key: CryptoKey;
+  try {
+    key = await crypto.subtle.importKey("raw", encoder.encode(password), "PBKDF2", false, ["deriveBits"]);
+  } catch {
+    throw new Error("AUTH_HASH_IMPORT_FAILED");
+  }
+  let bits: ArrayBuffer;
+  try {
+    bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt, iterations: PBKDF2_ITERATIONS }, key, 256);
+  } catch {
+    throw new Error("AUTH_HASH_DERIVE_FAILED");
+  }
+  try {
+    return `pbkdf2-sha256${PBKDF2_ITERATIONS}${encodeBase64Url(salt)}${encodeBase64Url(new Uint8Array(bits))}`;
+  } catch {
+    throw new Error("AUTH_HASH_ENCODE_FAILED");
+  }
 }
 
 export async function verifyPassword(password: string, encoded: string) {

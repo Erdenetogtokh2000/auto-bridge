@@ -1,5 +1,6 @@
 const encoder = new TextEncoder();
-const PBKDF2_ITERATIONS = 310_000;
+// Cloudflare Workers caps a single Web Crypto PBKDF2 operation at 100,000 iterations.
+const PBKDF2_ITERATIONS = 100_000;
 const SESSION_DAYS = 14;
 
 declare global {

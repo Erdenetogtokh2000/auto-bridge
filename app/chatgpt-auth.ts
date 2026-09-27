@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
-import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
-import { eq } from "drizzle-orm";
+import { and, eq, gt } from "drizzle-orm";
 import { getDb } from "@/db";
-import { shipments, userProfiles } from "@/db/schema";
+import { authSessions, shipments, userProfiles } from "@/db/schema";
+import { sha256 } from "@/lib/cloudflare-auth";
 import { adminPermissionCodes, hasAdminPermission, normalizeAdminPermissions, type AdminPermission } from "@/lib/admin-permissions";
 import { defaultPermissionsForRole, effectivePermissionsForRole, hasUserPermission, type UserPermission } from "@/lib/role-permissions";
 
@@ -36,37 +36,22 @@ function normalizeEmail(value: string): string {
 }
 
 async function getRawChatGPTUser(): Promise<ChatGPTUser | null> {
-  const cookieStore = await cookies();
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const publishableKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  if (!supabaseUrl || !publishableKey) return null;
-
-  const supabase = createServerClient(supabaseUrl, publishableKey, {
-    cookies: {
-      getAll: () => cookieStore.getAll(),
-      setAll: (entries) => {
-        try {
-          entries.forEach(({ name, value, options }) => cookieStore.set(name, value, options));
-        } catch {
-          // Server Components cannot always write cookies. The auth callback
-          // route refreshes sessions before users reach protected pages.
-        }
-      },
-    },
-  });
-
-  const { data: { user: identityUser } } = await supabase.auth.getUser();
-  const email = identityUser?.email ? normalizeEmail(identityUser.email) : "";
-  if (!email) return null;
-  const fullName = typeof identityUser?.user_metadata?.full_name === "string"
-    ? identityUser.user_metadata.full_name
-    : null;
-
-  return {
-    displayName: fullName ?? email,
-    email,
-    fullName,
-  };
+  try {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("auto_bridge_session")?.value;
+    if (!token) return null;
+    const [session] = await getDb().select({ email: authSessions.email, fullName: userProfiles.fullName })
+      .from(authSessions)
+      .leftJoin(userProfiles, eq(authSessions.email, userProfiles.email))
+      .where(and(eq(authSessions.tokenHash, await sha256(token)), gt(authSessions.expiresAt, new Date().toISOString())))
+      .limit(1);
+    const email = session?.email ? normalizeEmail(session.email) : "";
+    if (!email) return null;
+    const fullName = session.fullName ?? null;
+    return { displayName: fullName ?? email, email, fullName };
+  } catch {
+    return null;
+  }
 }
 
 function configuredAdminEmails() {

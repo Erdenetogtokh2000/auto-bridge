@@ -3,7 +3,11 @@ import { cookies } from "next/headers";
 
 type PutOptions = { httpMetadata?: { contentType?: string } };
 
-type ObjectBucket = Pick<R2Bucket, "put" | "get" | "delete">;
+type ObjectBucket = {
+  put(key: string, value: ReadableStream | ArrayBuffer | Blob, options?: PutOptions): Promise<unknown>;
+  get(key: string): Promise<null | { body: ReadableStream; size: number; httpMetadata?: { contentType?: string } }>;
+  delete(key: string): Promise<void>;
+};
 
 declare global {
   // Set by the Cloudflare Worker entry point for each request.

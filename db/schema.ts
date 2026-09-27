@@ -128,6 +128,34 @@ export const userProfiles = sqliteTable("user_profiles", {
   updatedAt: text("updated_at"),
 });
 
+// Cloudflare-native password credentials and opaque, hashed session tokens.
+// Passwords are never stored in the profile table or in plaintext.
+export const authCredentials = sqliteTable("auth_credentials", {
+  email: text("email").primaryKey(),
+  passwordHash: text("password_hash").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const authSessions = sqliteTable("auth_sessions", {
+  tokenHash: text("token_hash").primaryKey(),
+  email: text("email").notNull(),
+  expiresAt: text("expires_at").notNull(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const authBootstrap = sqliteTable("auth_bootstrap", {
+  id: text("id").primaryKey(),
+  completedAt: text("completed_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const authLoginAttempts = sqliteTable("auth_login_attempts", {
+  attemptKey: text("attempt_key").primaryKey(),
+  failedAttempts: integer("failed_attempts").notNull().default(0),
+  lockedUntil: text("locked_until"),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const expos = sqliteTable("expos", {
   id: text("id").primaryKey(), title: text("title").notNull(), country: text("country").notNull(),
   city: text("city").notNull(), venue: text("venue"), startDate: text("start_date").notNull(),

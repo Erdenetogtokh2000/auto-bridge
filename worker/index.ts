@@ -29,6 +29,7 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     globalThis.autoBridgeD1Database = env.DB;
+    globalThis.autoBridgeR2Bucket = env.BUCKET;
     const url = new URL(request.url);
 
     if (url.pathname === "/_vinext/image") {

@@ -3,6 +3,13 @@ import { cookies } from "next/headers";
 
 type PutOptions = { httpMetadata?: { contentType?: string } };
 
+type ObjectBucket = Pick<R2Bucket, "put" | "get" | "delete">;
+
+declare global {
+  // Set by the Cloudflare Worker entry point for each request.
+  var autoBridgeR2Bucket: ObjectBucket | undefined;
+}
+
 async function getSupabaseStorageClient() {
   const cookieStore = await cookies();
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -24,6 +31,31 @@ async function getSupabaseStorageClient() {
 }
 
 export function getSupabaseBucket(name: string) {
+  const r2 = globalThis.autoBridgeR2Bucket;
+  if (r2) {
+    return {
+      async put(key: string, value: ReadableStream | ArrayBuffer | Blob, options?: PutOptions) {
+        await r2.put(key, value, {
+          httpMetadata: { contentType: options?.httpMetadata?.contentType ?? "application/octet-stream" },
+        });
+      },
+
+      async get(key: string) {
+        const object = await r2.get(key);
+        if (!object) return null;
+        return {
+          body: object.body,
+          size: object.size,
+          httpMetadata: object.httpMetadata,
+        };
+      },
+
+      async delete(key: string) {
+        await r2.delete(key);
+      },
+    };
+  }
+
   return {
     async put(key: string, value: ReadableStream | ArrayBuffer | Blob, options?: PutOptions) {
       const client = await getSupabaseStorageClient();

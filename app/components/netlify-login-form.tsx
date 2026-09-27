@@ -20,7 +20,6 @@ export function NetlifyLoginForm() {
       });
       const body = await response.json() as { error?: string };
       if (!response.ok) throw new Error(body.error ?? "Нэвтрэх үед алдаа гарлаа.");
-      event.currentTarget.reset();
       void fetch("/api/auth/login-log", { method: "POST", keepalive: true }).catch(() => {});
       window.location.replace("/auth/continue");
     } catch (error) {

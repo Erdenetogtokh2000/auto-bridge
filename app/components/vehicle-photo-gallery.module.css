@@ -1,0 +1,15 @@
+.hero { padding: 0; border: 0; width: 100%; cursor: zoom-in; }
+.hero:focus-visible, .gallery button:focus-visible, .viewer button:focus-visible { outline: 3px solid #c5ae78; outline-offset: -3px; }
+.gallery { margin-top: 18px; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.gallery button { padding: 0; height: 170px; overflow: hidden; border: 1px solid rgba(243,241,236,.1); border-radius: 4px; background: #151515; cursor: zoom-in; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; }
+.viewer { margin: auto; width: min(1100px, calc(100vw - 24px)); max-width: none; max-height: calc(100dvh - 24px); padding: 12px; border: 1px solid #4d4535; border-radius: 8px; background: #111; color: #f3f1ec; overflow: auto; }
+.viewer::backdrop { background: rgba(0,0,0,.88); }
+.toolbar, .controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.toolbar { padding-bottom: 10px; font-size: 16px; }
+.viewer button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; padding: 0; border: 1px solid #625740; border-radius: 6px; background: #25221b; color: #f3f1ec; cursor: pointer; }
+.viewer button:disabled { opacity: .35; cursor: default; }
+.fullImage { display: block; width: 100%; height: min(70dvh, 740px); object-fit: contain; }
+.controls { justify-content: center; padding-top: 12px; font-size: 16px; }
+.controls span { min-width: 80px; text-align: center; }
+@media (max-width: 640px) { .gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); } .gallery button { height: 130px; } .fullImage { height: 60dvh; } }

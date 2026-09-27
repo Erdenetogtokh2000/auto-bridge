@@ -7,6 +7,7 @@ const config = {
   main: "./worker/index.ts",
   compatibility_date: "2026-09-27",
   compatibility_flags: ["nodejs_compat"],
+  secrets: { required: ["AUTH_BOOTSTRAP_TOKEN"] },
   observability: { traces: { enabled: true } },
   d1_databases: [{
     binding: "DB",

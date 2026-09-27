@@ -7,6 +7,16 @@ type ImageRow = {
   galleryImageUrls: string;
 };
 
+function imageFailure(vehicleId: string, source: string, error: unknown) {
+  const cause = error instanceof Error ? error.cause : undefined;
+  return JSON.stringify({
+    vehicleId,
+    sourceHost: new URL(source).hostname,
+    error: error instanceof Error ? error.message : String(error),
+    cause: cause instanceof Error ? cause.message : cause == null ? undefined : String(cause),
+  });
+}
+
 export async function backfillVehicleImages(db: D1Database, bucket: R2Bucket) {
   // Bound each invocation: a busy or unavailable image host must not hold up the next cron run.
   const { results } = await db.prepare(`SELECT id, image_url AS imageUrl, image_object_key AS imageObjectKey,
@@ -37,7 +47,7 @@ export async function backfillVehicleImages(db: D1Database, bucket: R2Bucket) {
           if (result.meta.changes) { copied++; gallery = nextGallery; galleryRaw = JSON.stringify(nextGallery); }
           else await bucket.delete(key);
         } catch (error) { await bucket.delete(key).catch(() => undefined); throw error; }
-      } catch (error) { console.error("Vehicle primary image backfill failed", vehicle.id, error); }
+      } catch (error) { console.error("Vehicle primary image backfill failed", imageFailure(vehicle.id, primary, error)); }
     }
 
     // Copy at most two gallery images per vehicle per run; the next run resumes.
@@ -58,7 +68,7 @@ export async function backfillVehicleImages(db: D1Database, bucket: R2Bucket) {
           if (result.meta.changes) { copied++; gallery = nextGallery; galleryRaw = JSON.stringify(nextGallery); }
           else { await bucket.delete(key); break; }
         } catch (error) { await bucket.delete(key).catch(() => undefined); throw error; }
-      } catch (error) { console.error("Vehicle gallery image backfill failed", vehicle.id, error); break; }
+      } catch (error) { console.error("Vehicle gallery image backfill failed", imageFailure(vehicle.id, source, error)); break; }
     }
   }
   console.log("Vehicle R2 image backfill", { checked: results.length, copied });

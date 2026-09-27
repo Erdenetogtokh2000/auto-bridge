@@ -33,7 +33,6 @@ export default function SetupAdminPage() {
       if (!response.ok) throw new Error(body.diagnostic ? `${body.error ?? "Тохиргоо хадгалагдсангүй."} (${body.diagnostic})` : body.error ?? "Тохиргоо хадгалагдсангүй.");
       setSetupState("complete");
       setMessage("Admin нууц үг үүслээ. Одоо нэвтрэх хэсэгт орж нэвтэрнэ үү.");
-      event.currentTarget.reset();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Тохиргоо хадгалах үед алдаа гарлаа.");
     } finally {

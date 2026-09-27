@@ -55,3 +55,23 @@ the D1 import and application flows are verified on the `workers.dev` URL.
    financing, shipment updates, and notifications.
 4. Verify Supabase Auth callbacks and existing document/image links.
 5. Only after those checks pass, connect `autobridge.mn` and update DNS.
+
+## Automatic vehicle image storage
+
+Saving a new vehicle with Encar or Cars.com image URLs copies its images to R2
+automatically. The scheduled Worker also backfills existing image URLs in small
+batches every 15 minutes. The admin does not need to press an R2 button. A
+source that no longer serves its image, or an unsupported external image host,
+cannot be copied; the original URL remains until it can be replaced.
+
+## Move autobridge.mn from Render
+
+`autobridge.mn` was previously configured on Render. Keep the Render DNS records
+until the `workers.dev` deployment and D1 application flows are verified. When
+ready, make `autobridge.mn` an active zone in the same Cloudflare account as the
+Worker and remove any DNS record on that exact hostname that conflicts with a
+Worker Custom Domain. Set the Cloudflare Workers Builds variable
+`CLOUDFLARE_CUSTOM_DOMAIN=autobridge.mn` and trigger a new deployment. The
+generated Wrangler config then registers it as a Custom Domain; Cloudflare
+creates its DNS record and certificate. Verify HTTPS, login and catalog on the
+new host before changing `www.autobridge.mn` or removing the Render service.

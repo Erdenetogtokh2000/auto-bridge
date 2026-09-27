@@ -71,7 +71,13 @@ export function isRemoteVehicleImage(value: string) {
   } catch { return false; }
 }
 
-export async function storeRemoteVehicleImage(vehicleId: string, imageUrl: string) {
+export async function storeRemoteVehicleImage(
+  vehicleId: string,
+  imageUrl: string,
+  writeImage: (key: string, bytes: ArrayBuffer, contentType: string) => Promise<void> = async (key, bytes, contentType) => {
+    await getVehicleBucket().put(key, bytes, { httpMetadata: { contentType } });
+  },
+) {
   if (!isRemoteVehicleImage(imageUrl)) throw new Error("Энэ зургийн эх сурвалжийг R2-д хуулж болохгүй байна.");
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 15_000);
@@ -102,7 +108,7 @@ export async function storeRemoteVehicleImage(vehicleId: string, imageUrl: strin
     const extension = jpeg ? "jpg" : png ? "png" : "webp";
     const contentType = jpeg ? "image/jpeg" : png ? "image/png" : "image/webp";
     const key = `vehicle-images/${vehicleId}/${crypto.randomUUID()}.${extension}`;
-    await getVehicleBucket().put(key, bytes.buffer, { httpMetadata: { contentType } });
+    await writeImage(key, bytes.buffer, contentType);
     return key;
   } finally { clearTimeout(timer); }
 }

@@ -2,6 +2,7 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { syncSourceListings } from "./source-listing-lifecycle";
+import { backfillVehicleImages } from "./vehicle-image-backfill";
 
 interface Env {
   ASSETS: Fetcher;
@@ -29,8 +30,9 @@ interface ExecutionContext {
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
 const worker = {
-  async scheduled(_controller: unknown, env: Env, ctx: ExecutionContext) {
-    ctx.waitUntil(syncSourceListings(env.DB, env.BUCKET));
+  async scheduled(controller: { cron: string }, env: Env, ctx: ExecutionContext) {
+    if (controller.cron === "0 */6 * * *") ctx.waitUntil(syncSourceListings(env.DB, env.BUCKET));
+    if (controller.cron === "*/15 * * * *") ctx.waitUntil(backfillVehicleImages(env.DB, env.BUCKET));
   },
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     globalThis.autoBridgeD1Database = env.DB;

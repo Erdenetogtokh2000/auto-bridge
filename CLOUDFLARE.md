@@ -66,12 +66,11 @@ cannot be copied; the original URL remains until it can be replaced.
 
 ## Move autobridge.mn from Render
 
-`autobridge.mn` was previously configured on Render. Keep the Render DNS records
-until the `workers.dev` deployment and D1 application flows are verified. When
-ready, make `autobridge.mn` an active zone in the same Cloudflare account as the
-Worker and remove any DNS record on that exact hostname that conflicts with a
-Worker Custom Domain. Set the Cloudflare Workers Builds variable
-`CLOUDFLARE_CUSTOM_DOMAIN=autobridge.mn` and trigger a new deployment. The
-generated Wrangler config then registers it as a Custom Domain; Cloudflare
-creates its DNS record and certificate. Verify HTTPS, login and catalog on the
-new host before changing `www.autobridge.mn` or removing the Render service.
+`autobridge.mn` is an active Cloudflare zone. Its proxied apex DNS record must
+exist for the Worker Route to run. The generated Wrangler config registers
+`autobridge.mn/*` as a route, covering the home page, login, catalog, assets,
+and APIs. The previous exact `autobridge.mn` dashboard route only covers the
+home page; replace it with `autobridge.mn/*`. Check HTTPS, login, catalog, and
+an image on the new host before changing `www.autobridge.mn` or removing the
+Render service. A Worker Custom Domain would require a separate DNS cutover;
+do not set the old `CLOUDFLARE_CUSTOM_DOMAIN` Builds variable for this route.

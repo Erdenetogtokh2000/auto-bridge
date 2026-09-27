@@ -34,7 +34,9 @@ export function normalizeVehicleForm(formData: FormData) {
   let galleryImageUrls: string[] = [];
   try {
     const parsed = JSON.parse(String(formData.get("galleryImageUrls") ?? "[]"));
-    if (Array.isArray(parsed)) galleryImageUrls = [...new Set(parsed.map(String).filter(value => /^https?:\/\//i.test(value)))].slice(0, 80);
+    if (Array.isArray(parsed)) galleryImageUrls = [...new Set(parsed.map(String).filter(value =>
+      /^https?:\/\//i.test(value) || /^\/api\/vehicle-images\/VEH-[a-f0-9-]+(?:\?image=[a-f0-9-]+\.(?:jpg|png|webp))?$/i.test(value)
+    ))].slice(0, 80);
   } catch { throw new Error("INVALID_GALLERY"); }
   if (vin.length > 32 || trim.length > 160 || color.length > 80 || fuelType.length > 80 || description.length > 1200) throw new Error("INVALID_TEXT");
   return {
@@ -58,4 +60,49 @@ export async function storeVehicleImage(vehicleId: string, file: File) {
   const objectKey = `vehicle-images/${vehicleId}/${crypto.randomUUID()}.${extension}`;
   await getVehicleBucket().put(objectKey, file.stream(), { httpMetadata: { contentType: file.type } });
   return objectKey;
+}
+
+const remoteImageHosts = new Set(["ci.encar.com", "platform.cstatic-images.com"]);
+
+export function isRemoteVehicleImage(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" && !url.username && !url.password && remoteImageHosts.has(url.hostname.toLowerCase());
+  } catch { return false; }
+}
+
+export async function storeRemoteVehicleImage(vehicleId: string, imageUrl: string) {
+  if (!isRemoteVehicleImage(imageUrl)) throw new Error("Энэ зургийн эх сурвалжийг R2-д хуулж болохгүй байна.");
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
+  try {
+    const response = await fetch(imageUrl, { redirect: "error", signal: controller.signal, headers: { Accept: "image/jpeg,image/png,image/webp" } });
+    if (!response.ok || !response.body || Number(response.headers.get("content-length") || 0) > 5 * 1024 * 1024)
+      throw new Error("Эх зургийг татаж чадсангүй эсвэл 5 MB-аас том байна.");
+    const reader = response.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let size = 0;
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 5 * 1024 * 1024) {
+        await reader.cancel();
+        throw new Error("Эх зураг 5 MB-аас том байна.");
+      }
+      chunks.push(value);
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+    const jpeg = size > 2 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    const png = size > 7 && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4e && bytes[3] === 0x47;
+    const webp = size > 11 && String.fromCharCode(...bytes.subarray(0, 4)) === "RIFF" && String.fromCharCode(...bytes.subarray(8, 12)) === "WEBP";
+    if (!jpeg && !png && !webp) throw new Error("Эх сурвалжаас зураг биш файл ирлээ.");
+    const extension = jpeg ? "jpg" : png ? "png" : "webp";
+    const contentType = jpeg ? "image/jpeg" : png ? "image/png" : "image/webp";
+    const key = `vehicle-images/${vehicleId}/${crypto.randomUUID()}.${extension}`;
+    await getVehicleBucket().put(key, bytes.buffer, { httpMetadata: { contentType } });
+    return key;
+  } finally { clearTimeout(timer); }
 }

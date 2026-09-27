@@ -24,13 +24,18 @@ export function NetlifyLoginForm() {
   const getSupabase = () => {
     const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-    if (!url || !key) throw new Error("Нэвтрэх үйлчилгээ тохируулагдаагүй байна.");
+    if (!url || !key) return null;
     return createBrowserClient(url, key);
   };
 
   useEffect(() => {
     let active = true;
-    getSupabase().auth.getSession().then(({ data }) => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      setMessage("Нэвтрэх үйлчилгээ тохируулагдаагүй байна. Админд хандана уу.");
+      return () => { active = false; };
+    }
+    supabase.auth.getSession().then(({ data }) => {
       if (!active || !data.session) return;
       setBusy(true);
       setMessage("Таны нэвтэрсэн эрхийг шалгаж байна…");
@@ -47,8 +52,10 @@ export function NetlifyLoginForm() {
     const email = String(data.get("email") ?? "").trim();
     const password = String(data.get("password") ?? "");
     try {
+      const supabase = getSupabase();
+      if (!supabase) throw new Error("Нэвтрэх үйлчилгээ тохируулагдаагүй байна. Админд хандана уу.");
       if (mode === "signup") {
-        const { error } = await getSupabase().auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -59,7 +66,7 @@ export function NetlifyLoginForm() {
         if (error) throw error;
         setMessage("Бүртгэл үүслээ. И-мэйлээр ирсэн баталгаажуулах холбоосыг нээнэ үү.");
       } else {
-        const { error } = await getSupabase().auth.signInWithPassword({ email, password });
+        const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         setMessage("Нэвтэрлээ. Таны эрхийг шалгаж байна…");
         void fetch("/api/auth/login-log", { method: "POST", keepalive: true }).catch(() => {});

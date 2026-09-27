@@ -7,7 +7,21 @@ const config = {
   compatibility_date: "2026-09-27",
   compatibility_flags: ["nodejs_compat"],
   secrets: { required: ["AUTH_BOOTSTRAP_TOKEN"] },
-  observability: { traces: { enabled: true } },
+  observability: {
+    enabled: true,
+    head_sampling_rate: 1,
+    logs: {
+      enabled: true,
+      head_sampling_rate: 1,
+      invocation_logs: true,
+      persist: true,
+    },
+    traces: {
+      enabled: true,
+      head_sampling_rate: 1,
+      persist: true,
+    },
+  },
   d1_databases: [{
     binding: "DB",
     database_name: "auto-bridge-db",

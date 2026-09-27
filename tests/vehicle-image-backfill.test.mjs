@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { after, test } from "node:test";
 import { backfillVehicleImages } from "../worker/vehicle-image-backfill.ts";
+import { storeRemoteVehicleImage } from "../lib/vehicle-catalog.ts";
 
 const originalFetch = globalThis.fetch;
 after(() => { globalThis.fetch = originalFetch; });
@@ -48,4 +49,26 @@ test("old primary and gallery URLs are copied to R2 and replaced without a butto
   const gallery = JSON.parse(row.galleryImageUrls);
   assert.equal(gallery[0], `/api/vehicle-images/${id}`);
   assert.match(gallery[1], new RegExp(`^/api/vehicle-images/${id}\\?image=`));
+});
+
+test("trusted CDN redirect is followed and the image is stored", async () => {
+  const seen = [];
+  globalThis.fetch = async url => {
+    seen.push(String(url));
+    return seen.length === 1
+      ? new Response(null, { status: 302, headers: { location: "/resolved.jpg" } })
+      : new Response(new Uint8Array([0xff, 0xd8, 0xff, 0x00]), { status: 200 });
+  };
+  let stored = false;
+  await storeRemoteVehicleImage("VEH-123", "https://ci.encar.com/original.jpg", async () => { stored = true; });
+  assert.deepEqual(seen, ["https://ci.encar.com/original.jpg", "https://ci.encar.com/resolved.jpg"]);
+  assert.equal(stored, true);
+});
+
+test("redirect to an untrusted host is blocked", async () => {
+  globalThis.fetch = async () => new Response(null, { status: 302, headers: { location: "https://example.com/image.jpg" } });
+  await assert.rejects(
+    storeRemoteVehicleImage("VEH-123", "https://ci.encar.com/original.jpg", async () => { throw new Error("must not store"); }),
+    /IMAGE_REDIRECT_UNTRUSTED_HOST example\.com/,
+  );
 });

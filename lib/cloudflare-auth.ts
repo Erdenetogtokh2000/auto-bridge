@@ -54,10 +54,16 @@ export async function hashPassword(password: string) {
     throw new Error("AUTH_HASH_DERIVE_FAILED");
   }
   try {
-    return `pbkdf2-sha256${PBKDF2_ITERATIONS}${encodeBase64Url(salt)}${encodeBase64Url(new Uint8Array(bits))}`;
+    return `pbkdf2-sha256$${PBKDF2_ITERATIONS}$${encodeBase64Url(salt)}$${encodeBase64Url(new Uint8Array(bits))}`;
   } catch {
     throw new Error("AUTH_HASH_ENCODE_FAILED");
   }
+}
+
+// An earlier deployment omitted the separators while storing the initial owner hash.
+// This exact legacy shape cannot be verified and may be repaired using the bootstrap token.
+export function isBrokenBootstrapHash(encoded: string) {
+  return /^pbkdf2-sha256100000[A-Za-z0-9_-]{65}$/.test(encoded);
 }
 
 export async function verifyPassword(password: string, encoded: string) {
